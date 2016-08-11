@@ -16,20 +16,18 @@ typedef struct
 {
 	uint16_t 			voltage;          		// 电池包总电压 0.1v/bit 
 	volatile int16_t  	current;          		// 电池包母线电流 0.1A/bit 
-	int16_t 			curr_pre;
 
 	uint8_t  			SOC;          			// 电池包SOC (%)  
 	uint16_t			socCyclesPerSec;		// 每秒计算SOC相关量的次数
 	int16_t				Ah;						// 剩余安时数
 	int32_t				Accumulator;			// 计算电量的累加器
+						
+	int16_t 			sohCyclesPerSec;		// 每秒计算SOH相关量的次数
+	uint32_t			ChargedAh;				// 冲了多少AH 电量
+	uint16_t			sohCycleTimes;			// 充电循环次数
 	
-	uint16_t 			SOH;					//充电循环次数
-	int16_t 			sohCyclesPerSec;
-	uint32_t			ChargedAh;
-	uint16_t			sohCycleTimes;
-	
-	uint16_t 			CellVoltPre[CellsAmount];
-	uint16_t 			CellRes[CellsAmount];
+//	uint16_t 			CellVoltPre[CellsAmount];
+//	uint16_t 			CellRes[CellsAmount];
 	uint16_t 			CellVoltMax;   			// 电池包最大单体电压
 	uint16_t 			CellVoltMin;          	// 电池包最小单体电压
 	uint16_t 			CellVoltAvg;          	// 电池包平均单体电压
@@ -48,4 +46,4 @@ typedef struct
 	int8_t   			AmbientTemp;          	// 板上环境温度
 	uint16_t 			BalanceCellNum;       	// 指示哪几节cell在均衡
 	uint8_t  			BalanceFlag;			// 是否处于均衡处理            
-}BatteryPackTypedef;	
+}BatteryPackTypedef;
