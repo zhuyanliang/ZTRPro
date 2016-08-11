@@ -1,0 +1,98 @@
+#include "include.h"
+
+RelayFlagTepedef g_RelayActFlg;
+
+//============================================================================
+// Function    ：Relay_Init
+// Description ：控制继电器引脚的初始化
+// Parameters  ：none 
+// Returns     ：none
+//============================================================================
+void Relay_Init(void)
+{
+	// 控制管脚设为输出
+	TRISBbits.TRISB0 = 0;
+	TRISCbits.TRISC0 = 0;
+	TRISAbits.TRISA2 = 0;
+
+	RELAY_POSI_CTRL = 0;
+	RELAY_NEGA_CTRL = 0;
+	RELAY_PREC_CTRL = 0;
+	RELAY_FAN_CTRL  = 0;
+	RELAY_HEAT_CTRL = 0;
+
+	g_RelayActFlg.precharge = FALSE;
+	g_RelayActFlg.positive = TRUE;
+	g_RelayActFlg.negative = TRUE;
+}
+
+//============================================================================
+// Function    ：RelayAction
+// Description ：该函数为继电器执行机构，执行条件为继电器动作标志位；该函数需要
+//               周期性循环中被调用。
+// Parameters  ：none 
+// Returns     ：none
+//============================================================================
+void RelayAction(void)
+{
+	if(g_RelayActFlg.precharge == TRUE)
+	{
+		RELAY_PREC_CTRL = 1;
+	}
+	else
+	{
+		RELAY_PREC_CTRL = 0;
+	}
+
+	if(g_RelayActFlg.positive == TRUE)
+	{
+		RELAY_POSI_CTRL ^= 1;
+	}
+
+	if(g_RelayActFlg.negative == TRUE)
+	{
+		RELAY_NEGA_CTRL ^= 1;
+	}
+
+	if (g_RelayActFlg.heating == TRUE)
+	{
+		RELAY_HEAT_CTRL = 1;
+	}
+	else
+	{
+		RELAY_HEAT_CTRL = 0;
+	}   
+
+	if (g_RelayActFlg.cooling == TRUE)
+	{
+		RELAY_FAN_CTRL = 1;
+	}
+	else
+	{
+		RELAY_FAN_CTRL = 0;
+	}  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
