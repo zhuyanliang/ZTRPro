@@ -8,42 +8,58 @@
 
 部分数据通过CAN上报整机控制器
 
-关键结构体与全局变量说明：
-1.
-volatile BatteryPackTypedef g_BatteryParameter;
-// 定义电池包相关参数的结构体数据
-typedef struct 
-{
-	uint16_t 			voltage;          		// 电池包总电压 0.1v/bit 
-	volatile int16_t  	current;          		// 电池包母线电流 0.1A/bit 
 
-	uint8_t  			SOC;          			// 电池包SOC (%)  
-	uint16_t			socCyclesPerSec;		// 每秒计算SOC相关量的次数
-	int16_t				Ah;						// 剩余安时数
-	int32_t				Accumulator;			// 计算电量的累加器
-						
-	int16_t 			sohCyclesPerSec;		// 每秒计算SOH相关量的次数
-	uint32_t			ChargedAh;				// 冲了多少AH 电量
-	uint16_t			sohCycleTimes;			// 充电循环次数
-	
-//	uint16_t 			CellVoltPre[CellsAmount];
-//	uint16_t 			CellRes[CellsAmount];
-	uint16_t 			CellVoltMax;   			// 电池包最大单体电压
-	uint16_t 			CellVoltMin;          	// 电池包最小单体电压
-	uint16_t 			CellVoltAvg;          	// 电池包平均单体电压
-	uint8_t  			MaxCellNum;				// 最大最小电压电芯编号
-	uint8_t  			MinCellNum;
-	int8_t   			CellTemp[8];          	// cell temperature   
-	int8_t   			CellTempMax;          
-	int8_t   			CellTempMin;   
-	int8_t  			CellTempAvg; 
-	uint8_t 			MaxTempNum;
-	uint8_t 			MinTempNum; 
-	uint8_t 			MaxTempModuIdx;
-	uint8_t 			MinTempModuIdx;
-	uint8_t 			MaxTempChnIdx;
-	uint8_t 			MinTempChnIdx;     
-	int8_t   			AmbientTemp;          	// 板上环境温度
-	uint16_t 			BalanceCellNum;       	// 指示哪几节cell在均衡
-	uint8_t  			BalanceFlag;			// 是否处于均衡处理            
-}BatteryPackTypedef;
+引脚功能说明：
+
+A0 AN0:绝缘性检测
+A1:保留
+A2:Relay NEG+ 负极继电器控制机端口
+A3 AN3:TBAVAL PCB板子的温度采集，模拟量
+A5:ISO_PWM 绝缘检测产生PWM波形
+A6:OUTPUT3						？？
+A7:Heater Control 控制加温装置启停端口
+
+B0:PreCHA+ 预充继电器控制
+B1 AN8:V12VD  检测电压是否为12V
+B2:CANTX	CAN通信端口
+B3:CANRX
+B4 AN9:检测电压是否为5V    	
+B5:FAN Control 风扇控制引脚
+B6:ICD PGC
+B7:ICD PGD
+
+C0:Relay POS+ 正极继电器控制端口
+C1:OUTPUT4				？？
+C2:BSSB 与LTC6803之间SPI通信的片选信号
+C3:SCK SPI时钟输出
+C4:SDI SPI数据输入
+C5:SDO SPI数据输出
+C6:LDGRNB 红灯控制引脚 0-点亮 1-熄灭
+C7:LDREDB 绿灯控制引脚 0-点亮 1-熄灭
+
+D0:TH1EN   热敏电阻1使能端口
+D1:TH2EN   热敏电阻2使能端口
+D2:MCUcoderOUT     暂时不用
+D3:MCUcoderIN      暂时不用
+D4:KEYRUN 钥匙开关
+D5:BusRelease     暂时不用
+D6:INPUT1         ？？
+D7:ChargeIN  充电继电器控制端口
+
+E0 AN5:ILOW  电流传感器的输入模拟量
+E1 AN6:IHIGH 电流传感器的输入模拟量
+E2 AN7:THXVAL 外接热敏电阻（模拟量输入）配合TH1EN TH2EN使用
+E3:ICD VPP
+
+
+
+
+
+
+
+
+
+
+
+
+
