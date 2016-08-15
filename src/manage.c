@@ -46,7 +46,6 @@ void TskBatteryPra_Init(void)
 	g_BatteryParameter.BalanceFlag = 0;
 
 
-	//以下是报警值设置，从EEPROM中读取，如果没有读取到或者读取错误，使用默认值
 	EEPROM_ReadBlock(EEPROM_ADDR_COV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 

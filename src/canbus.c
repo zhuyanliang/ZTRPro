@@ -1619,27 +1619,6 @@ void TskCanProcessRxMsg(void)
 
 	while (!CAN_IsRxBufEmpty())
 	{
-  #if 0
-        g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr].COB_ID = g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID;
-        g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr].DLC = g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].DLC;
-        g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr].IDE = g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].IDE;
-        g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr].RTR = g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].RTR;
-        
-        for(int i=0;i<g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr].DLC;i++)
-        {
-            g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr].Data[i] = g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data[i];
-        }
-        
-        if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
-        {
-            g_CanMsgBuf.TxBuf_Wptr = 0;
-        }
-        
-        if (++g_CanMsgBuf.RxBuf_Wptr >= CAN_BUF_DEEP)
-        {
-            g_CanMsgBuf.TxBuf_Wptr = 0;
-        }
-#endif
 		if (CAN_IsTxBufFull())  // 判断发送缓冲区是否满，以确定是否有空间给响应帧发送，
 		{                      // 若没有空间发送响应帧，则暂不处理接收到的数据帧。
 			return;             
@@ -1649,15 +1628,7 @@ void TskCanProcessRxMsg(void)
 		{
 			can_sa = CAN_GetSourceAddr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID);
 			can_fc = CAN_GetFuncCode(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID);
-#if 0                
-            if (nbrCanId == can_sa)
-            {
- 				if ( !can_fc )
-				{
-					CAN_PaserNeighborPack(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
-				}                   
-            }
-#endif
+
             if (tduCanId == can_sa) 
             {
                 if(can_fc == CAN_MSG_TEMP_GNR_INFO)

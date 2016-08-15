@@ -10,18 +10,6 @@ void ISR_Init(void)
 	INTCONbits.GIE_GIEH 	= 1;	//允许所有未屏蔽中断
 	INTCONbits.PEIE_GIEL 	= 1;	//允许所有未屏蔽外设中断
 	RCONbits.IPEN			= 1;	//允许中断优先级
-#if 0
-	/* 配置INT0中断 */
-	INTCON2bits.INTEDG0 = 1;  //interrupt on rising edge
-	INTCONbits.INT0IF = 0;
-	INTCONbits.INT0IE = 1;  //enable INT0 interrupt
-
-	/* 开启全局中断 */
-	RCON = 0x9F;
-	INTCON2 = 0x80;
-	INTCON3 = 0x00;
-	INTCON = 0xC0;  //Enable once setup done
-#endif	
 }
 
 //interrupt
@@ -40,24 +28,6 @@ void interrupt ISR_High_Handler(void)
         g_SysTickMs++;
 
 	}
-    
-    if(PIR5bits.RXB0IF)
-    {
-#if 0
-        static uint8_t i;
-        PIR5bits.RXB0IF = 0b0;
-        if(ECAN_ReceiveMsg(&msgRx))
-        {
-            msgTx.IDE = msgRx.IDE;
-            msgTx.RTR = msgRx.RTR;
-            msgTx.DLC = msgRx.DLC;
-            msgTx.COB_ID = msgRx.COB_ID;
-            for(i=0;i<8;i++)
-                msgTx.Data[i] = msgRx.Data[i];
-            ECAN_TransmitMsg(&msgTx);
-        }
-#endif            
-    }
 	
 	INTCONbits.GIE   = 1;
 }

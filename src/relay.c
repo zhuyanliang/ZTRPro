@@ -11,9 +11,12 @@ RelayFlagTepedef g_RelayActFlg;
 void Relay_Init(void)
 {
 	// 控制管脚设为输出
-	TRISBbits.TRISB0 = 0;
-	TRISCbits.TRISC0 = 0;
-	TRISAbits.TRISA2 = 0;
+	TRISAbits.TRISA2 = 0;	// 负极继电器控制机端口
+	TRISAbits.TRISA7 = 0;	// 加热继电器控制机端口
+	TRISBbits.TRISB0 = 0;	// 预充继电器控制端口
+	TRISBbits.TRISB5 = 0;	// 风扇继电器控制端口
+	TRISCbits.TRISC0 = 0;	// 正极继电器控制端口
+	
 
 	RELAY_POSI_CTRL = 0;
 	RELAY_NEGA_CTRL = 0;
@@ -46,12 +49,20 @@ void RelayAction(void)
 
 	if(g_RelayActFlg.positive == TRUE)
 	{
-		RELAY_POSI_CTRL ^= 1;
+		RELAY_POSI_CTRL = 1;
+	}
+	else
+	{
+		RELAY_POSI_CTRL = 0;
 	}
 
 	if(g_RelayActFlg.negative == TRUE)
 	{
-		RELAY_NEGA_CTRL ^= 1;
+		RELAY_NEGA_CTRL = 1;
+	}
+	else
+	{
+		RELAY_NEGA_CTRL = 0;
 	}
 
 	if (g_RelayActFlg.heating == TRUE)

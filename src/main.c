@@ -207,7 +207,7 @@ void System_Init(void)
     SPI_Init();      // SPI初始化
     ECAN_Init();    // 芯片CAN配置寄存器初始化
     Timer_Init();   // 定时器初始化
-    ADC_Init();     // ADC初始化
+    ADC_IOInit();   // ADC初始化
     Led_Init();     // LED引脚初始化
     Relay_Init();   // 继电器控制引脚初始化
     Thermal_Init();	// 温度控制引脚初始化 (目前只有风扇)

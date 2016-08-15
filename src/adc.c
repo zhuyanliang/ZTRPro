@@ -13,8 +13,6 @@ const TempWarnClsDef CellDLTThrDefault = {3,   5,  0};
 const CurrWarnClsDef BattCOCThrDefault = {-220, -250, 0};
 const CurrWarnClsDef BattDOCThrDefault = {2000, 2500, 0};
 
-
-
 // ADC值与温度的对照表
 const ThermLookupTypedef ThermLookupTable[] = 
 {
@@ -30,45 +28,40 @@ const ThermLookupTypedef ThermLookupTable[] =
 //ADC与温度值对照元素个数 
 #define THERM_TABLE_NUM      ((uint8_t)34)
 
-
 //============================================================================
-// Function    : ADC_Init
+// Function    : ADC_IOInit
 // Description : 
 // Parameters  : none
 // Returns     : none
 //============================================================================
-void ADC_Init(void)
+void ADC_IOInit(void)
 {
+	//1.配置对应的管脚为模拟端口
     ANCON0 = 0xF1;  //配置AN0,AN4,AN5,AN6,AN7
     ANCON1 = 0x03;  //配置AN8,AN9
 
     //set ad input pin direct as input
-    TRISAbits.TRISA0 = 1;   //AN0
+    TRISAbits.TRISA0 = 1;   //AN0  绝缘检测
+    TRISAbits.TRISA3 = 1;   //AN3  PCB板温度采集
+    TRISBbits.TRISB1 = 1;   //AN8  检测电压是否为12V
+    TRISBbits.TRISB4 = 1;   //AN9  检测电压是否为5V
+    TRISEbits.TRISE0 = 1;   //AN5  母线电流
+    TRISEbits.TRISE1 = 1;   //AN6  母线电流
+    TRISEbits.TRISE2 = 1;   //AN7 热敏电阻采集端口
 
-    TRISAbits.TRISA3 = 1;   //AN3
+    //设置连接热敏电子的管脚为输出
+    TRISDbits.TRISD0 = 0;   // 选择热敏电阻端口
+    TRISDbits.TRISD1 = 0;
 
-    TRISBbits.TRISB1 = 1;   //AN8
-    TRISBbits.TRISB4 = 1;   //AN9
-    TRISEbits.TRISE0 = 1;   //AN5
-    TRISEbits.TRISE1 = 1;   //AN6
-    TRISEbits.TRISE2 = 1;   //AN7
+    ADCON1bits.VCFG 	= 0b00;     // ADC的正端参考电压选择 AVdd 
+    ADCON1bits.VNCFG 	= 0b0;     // ADC的负端参考电压选择 AVss
+    ADCON1bits.CHSN 	= 0b0;      // 模拟反相通道选择位 通道00（AVss） 
 
-    //set thermistor select pins as input
-    TRISDbits.TRISD0 = 1;   //
-    TRISDbits.TRISD1 = 1;
-    TRISDbits.TRISD2 = 1;
-    TRISDbits.TRISD3 = 1;
+    ADCON2bits.ADFM 	= 0b1;     // 右对齐
+    ADCON2bits.ADCS 	= 0b110;     // AD clock : Fosc/64, Tad=1us 
+    ADCON2bits.ACQT 	= 0b010;     // 采样时间为4个AD clock
 
-    ADCON0 = 0;                 // 模拟通道选择位 通道 00 （ AN0）
-    ADCON1bits.VCFG = 0x00;     // select reference AVDD 与AN3相连的电压参考
-    ADCON1bits.VNCFG = 0;       // set Vref- as Vss
-    ADCON1bits.CHSN = 0;        // 模拟反相通道选择位 通道00（AVss） 
-
-    ADCON2bits.ADFM = 1;     // 右对齐
-    ADCON2bits.ADCS = 6;     // AD clock : Fosc/64, Tad=1us 
-    ADCON2bits.ACQT = 2;     // 采样时间为4个AD clock
-
-    ADCON0bits.ADON = 1;     // 启动A/D 转换器
+    ADCON0bits.ADON 	= 0b1;     // 使能A/D 转换器
 }
 
 //============================================================================
@@ -79,8 +72,8 @@ void ADC_Init(void)
 //============================================================================
 void ADC_Convert(uint8_t channel)
 {
-   ADCON0bits.CHS = channel;
-   ADCON0bits.GO = 1;
+   ADCON0bits.CHS = channel;	// 设置AD的转换通道
+   ADCON0bits.GO = 1; 			//启动ADC转换周期
 }
 
 //============================================================================
@@ -91,12 +84,11 @@ void ADC_Convert(uint8_t channel)
 //============================================================================
 uint16_t ADC_GetCvtRaw(void)
 {
-   uint16_t adcRaw;  
+	uint16_t adcRaw;  
 
-  // adcRaw = ADRESL + ADRESH * 256;
 	adcRaw = ((uint16_t)ADRESH << 8) | ADRESL;
 	adcRaw &= 0x0FFF;
-   	return(adcRaw);
+	return adcRaw;
 }
 
 //============================================================================
@@ -204,7 +196,7 @@ int8_t ADCToTempVal(uint16_t dat)
 
 //============================================================================
 // Function    : TskAdc_Init
-// Description : 
+// Description : ADC任务相关的参数初始化
 // Parameters  : none
 // Returns     : 
 //============================================================================
@@ -231,9 +223,10 @@ void TskAdc_Init(void)
 		g_AdcConvertValue.CurHighRaw[i] = 2048;
 		g_AdcConvertValue.CurLowRaw[i] = 2048;
 	}
+
+	
 	EEPROM_ReadBlock(EEPROM_ADDR_COT_THRHOLD, buff, 3);
 	crc = calculate_crc8(buff, 2);
-
 	if (crc == buff[2])
 	{
 		ptr = (uint8_t *)&g_CellCOTThr.cls_1;

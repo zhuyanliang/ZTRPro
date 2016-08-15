@@ -3,14 +3,12 @@
 
 void Led_Init(void)
 {
-	TRISCbits.TRISC6 = 0;
-	TRISCbits.TRISC7 = 0;
+	TRISCbits.TRISC6 = 0;   // PCB板绿灯控制端口
+	TRISCbits.TRISC7 = 0;   // PCB板红灯控制端口
+	
+	TRISAbits.TRISA6 = 0;   // 充电LED闪烁控制端口
+	TRISCbits.TRISC1 = 0	// 放电LED闪烁控制端口
 
-	/*添加SOC指示灯，板上指示灯*/
-	TRISAbits.TRISA6 = 0;
-	TRISCbits.TRISC1 = 0;
-
-	//...
     LedRed = 1;
     LedGre = 1;
 
@@ -28,7 +26,7 @@ void SysStateLedMgt(void)
 {
 	static uint8_t TimeStamp = 0;
 
-	if (g_BatteryMode == PROTECTION)
+	if (g_BatteryMode == PROTECTION) // 保护模式中 LedNormal 熄灭
 	{
 		LedNormal = 1; 
 	}
@@ -36,7 +34,7 @@ void SysStateLedMgt(void)
 	{
 		LedNormal = 0;  
 
-		if( g_BatteryMode == CHARGE )
+		if( g_BatteryMode == CHARGE ) // 充电模式中，LedChgRed闪烁
 		{
 			if (++TimeStamp < 50)
 			{
@@ -72,8 +70,9 @@ void SysSocLedMgt(void)
 
 	if (g_BatteryParameter.SOC> 75)
 	{
-		LATAbits.LATA6 = 0;
-		LATAbits.LATA7 = 0;
+		//LATAbits.LATA6 = 0;
+		LedChgRed = 0;
+		//LATAbits.LATA7 = 0; 端口改为加热控制端口
 
 		if (g_BatteryMode == CHARGE)
 		{
