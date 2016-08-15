@@ -88,7 +88,7 @@ void SPI_SendBlock(uint8_t *BlockPtr, uint8_t BlockLen)
 // Parameters  : none
 // Returns     : the data in receive buf
 //----------------------------------------------------------------------------
-uint8_t SPI_ReceiveByte()
+uint8_t SPI_ReceiveByte(void)
 {
 	uint8_t TmpByt;
 

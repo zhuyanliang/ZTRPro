@@ -11,7 +11,6 @@ void Led_Init(void)
 
     LedRed = 1;
     LedGre = 1;
-
     LedChgRed = 1;
     LedNormal = 1;  
 }

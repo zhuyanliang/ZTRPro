@@ -11,7 +11,7 @@
 // Returns     : none
 //----------------------------------------------------------------------------
 
-void Timer_Init()
+void Timer_Init(void)
 {
 #ifdef USETIMER0
 	// Timer0≈‰÷√£¨10ms≤˙…˙÷–∂œ
