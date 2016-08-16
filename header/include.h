@@ -30,7 +30,6 @@ extern "C" {
 #include "manage.h"
 #include "soc.h"
 #include "soh.h"   
-#include "tempcontrol.h"
 #include "selftest.h"
 #include "fault.h"  
 #include "canbus.h"

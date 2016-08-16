@@ -210,7 +210,6 @@ void System_Init(void)
     ADC_IOInit();   // ADC初始化
     Led_Init();     // LED引脚初始化
     Relay_Init();   // 继电器控制引脚初始化
-    Thermal_Init();	// 温度控制引脚初始化 (目前只有风扇)
     
     ClrWdt();
     

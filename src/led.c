@@ -7,7 +7,7 @@ void Led_Init(void)
 	TRISCbits.TRISC7 = 0;   // PCB板红灯控制端口
 	
 	TRISAbits.TRISA6 = 0;   // 充电LED闪烁控制端口
-	TRISCbits.TRISC1 = 0	// 放电LED闪烁控制端口
+	TRISCbits.TRISC1 = 0;	// 放电LED闪烁控制端口
 
     LedRed = 1;
     LedGre = 1;
