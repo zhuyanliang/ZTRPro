@@ -168,7 +168,7 @@ uint8_t ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
          TXB0DLCbits.TXRTR = 1;
       }
 
-      TXB0CONbits.TXREQ = 1;  //Request transmission
+      TXB0CONbits.TXREQ = 1;  // Request transmission
    }
    else if (!TXB1CONbits.TXREQ)
    {
@@ -287,7 +287,7 @@ uint8_t ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
       
       RXB0CONbits.RXFUL = 0;    //接收缓冲区可用于接收新报文
    }
-   /*
+   
    else if (RXB1CONbits.RXFUL)
    {
       ptr = (uint8_t*)0x0F36;       //寄存器RXB1D0地址
@@ -299,7 +299,8 @@ uint8_t ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
       }
       else
       {
-         RxMessage->COB_ID = ((uint32_t)RXB1SIDH<<21)|(((uint32_t)RXB1SIDL&0xE0)<<13)|(((uint32_t)RXB1SIDL&0x03)<<16)|
+         RxMessage->COB_ID = ((uint32_t)RXB1SIDH<<21)|(((uint32_t)RXB1SIDL&0xE0)<<13)
+         					|(((uint32_t)RXB1SIDL&0x03)<<16)|
                             ((uint32_t)RXB1EIDH<<8) |((uint32_t)RXB1EIDL);           
       }
       
@@ -317,11 +318,11 @@ uint8_t ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
 
       RXB1CONbits.RXFUL = 0;
    }
-*/
+
    else
    {
-      return(0);
+      return 0;
    }
 
-   return(1);   
+   return 1;   
 }

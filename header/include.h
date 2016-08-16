@@ -34,8 +34,6 @@ extern "C" {
 #include "fault.h"  
 #include "canbus.h"
 
-
-
 #ifdef	__cplusplus
 }
 #endif

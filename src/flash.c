@@ -1,5 +1,4 @@
-#include "flash.h"
-#include <pic18.h>
+#include "include.h"
 //============================================================================
 // Function    : FLASH_Erase64Bytes
 // Description : This function erases the 64 bytes of flash program memory 
@@ -7,18 +6,18 @@
 // Parameters  : unsigned short long - Address of block to erase
 // Returns     : none
 //============================================================================
-void FLASH_Erase64Bytes(uint24_t FlashAddr)
+void FLASH_Erase64Bytes(uint24_t flashAddr)
 {
-   TBLPTR = FlashAddr;                  // Setup flash program address
+   TBLPTR = flashAddr;                  // Setup flash program address
    EECON1bits.EEPGD = 1;                // 后续操作都将针对程序存储器进行  
    EECON1bits.CFGS  = 0;                // 由 EEPGD 来选择访问的存储器类型
    EECON1bits.WREN  = 1;                // 允许进行写操作
    EECON1bits.FREE  = 1;                // 允许对程序存储器进行擦除操作    
-//   INTCONbits.GIE   = 0;              // Disable interrupts           
+   INTCONbits.GIE   = 0;              // Disable interrupts           
    EECON2           = 0x55;             // Interlock pattern 1          
    EECON2           = 0xAA;             // Interlock pattern 2          
    EECON1bits.WR    = 1;                // 启动写操作           
-//   INTCONbits.GIE   = 1;              // Reenable interrupts 
+   INTCONbits.GIE   = 1;              // Reenable interrupts 
                
    while (EECON1bits.WR);               //写操作完成时，由硬件将其清零                                
    EECON1bits.WREN = 0;                 // Disable flash program writes        
