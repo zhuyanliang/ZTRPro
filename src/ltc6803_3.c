@@ -60,21 +60,21 @@ static struct
 // Parameters  : CrcByte, Byte to be calculated Crc8 value
 // Returns     : temp, Current Crc8Value
 //============================================================================
-uint8_t Ltc6803_ByteCrc8Cal(uint8_t CrcByte)
+uint8_t Ltc6803_ByteCrc8Cal(uint8_t crcByte)
 {
 	uint8_t temp;
 
-	temp = Crc8Table[0x41 ^ CrcByte];
-	return(temp);
+	temp = Crc8Table[0x41 ^ crcByte];
+	return temp;
 }
 
 //Ltc6803的初始化，设置管理芯片参数
 void Ltc6803_Init(void)
 {
 	uint8_t i;
-	uint32_t delay = g_SysTickMs;//getSysTickCounter();  // 如果每次完全断电就不会出问题 ？？？
+	uint32_t delay = g_SysTickMs;
 
-	TRISCbits.TRISC2 = 0;  //设置ltc6802片选管脚为输出
+	TRISCbits.TRISC2 = 0;  //设置ltc6802片选管脚(C2)为输出
 
 	for(i=0; i<2; i++)
 	{
@@ -160,28 +160,30 @@ void Ltc6803_WriteCfgRegGroup(Ltc6803_Parameter *Dev)
 //============================================================================
 uint8_t Ltc6803_ReadCfgRegGroup(uint8_t *CfgData)
 {
-   uint8_t i, Pec, DataBuf[6];
+   uint8_t i;
+   uint8_t pec;
+   uint8_t dataBuf[6];
 
-   DataBuf[0] = RDCFG_CMD;
-   DataBuf[1] = 0xCE;  
+   dataBuf[0] = RDCFG_CMD;
+   dataBuf[1] = 0xCE;  
 
    Ltc6803_ChipSelect();
-   SPI_SendBlock(DataBuf, 2);
-   SPI_ReceiveBlock(DataBuf, 6);
-   Pec = SPI_ReceiveByte();
+   SPI_SendBlock(dataBuf, 2);
+   SPI_ReceiveBlock(dataBuf, 6);
+   pec = SPI_ReceiveByte();
    Ltc6803_ChipUnselect();
 
-   if (Pec == Ltc6803_BlockCrc8Cal(DataBuf, 6))
+   if (pec == Ltc6803_BlockCrc8Cal(dataBuf, 6))
    {
       for (i=0; i<6; i++)
       {
-         *CfgData++ = DataBuf[i];
+         *CfgData++ = dataBuf[i];
       }
 
-      return(1);
+      return 1;
    }
 
-   return(0);
+   return 0;
 }
 
 //============================================================================
@@ -191,23 +193,23 @@ uint8_t Ltc6803_ReadCfgRegGroup(uint8_t *CfgData)
 //               channel, 
 // Returns     : none
 //============================================================================
-void Ltc6803_CellVoltCnvt(uint8_t ConvertMode, uint8_t channel)
+void Ltc6803_CellVoltCnvt(uint8_t convertMode, uint8_t channel)
 {
-	uint8_t DataBuf[2];
+	uint8_t dataBuf[2];
 
-	if (ConvertMode != STCVDC_CMD)
+	if (convertMode != STCVDC_CMD)
 	{
-		DataBuf[0] = STCVAD_CMD | (channel&0x0F);
+		dataBuf[0] = STCVAD_CMD | (channel&0x0F);
 	}
 	else
 	{
-		DataBuf[0] = STCVDC_CMD | channel;
+		dataBuf[0] = STCVDC_CMD | channel;
 	}
 
-	DataBuf[1] = Ltc6803_ByteCrc8Cal(DataBuf[0]);  
+	dataBuf[1] = Ltc6803_ByteCrc8Cal(dataBuf[0]);  
 
 	Ltc6803_ChipSelect();
-	SPI_SendBlock(DataBuf, 2);
+	SPI_SendBlock(dataBuf, 2);
 	Ltc6803_ChipUnselect();
 }
 
@@ -217,9 +219,11 @@ void Ltc6803_CellVoltCnvt(uint8_t ConvertMode, uint8_t channel)
 // Parameters  : CellVolt, the raw convert value of the cell voltage
 // Returns     : 1, success   0, fail
 //============================================================================
-uint8_t Ltc6803_ReadAllCellVolt(Ltc6803_Parameter *Dev)
+uint8_t Ltc6803_ReadAllCellVolt(Ltc6803_Parameter *dev)
 {
-	uint8_t pec, i, j;
+	uint8_t pec;
+	uint8_t i;
+	uint8_t j;
 	uint16_t temp;
 
 	Ltc6803_ChipSelect();
@@ -238,18 +242,18 @@ uint8_t Ltc6803_ReadAllCellVolt(Ltc6803_Parameter *Dev)
 			for (j=0; j<6; j++)
 			{
 				temp = (uint16_t)RegStr.cvr[3*j] | ((uint16_t)(RegStr.cvr[3*j + 1] & 0x0F) << 8);
-				Dev->CellVolt[2*j] = Ltc6803_CellVoltCal((int16_t)temp);
+				dev->CellVolt[2*j] = Ltc6803_CellVoltCal((int16_t)temp);
 				temp = (uint16_t)(RegStr.cvr[3*j +1] >> 4) | ((uint16_t)RegStr.cvr[3*j + 2] << 4);
-				Dev->CellVolt[2*j+1] = Ltc6803_CellVoltCal((int16_t)temp);
+				dev->CellVolt[2*j+1] = Ltc6803_CellVoltCal((int16_t)temp);
 			}
 		}
 		else
 		{
-		Ltc6803_ChipUnselect();
-		return(0);
-	}
+			Ltc6803_ChipUnselect();
+			return(0);
+		}
 
-	Dev++;
+		dev++;
 	}
 
 	Ltc6803_ChipUnselect();
@@ -269,7 +273,7 @@ int16_t Ltc6803_CellVoltCal(int16_t VoltRaw)
 
    temp = ((VoltRaw - 512)* 3) / 2;  // 读取转换值的时候偏移量512没有减掉
 
-   return(temp);
+   return temp;
 }
 
 
@@ -281,13 +285,13 @@ int16_t Ltc6803_CellVoltCal(int16_t VoltRaw)
 //============================================================================
 void Ltc6803_TempCnvt(uint8_t channel)
 {
-	uint8_t DataBuf[2];
+	uint8_t dataBuf[2];
 
-	DataBuf[0] = STTMPAD_CMD + (channel&0x0F);
-	DataBuf[1] = Ltc6803_ByteCrc8Cal(DataBuf[0]);   
+	dataBuf[0] = STTMPAD_CMD + (channel&0x0F);
+	dataBuf[1] = Ltc6803_ByteCrc8Cal(dataBuf[0]);   
 
 	Ltc6803_ChipSelect();
-	SPI_SendBlock(DataBuf, 0x02);
+	SPI_SendBlock(dataBuf, 0x02);
 	Ltc6803_ChipUnselect();
 }
 
@@ -299,30 +303,30 @@ void Ltc6803_TempCnvt(uint8_t channel)
 //============================================================================
 uint8_t Ltc6803_ReadTempRegGroup(uint8_t *data)
 {
-   uint8_t CmdBuf[2], RegBuf[6];
+   uint8_t cmdBuf[2], regBuf[6];
    uint8_t pec, i;
 
-   CmdBuf[0] = RDTMP_CMD;
-   CmdBuf[1] = 0xEA;
+   cmdBuf[0] = RDTMP_CMD;
+   cmdBuf[1] = 0xEA;
 
    Ltc6803_ChipSelect();
-   SPI_SendBlock(CmdBuf, 2);
-   SPI_ReceiveBlock(RegBuf, 0x06);
+   SPI_SendBlock(cmdBuf, 2);
+   SPI_ReceiveBlock(regBuf, 0x06);
    Ltc6803_ChipUnselect();
 
-   pec = Ltc6803_BlockCrc8Cal(RegBuf, 0x05);
+   pec = Ltc6803_BlockCrc8Cal(regBuf, 0x05);
 
-   if (pec == RegBuf[5])
+   if (pec == regBuf[5])
    {
       for (i=0; i<5; i++)
       {
-         *data++ = RegBuf[i];
+         *data++ = regBuf[i];
       }
 
-      return(1);
+      return 1;
    }
 
-   return(0);
+   return 0;
 }
 
 //============================================================================
@@ -331,7 +335,7 @@ uint8_t Ltc6803_ReadTempRegGroup(uint8_t *data)
 // Parameters  : 
 // Returns     : 1, success   0, fail
 //============================================================================
-uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *Dev)
+uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *dev)
 {
    uint8_t pec, i;
    uint16_t tmp;
@@ -350,20 +354,20 @@ uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *Dev)
       if (pec == Ltc6803_BlockCrc8Cal(RegStr.tmpr, 5))
       {
          tmp = (uint16_t)RegStr.tmpr[0] | ((uint16_t)(RegStr.tmpr[1] & 0x0F) << 8);
-         Dev->Temp1 = (tmp - 512) * 3 / 2;
+         dev->Temp1 = (tmp - 512) * 3 / 2;
 
          tmp = (uint16_t)(RegStr.tmpr[1] >> 4) | ((uint16_t)RegStr.tmpr[2] << 4);
-         Dev->Temp2 = (tmp - 512) * 3 / 2;
+         dev->Temp2 = (tmp - 512) * 3 / 2;
 
          tmp = (uint16_t)RegStr.tmpr[3] | ((uint16_t)(RegStr.tmpr[4] & 0x0F) << 8);
-         Dev->Itemp = (tmp - 512) * 3 / 2;
+         dev->Itemp = (tmp - 512) * 3 / 2;
       }
       else
       {
          Ltc6803_ChipUnselect();
          return(0);
       }
-        Dev++;
+      dev++;
    }
 
    Ltc6803_ChipUnselect();
@@ -377,7 +381,7 @@ uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *Dev)
 // Parameters  : 
 // Returns     : 1, success   0, fail
 //============================================================================
-uint8_t Ltc6803_ReadRef(Ltc6803_Parameter *Dev)
+uint8_t Ltc6803_ReadRef(Ltc6803_Parameter *dev)
 {
    uint8_t pec, i;
    uint16_t tmp;
@@ -396,18 +400,18 @@ uint8_t Ltc6803_ReadRef(Ltc6803_Parameter *Dev)
       if (pec == Ltc6803_BlockCrc8Cal(RegStr.dgnr, 2))
       {
          tmp = (uint16_t)RegStr.dgnr[0] | ((uint16_t)(RegStr.dgnr[1] & 0x0F) << 8);
-         Dev->Vref = (tmp - 512) * 3 / 2;
+         dev->Vref = (tmp - 512) * 3 / 2;
       }
       else
       {
          Ltc6803_ChipUnselect();
-         return(0);
+         return 0;
       }
    }
 
    Ltc6803_ChipUnselect();
 
-   return(1);
+   return 1;
 }
 
 //============================================================================
@@ -417,7 +421,7 @@ uint8_t Ltc6803_ReadRef(Ltc6803_Parameter *Dev)
 //               *UnderFlag, under voltage flags return 
 // Returns     : 1, success   0, fail
 //============================================================================
-uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *Dev)
+uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *dev)
 {
    uint8_t pec, i, j, k;
 
@@ -434,8 +438,8 @@ uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *Dev)
       // PEC校验，判断数据是否正确接受
       if (pec == Ltc6803_BlockCrc8Cal(RegStr.flgr, 3))
       {
-         Dev->UndVoltFlg = 0;
-         Dev->OveVoltFlg = 0;
+         dev->UndVoltFlg = 0;
+         dev->OveVoltFlg = 0;
 
          for (i=0; i<3; i++)
          {
@@ -443,12 +447,12 @@ uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *Dev)
             {
                if (RegStr.flgr[i] & (0x01 << (j*2)))
                {
-                  Dev->UndVoltFlg |= 0x0001 << (i*4 + j);
+                  dev->UndVoltFlg |= 0x0001 << (i*4 + j);
                }
 
                if (RegStr.flgr[i] & (0x01 << (j*2 + 1)))
                {
-                  Dev->OveVoltFlg |= 0x0001 << (i*4 + j); 
+                  dev->OveVoltFlg |= 0x0001 << (i*4 + j); 
                }
             }
          }

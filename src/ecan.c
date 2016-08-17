@@ -324,5 +324,5 @@ uint8_t ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
       return 0;
    }
 
-   return 1;   
+   return 1; 
 }
