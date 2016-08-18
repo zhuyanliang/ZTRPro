@@ -30,6 +30,9 @@ extern "C" {
 #define  SOC_UPDATE_PERIOD_MS         		2000    // update the soc every 2 seconds
 #define	 SOC_SAMPLE_CYCLES_PER_SECOND		500     // 每秒采样次数 2ms采样一次
 
+// 充电器和keyrun信号检测周期
+#define KEY_CHK_CYCLE       ((uint8_t)10)
+#define CHGR_CHK_CYCLE      ((uint8_t)10)
 
 // 开启停止风扇控制的临界温度配置
 #define FAN_ON_TEMPERATURE_CHARGE          40                // 定义充电状态风扇开启温度为40℃

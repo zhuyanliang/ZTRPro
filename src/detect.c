@@ -27,9 +27,10 @@ TempWarnClsDef 	g_CellDLTThr;	// 电池温差大告警
 // 电池是否处于充电检测相关参数
 static uint8_t chgrChkTimer = 0;
 static uint8_t keyChkTimer = 0;
+
+// 0-位表示是否有充电器接入
+// 1-位表示是否有keyrun信号
 static uint8_t keyChgrState = 0;
-#define KEY_CHK_CYCLE       ((uint8_t)10)
-#define CHGR_CHK_CYCLE      ((uint8_t)10)
 
 //============================================================================
 // Function    : DetectPackOverCurrent
@@ -767,19 +768,6 @@ uint8_t DetectPackChargeFinish(void)
 	}
 }
 
-//============================================================================
-// Function    ：TskChargerCheck
-// Description ：检测电池包是否处于充电状态
-// Parameters  ：none 
-// Returns     ：
-//============================================================================
-BOOL DetectIsChargedState(void)
-{
-	//做实际的检测工作
-	// .....
-	return TRUE;
-}
-
 
 //============================================================================
 // Function    : GetMaxMinAvgCellVolt
@@ -829,7 +817,7 @@ void DetectMaxMinAvgCellVolt(void)
 //============================================================================
 void DetectCharger(void)
 {
-	if (!PORTDbits.RD7)
+	if (!PORTDbits.RD7) // 有充电器接入
 	{
 		if (++chgrChkTimer > CHGR_CHK_CYCLE)
 		{
@@ -837,7 +825,7 @@ void DetectCharger(void)
 			chgrChkTimer = CHGR_CHK_CYCLE;
 		}
 	}
-	else
+	else  // 没有充电器接入
 	{
 		if (keyChgrState & 0x01)    
 		{
@@ -863,7 +851,7 @@ void DetectCharger(void)
 //============================================================================
 void DetectRunkey(void)
 {
-	if (PORTDbits.RD4)
+	if (PORTDbits.RD4) // keyrun接通
 	{
 		if (++keyChkTimer > CHGR_CHK_CYCLE)
 		{
