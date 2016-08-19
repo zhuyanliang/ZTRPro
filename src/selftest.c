@@ -1,8 +1,8 @@
 
 #include "include.h"
 
-static int16_t cellVoltTest[ModuleAmount][12]={0};
-static uint8_t ltc6803TestBuf[18]={0};
+static int16_t cellVoltTest[ModuleAmount][12] = {0};
+static uint8_t ltc6803TestBuf[18] = {0};
 
 
 //============================================================================
@@ -19,14 +19,12 @@ uint8_t SystemSelftest(void)
 
 	// 检测线开路检查
 	Ltc6803_OpenWireTest();
-#if 0
 	// cell电压自检
 	CellVoltSelftest();
 
 	// 系统温度自检
 	CellTempSelftest();
 	AmbTempSelftest();
-#endif
 
 
 	// pack总压自检
@@ -55,6 +53,7 @@ void Ltc6803_Selftest(void)
 
 	/* 执行cell voltage selftest1 */
 	Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_TEST1);
+    
 	timeStamp = g_SysTickMs;
 	while (g_SysTickMs - timeStamp < 30);
 
@@ -63,7 +62,7 @@ void Ltc6803_Selftest(void)
 	Ltc6803_ChipSelect();
 	SPI_SendByte(RDCV_CMD);
 	SPI_SendByte(0xDC);
-	// DelayMs(1500);
+    
 	for (i=0; i<ModuleAmount; i++)
 	{
 		SPI_ReceiveBlock(ltc6803TestBuf, 18);
@@ -74,7 +73,7 @@ void Ltc6803_Selftest(void)
 		{
 			for (j=0; j<18; j++)
 			{
-				if (ltc6803TestBuf[j] != 0x55)
+				if ((ltc6803TestBuf[j] != 0x55) && (ltc6803TestBuf[j] != 0xAA))
 				{
 					g_SystemError.ltc_st = 1;
 					break;
@@ -110,7 +109,7 @@ void Ltc6803_Selftest(void)
 		{
 			for (j=0; j<18; j++)
 			{
-				if (ltc6803TestBuf[j] != 0xAA)
+				if((ltc6803TestBuf[j] != 0x55) && (ltc6803TestBuf[j] != 0xAA))
 				{
 					g_SystemError.ltc_st = 1;
 					break;
@@ -202,7 +201,7 @@ void Ltc6803_OpenWireTest(void)
 
 //============================================================================
 // Function    : CellVoltSelftest
-// Description : 电池包母线电压自检，可用于母线开路检查，总压报警等自检
+// Description : 电芯电压自检
 // Parameters  : none
 // Returns     : none
 //============================================================================
@@ -217,7 +216,7 @@ void CellVoltSelftest(void)
 		timeStamp = g_SysTickMs;  //记录转换开始时间
 		while (g_SysTickMs - timeStamp < 25);  // 转换完成需要20ms
 
-		if (Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
+		if(Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
 		{
 			DetectMaxMinAvgCellVolt();
 			DetectCellsOverVolt();

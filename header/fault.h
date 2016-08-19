@@ -12,6 +12,16 @@
 extern "C" {
 #endif
 
+// ´íÎóÐÅÏ¢´úÂë
+#define FALT_CUV 	0xE4
+#define FALT_COV 	0xE3
+#define FALT_CIB	0xE5
+#define FALT_CUT	0xE7
+#define FALT_COT	0xE8
+#define FALT_COC	0xE1
+#define FALT_LTC	0xE0
+
+
 typedef struct
 {
 	uint16_t cuv;

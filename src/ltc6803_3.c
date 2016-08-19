@@ -250,7 +250,7 @@ uint8_t Ltc6803_ReadAllCellVolt(Ltc6803_Parameter *dev)
 		else
 		{
 			Ltc6803_ChipUnselect();
-			return(0);
+			return 0;
 		}
 
 		dev++;

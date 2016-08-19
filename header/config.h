@@ -51,7 +51,7 @@ extern "C" {
 #define  CELL_SERIES_NUM               ((uint8_t)20)     	// 定义电池串数
 #define  CELL_PARALLEL_NUM			   ((uint8_t)30)        // 定义电池并数 
 #define  BATTERY_CAPACITY_RATED		   ((int16_t)750)       // 新电池标称容量(扩大10倍)
-#define  BATTERY_CAPACITY_TOTAL        ((int16_t)680)       // 新电池组满容量(扩大10倍)
+#define  BATTERY_CAPACITY_TOTAL        ((int16_t)750)       // 新电池组满容量(扩大10倍)
 #define  SOC_PACK_TOTAL_WH             ((int16_t)5400)    	// 电池组总容量(Wh)
 
 //--------------------------------- 系统报警值设置 ---------------------------------

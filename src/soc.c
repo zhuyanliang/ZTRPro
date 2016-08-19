@@ -21,7 +21,7 @@ const SocLookupTypeDef Soc_Volt_1C_Table[] =
 // Parameters  : None
 // Return      : None
 //============================================================================
-void Soc_Init ( void )
+void Soc_Init(void)
 {
    g_BatteryParameter.socCyclesPerSec = SOC_SAMPLE_CYCLES_PER_SECOND;
    g_BatteryParameter.current = 0;
@@ -42,7 +42,9 @@ void Soc_Init ( void )
 //============================================================================
 void Soc_PowerOnAdjust(void)
 {
-	uint8_t i, soc_frmVol, soc_frmEerom;
+	uint8_t i;
+	uint8_t soc_frmVol;
+	uint8_t soc_frmEerom;
 
 	/* 启动单体电压转换 */
 	Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_ALL);  
@@ -79,7 +81,7 @@ void Soc_PowerOnAdjust(void)
 		}
 	}
 
-	/* 从eeprom中读取断电之前存储的soc积分值 */
+	/* 从eeprom中读取断电之前存储的Ah值，转换成SOC*/
 	g_BatteryParameter.Ah = Soc_ReadAh();
 	soc_frmEerom = (uint32_t)g_BatteryParameter.Ah * 100 / BATTERY_CAPACITY_TOTAL; 
 
@@ -88,7 +90,7 @@ void Soc_PowerOnAdjust(void)
 	{
 		g_BatteryParameter.Ah = (uint32_t)soc_frmVol * BATTERY_CAPACITY_TOTAL / 100;
 		g_BatteryParameter.Accumulator = 0;
-		g_BatteryParameter.SOC = (uint32_t)g_BatteryParameter.Ah / BATTERY_CAPACITY_TOTAL * 100 ;
+		g_BatteryParameter.SOC = soc_frmVol ;
 	}
 	else 
 	{
@@ -117,20 +119,20 @@ void Soc_Update (void)
 
 	/* 充放电上下截止点SOC校准, 注意该校准一定要在系统状态 */
 	/* 切换前完成，否则以下语句将无法得到执行。            */
-	if ((g_BatteryMode == CHARGE) && (DetectPackChargeFinish()))  // 充电上止点校准
+	if((g_BatteryMode == CHARGE) && (DetectPackChargeFinish()))  // 充电上止点校准
 	{
 		g_BatteryParameter.Ah = BATTERY_CAPACITY_TOTAL;
 		g_BatteryParameter.SOC = 100;
 	}
-	else if ((g_BatteryParameter.CellVoltMin <= CELL_DISCHARGE_END_VOLT)  // 放电下止点校准
+	else if((g_BatteryParameter.CellVoltMin <= CELL_DISCHARGE_END_VOLT)  // 放电下止点校准
 				&& (g_BatteryMode == DISCHARGE))
 	{
 		g_BatteryParameter.Ah = 0;
 		g_BatteryParameter.SOC= 0;
 	}
 
-	/* 每个SOC_UPDATE_PERIOD_MS周期计算一次SOC值 目前暂定2s*/
-	if (g_SysTickMs - timeStamp >= SOC_UPDATE_PERIOD_MS)
+	/* 每个SOC_UPDATE_PERIOD_MS周期更新一次SOC值 目前暂定4s = 2Ms * SOC_UPDATE_PERIOD_MS */
+	if(g_SysTickMs - timeStamp >= SOC_UPDATE_PERIOD_MS)
 	{
 		if (g_BatteryParameter.Ah > BATTERY_CAPACITY_TOTAL)
 		{
@@ -155,13 +157,15 @@ void Soc_Update (void)
 // Parameters  : none
 // Return      : none
 //============================================================================
-void Soc_AhAcc (void)
+void Soc_AhAcc(void)
 {
-   if ((g_BatteryMode == CHARGE) || (g_BatteryMode == DISCHARGE))
+   if((g_BatteryMode == CHARGE) || (g_BatteryMode == DISCHARGE))
+   {
 	   if ( (g_BatteryParameter.current > 3) || (g_BatteryParameter.current < -3) )
 	   {
 	      g_BatteryParameter.Accumulator += g_BatteryParameter.current;
 	   }
+	}
 }
 
 
@@ -173,6 +177,8 @@ void Soc_AhAcc (void)
 //============================================================================
 void Soc_CalculateAh(void)
 {
+	// 2Ms累加一次Ah  1Ah = 60*60*1000Ms*I 电流积分思想
+	// 1Ah = 1A*1h = I1+I2+I3+...+I1800000 
 	if (g_BatteryParameter.Accumulator > 1800000)
 	{
 		g_BatteryParameter.Accumulator -= 1800000;
@@ -213,29 +219,26 @@ void Soc_StoreSoc(void)
 	switch(socSt++)
 	{
 	case 0:
-		EEPROM_WriteByte(EEPROM_ADDR_SOC, g_BatteryParameter.SOC);
-		break;
-	case 1:
 		temp = (uint8_t)g_BatteryParameter.Ah;
         EEPROM_WriteByte(EEPROM_ADDR_SOC, &temp);
         break;
-    case 2:
+    case 1:
         temp = (uint8_t)(g_BatteryParameter.Ah >> 8);    
         EEPROM_WriteByte(EEPROM_ADDR_SOC+1, &temp);
         break;
-    case 3:
+    case 2:
         temp = (uint8_t)(g_BatteryParameter.Accumulator);
         EEPROM_WriteByte(EEPROM_ADDR_ACC, &temp);
         break;
-    case 4:
+    case 3:
         temp = (uint8_t)(g_BatteryParameter.Accumulator >> 8);
         EEPROM_WriteByte(EEPROM_ADDR_ACC+1, &temp);
         break;
-    case 5:
+    case 4:
         temp = (uint8_t)(g_BatteryParameter.Accumulator >> 16);
         EEPROM_WriteByte(EEPROM_ADDR_ACC+2, &temp);
         break;
-    case 6:
+    case 5:
         temp = (uint8_t)(g_BatteryParameter.Accumulator >> 24);
         EEPROM_WriteByte(EEPROM_ADDR_ACC+3, &temp);
         socSt = 0;
@@ -246,18 +249,6 @@ void Soc_StoreSoc(void)
         socSt = 0;
         break;
 	}
-}
-
-
-//============================================================================
-// Function    : Soc_ReadSoc
-// Description : 从EEPROM中读取SOC值
-// Parameters  : none
-// Return      : soc
-//============================================================================
-uint8_t Soc_ReadSoc(void)
-{
-	EEPROM_ReadByte(EEPROM_ADDR_SOC);
 }
 
 
@@ -300,7 +291,7 @@ int32_t Soc_ReadAcc(void)
 		tmp = 0;
 	}
 
-	return(tmp);
+	return tmp;
 }
 
 

@@ -45,7 +45,7 @@ void TskBatteryPra_Init(void)
 	g_BatteryParameter.BalanceCellNum = 0;
 	g_BatteryParameter.BalanceFlag = 0;
 
-
+	// 读取充电单体过充警报等级设定值
 	EEPROM_ReadBlock(EEPROM_ADDR_COV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -63,6 +63,7 @@ void TskBatteryPra_Init(void)
 		g_CellOVThr = CellOVThrDefault; 
 	}
 
+	// 读取单体放电低压报警等级设定值
 	EEPROM_ReadBlock(EEPROM_ADDR_CUV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -80,6 +81,7 @@ void TskBatteryPra_Init(void)
 		g_CellUVThr = CellUVThrDefault; 
 	}
 
+	// 读取单体非一致性等级设定值
 	EEPROM_ReadBlock(EEPROM_ADDR_DLV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -97,6 +99,7 @@ void TskBatteryPra_Init(void)
 		g_CellIBThr = CellIBThrDefault; 
 	}
 
+	// 读取电池包过压等级设定值
 	EEPROM_ReadBlock(EEPROM_ADDR_POV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -114,6 +117,7 @@ void TskBatteryPra_Init(void)
 		g_PackOVThr = PackOVThrDefault; 
 	}
 
+	// 读取电池包低压等级设定值
 	EEPROM_ReadBlock(EEPROM_ADDR_PUV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -223,9 +227,6 @@ void TskSOCMgt(void)
    Soc_StoreSoc();
 }
 
-
-
-
 //============================================================================
 // Function    ：TskRelayMgt
 // Description ：该函数根据pack的状态决定相应继电器的开关标志状态
@@ -234,14 +235,6 @@ void TskSOCMgt(void)
 //============================================================================
 void TskRelayMgt(void)
 {
-#ifdef RELAY_TEST
-
-	g_RelayActFlg.precharge = TRUE;
-	g_RelayActFlg.positive = TRUE;
-	g_RelayActFlg.negative = TRUE;
-
-#else
-
 	switch(g_BatteryMode)
 	{
 	case IDLE:
@@ -295,8 +288,6 @@ void TskRelayMgt(void)
 	default:
 		break;
 	}
-
-#endif
 }
 
 
@@ -311,7 +302,7 @@ void TskFaultStoreMgt(void)
 {
 	static uint16_t state = 0;
 
-	switch (state & 0x0001)
+	switch(state & 0x0001) // 充电低压
 	{
 	case 0:
 		if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
@@ -320,7 +311,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.cuv++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_CUV, (uint8_t*)&g_FaultRecord.cuv, 2);
-				Nvm_UpdateRecentFaultRec(0xE4);
+				Nvm_UpdateRecentFaultRec(FALT_CUV);
 			}
 			state |= 0x0001;
 		}
@@ -337,7 +328,7 @@ void TskFaultStoreMgt(void)
 		break;
 	}
 
-	switch (state & 0x0002)
+	switch (state & 0x0002) // 充电过压
 	{
 	case 0:
 		if (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
@@ -346,7 +337,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.cov++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_COV, (uint8_t*)&g_FaultRecord.cov, 2);
-				Nvm_UpdateRecentFaultRec(0xE3);
+				Nvm_UpdateRecentFaultRec(FALT_COV);
 			}
 			state |= 0x0002;
 		}
@@ -362,7 +353,7 @@ void TskFaultStoreMgt(void)
 		break;
 	}
 
-	switch (state & 0x0004)
+	switch (state & 0x0004)	// 单体一致性
 	{
 	case 0:
 		if (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
@@ -371,7 +362,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.cib++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_CIB, (uint8_t*)&g_FaultRecord.cib, 2);
-				Nvm_UpdateRecentFaultRec(0xE5);	
+				Nvm_UpdateRecentFaultRec(FALT_CIB);	
 			}
 			state |= 0x0004;
 		}
@@ -394,7 +385,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.cut++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_CUT, (uint8_t*)&g_FaultRecord.cut, 2);
-				Nvm_UpdateRecentFaultRec(0xE7);
+				Nvm_UpdateRecentFaultRec(FALT_CUT);
 			}
 			state |= 0x0008;
 		}
@@ -404,7 +395,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.dut++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DUT, (uint8_t*)&g_FaultRecord.dut, 2);
-				Nvm_UpdateRecentFaultRec(0xE7);
+				Nvm_UpdateRecentFaultRec(FALT_CUT);
 			}
 			state |= 0x0008;
 		}
@@ -428,7 +419,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.cot++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_COT, (uint8_t*)&g_FaultRecord.cot, 2);
-				Nvm_UpdateRecentFaultRec(0xE8);
+				Nvm_UpdateRecentFaultRec(FALT_COT);
 			}
 			state |= 0x0010;
 		}
@@ -438,7 +429,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.dot++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DOT, (uint8_t*)&g_FaultRecord.dot, 2);
-				Nvm_UpdateRecentFaultRec(0xE8);
+				Nvm_UpdateRecentFaultRec(FALT_COT);
 			}
 			state |= 0x0010;
 		}
@@ -462,7 +453,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.coc++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_COC, (uint8_t*)&g_FaultRecord.coc, 2);
-				Nvm_UpdateRecentFaultRec(0xE1);
+				Nvm_UpdateRecentFaultRec(FALT_COC);
 			}
 			state |= 0x0020;
 		}
@@ -472,7 +463,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.doc++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DOC, (uint8_t*)&g_FaultRecord.doc, 2);
-				Nvm_UpdateRecentFaultRec(0xE1);
+				Nvm_UpdateRecentFaultRec(FALT_COC);
 			}
 			state |= 0x0020;
 		}
@@ -496,7 +487,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.ltc_st++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_LTCST, (uint8_t*)&g_FaultRecord.ltc_st, 2);
-				Nvm_UpdateRecentFaultRec(0xE0);	
+				Nvm_UpdateRecentFaultRec(FALT_LTC);	
 			}
 			state |= 0x0080;
 		}
@@ -513,13 +504,13 @@ void TskFaultStoreMgt(void)
 	switch (state & 0x0100)
 	{
 	case 0:
-		if (g_SystemError.ltc_com)
+		if(g_SystemError.ltc_com)
 		{
-			if (g_FaultRecord.ltc_com < FAULT_REC_LIMIT)
+			if(g_FaultRecord.ltc_com < FAULT_REC_LIMIT)
 			{
 				g_FaultRecord.ltc_com++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_LTCCOM, (uint8_t*)&g_FaultRecord.ltc_com, 2);
-				Nvm_UpdateRecentFaultRec(0xE0);
+				Nvm_UpdateRecentFaultRec(FALT_LTC);
 			}
 			state |= 0x0100;
 		}
@@ -637,7 +628,6 @@ void TskAfeMgt(void)
 				AfeState = AFE_TEMP_CNVT;
 				g_SystemError.ltc_com = 0;
 				ComErrCnt = 5;
-				
 			}
 			else
 			{
@@ -754,7 +744,7 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
-			if ( GetChargeState() )
+			if(GetChargeState()) // 充电器接入
 			{
 				g_BatteryMode = CHARGE;
 				if ( g_BatteryParameter.CellTempMin < 0)
@@ -765,13 +755,16 @@ void TskBatteryModeMgt(void)
 			}
             else
 			{
-				g_BatteryMode = PRECHARGE;
-				if ( g_BatteryParameter.CellTempMin < -18)
+				if(GetKeyrunState())
 				{
-					g_BatteryMode = HEATING;
-					g_BatterySubMode =  RUNKEY_IN;
+					g_BatteryMode = PRECHARGE;
+					g_BatterySubMode = RUNKEY_IN;
+					if ( g_BatteryParameter.CellTempMin < -18)
+					{
+						g_BatteryMode = HEATING;
+					}
+					g_PrechargeTimer =0;  
 				}
-				g_PrechargeTimer =0;                   
 			}
 		}
 		break;
@@ -802,10 +795,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PRECHARGE:  //预充电状态
-		if (//(SystemWarning.COT == WARNING_SECOND_LEVEL)     // 过温保护
-		//|| (SystemWarning.CUT == WARNING_SECOND_LEVEL)     // 低温保护
-		//|| (SystemWarning.CUV == WARNING_SECOND_LEVEL)   // cell欠压故障
-		(g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
+		if ((g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
 		|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)   // 过流保护
 		|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 		|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
@@ -856,7 +846,7 @@ void TskBatteryModeMgt(void)
 	case DISCHARGE:  //放电状态
 		if ((g_SystemWarning.DOT == WARNING_SECOND_LEVEL)     // 过温保护
 			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)     // 低温保护
-			//|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)     // cell欠压故障
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)     // cell欠压故障
 			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)     // cell过压故障
 			|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)     // 过流保护    
 			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)   

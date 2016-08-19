@@ -26,7 +26,6 @@ void Soc_AhAcc (void);
 void Soc_CalculateAh(void);
 void Soc_StoreSoc(void);
 int32_t Soc_ReadAcc(void);
-uint8_t Soc_ReadSoc(void);
 int16_t Soc_ReadAh(void);
 
 #ifdef	__cplusplus

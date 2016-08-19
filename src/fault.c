@@ -82,23 +82,3 @@ void Nvm_UpdateRecentFaultRec(uint8_t code)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

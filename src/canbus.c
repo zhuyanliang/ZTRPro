@@ -1578,10 +1578,10 @@ void TskCanSendTxBufMsg(void)
 #if SENDTEST
 			ToggleCanSendTest();
 #endif
-			}
+		}
 		else
 		{
-			//break;
+			break;
 		}
 	}
 }
