@@ -1299,7 +1299,7 @@ void CAN_CharggerMsgToTxBuf(void)
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)(MAX_CHARGER_OUTPUT_VOLT >> 8);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)MAX_CHARGER_OUTPUT_VOLT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)(MAX_CHARGER_OUTPUT_CURR >> 8);;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)(MAX_CHARGER_OUTPUT_CURR >> 8);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)MAX_CHARGER_OUTPUT_CURR;
 
 	if (g_BatteryMode == PROTECTION)

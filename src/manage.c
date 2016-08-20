@@ -701,7 +701,6 @@ void TskCanMgt(void)
 	CAN_BroadcastBufUpdate();       // 将要发送的广播数据更新到发送缓冲区
 	TskCanSendTxBufMsg();           // 发送发送缓冲区数据
 
-#if 0
 	if (g_BatteryMode == CHARGE)
 	{
 		CAN_ChargerTskUpdate();
@@ -714,7 +713,6 @@ void TskCanMgt(void)
 	}
 
 	CAN_TmpBoardTimeoutCheck();
-#endif
 }
 
 
