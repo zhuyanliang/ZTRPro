@@ -15,12 +15,12 @@
 
 //=============================================================================================
 // 定义CAN总线上各节点的地址
-#define  BMS                                    0xF4 
-#define  GUI                                    0xFD
-#define  MCS                                    0xEF
-#define  TDU                                    0xE6
-#define  CCS                                    0xE5
-#define  BCA                                    0x50
+#define  BMS         	0xF4 // 电池管理系统
+#define  GUI        	0xFD // 上位机监视器
+#define  MCS        	0xEF // 电机控制器
+#define  TDU       		0xE6 // 温度模块
+#define  CCS          	0xE5 // 充电器地址
+#define  BCA         	0x50 // 广播地址
 
 #define CAN_ID_INPUT                            PORTDbits.RD4
 

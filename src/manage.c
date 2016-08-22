@@ -623,7 +623,7 @@ void TskAfeMgt(void)
 	case AFE_READ_CELL_VOLT:
 		if (g_SysTickMs - TimeStamp >= 50)  // 转换完成需要20ms
 		{
-			if (Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
+			if (Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 			{
 				AfeState = AFE_TEMP_CNVT;
 				g_SystemError.ltc_com = 0;
@@ -672,7 +672,7 @@ void TskAfeMgt(void)
 		break;
 
 	case AFE_READ_TEMP:
-		Ltc6803_ReadAllTemp(g_ArrayLtc6803Unit);
+		Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
 		AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
 		break;
 
@@ -716,6 +716,42 @@ void TskCanMgt(void)
 }
 
 
+//============================================================================
+// Function    : TskAmbTempMgt
+// Description : 
+// Parameters  : none
+// Returns     : 
+//============================================================================
+void TskAmbTempMgt(void)
+{
+   static uint8_t state = 0;
+
+   switch(state)
+   {
+      case 0:  // start conversion 
+           ADC_Convert(CHANNEL_TBAVAL);  
+           while(ADCON0bits.GO);  //等待转换完成，大约需要15us
+           g_AdcConvertValue.AmbTempRaw[g_AdcConvertValue.AmbTempIndex++] = ADC_GetConvertVal();
+
+           // 采集满一组就计算平均值
+           if (g_AdcConvertValue.AmbTempIndex >= 8)
+           {
+              g_AdcConvertValue.AmbTempAvg = ADC_AverageCalculate(g_AdcConvertValue.AmbTempRaw); 
+              g_AdcConvertValue.AmbTempIndex = 0;
+
+              state = 1;  // 下一周期计算全部采样值
+           }
+      break;
+
+      case 1:
+           g_BatteryParameter.AmbientTemp = ADCToTempVal(g_AdcConvertValue.AmbTempAvg);
+      default: 
+           state = 0;
+      break;
+   }
+}
+
+
 
 //============================================================================
 // Function    ：BatteryModeSwitch
@@ -745,7 +781,7 @@ void TskBatteryModeMgt(void)
 			if(GetChargeState()) // 充电器接入
 			{
 				g_BatteryMode = CHARGE;
-				if ( g_BatteryParameter.CellTempMin < 0)
+				if(g_BatteryParameter.CellTempMin < 0)
 				{
 					g_BatteryMode = HEATING;
 					g_BatterySubMode =  CHARGER_IN;

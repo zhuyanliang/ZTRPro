@@ -16,6 +16,7 @@ void Soh_Init (void);
 void Soh_ReadChargedAh(void);
 void Soh_ReadCycleTime(void);
 void Soh_UpdateCycleTime(void);
+void Soh_ChargeAhAcc(void);
 
 
 

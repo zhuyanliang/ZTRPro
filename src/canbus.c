@@ -17,11 +17,11 @@
 static CanMsgBufTypedef g_CanMsgBuf; 
 
 static uint8_t 	canIdOffset = 0;	// 识别两组电池包
-static uint8_t 	nbrCanId = 0;		// 同组电池包ID
+//static uint8_t 	nbrCanId = 0;		// 同组电池包ID
 static uint8_t 	tduCanId = 0;		// 温度模块CAN ID
-static uint16_t canMcsTimeout = 0;	// MCS 电机控制系统
-static uint16_t canCcsTimeout = 0;	// CCS 充电器控制系统 
-static uint16_t canTduTimeout = 0;	// TDU 温度模块
+static uint16_t canMcsTimeout = 0;	// MCS 电机控制系统时间超时变量
+static uint16_t canCcsTimeout = 0;	// CCS 充电器控制系统时间超时变量
+static uint16_t canTduTimeout = 0;	// TDU 温度模块时间超时变量
 static uint16_t brdTxTimer = 0;		// 广播时间参数
 
 //----------------------------------------------------------------------------
@@ -37,18 +37,10 @@ void TskCan_Init(void)
 	g_CanMsgBuf.RxBuf_Wptr = 0;
 	g_CanMsgBuf.RxBuf_Rptr = 0;
 
-	if (!CAN_ID_INPUT)
-	{
-		canIdOffset = 0;
-		tduCanId = TDU;
-		nbrCanId = BMS + 1;
-	}
-	else 
-	{
-		canIdOffset = 1; 
-		nbrCanId = BMS;
-		tduCanId = TDU+1;
-	} 
+ 	// modify by zhuyanliang20160822
+	canIdOffset = 0;
+	tduCanId = TDU;
+	
 	brdTxTimer = 0; 
 	canMcsTimeout = 0;
 	canCcsTimeout = 0;
@@ -79,7 +71,7 @@ uint8_t CAN_GetFuncCode(uint32_t can_id)
 	uint8_t temp;
 
 	temp = (uint8_t)(can_id >> 16);
-	return(temp);
+	return temp;
 }
 
 //----------------------------------------------------------------------------
@@ -94,7 +86,7 @@ uint32_t CAN_GenerateID(uint8_t des_addr, uint8_t msg_fc)
 
 	temp = ((uint32_t)0x18 << 24) + ((uint32_t)msg_fc << 16) + 
 		((uint32_t)des_addr << 8) + BMS + canIdOffset;
-	return(temp);
+	return temp;
 }
 
 //----------------------------------------------------------------------------
@@ -106,7 +98,7 @@ uint32_t CAN_GenerateID(uint8_t des_addr, uint8_t msg_fc)
 BOOL CAN_IsTxBufFull(void)
 {
 	if (((g_CanMsgBuf.TxBuf_Wptr == (CAN_BUF_DEEP - 1))&&(g_CanMsgBuf.TxBuf_Rptr == 0))
-	|| (g_CanMsgBuf.TxBuf_Rptr == (g_CanMsgBuf.TxBuf_Wptr + 1)))
+	|| (g_CanMsgBuf.TxBuf_Rptr == (g_CanMsgBuf.TxBuf_Wptr-1)))
 	{
 		return TRUE;
 	}
@@ -143,7 +135,7 @@ BOOL CAN_IsTxBufEmpty(void)
 BOOL CAN_IsRxBufFull(void)
 {
 	if (((g_CanMsgBuf.RxBuf_Wptr == (CAN_BUF_DEEP - 1))&&(g_CanMsgBuf.RxBuf_Rptr == 0))
-		|| (g_CanMsgBuf.RxBuf_Rptr == (g_CanMsgBuf.RxBuf_Wptr + 1)))
+		|| (g_CanMsgBuf.RxBuf_Rptr == (g_CanMsgBuf.RxBuf_Wptr - 1)))
 	{
 		return TRUE;
 	}
@@ -279,10 +271,10 @@ void CAN_PutCellTempPosToTxBuf(void)
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = g_BatteryParameter.CellTempMax;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = g_BatteryParameter.CellTempMin;
 
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0;//g_BatteryParameter.MaxTempModuIdx;
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0;//g_BatteryParameter.MaxTempChnIdx;
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0;
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = g_BatteryParameter.MaxTempChnIdx;
 
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryParameter.MaxTempChnIdx;
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = g_BatteryParameter.MinTempChnIdx;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
@@ -302,7 +294,7 @@ void CAN_PutCellTempPosToTxBuf(void)
 //----------------------------------------------------------------------------
 void CAN_CellVoltage1ToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP1);//CAN_GenerateID(GUI, CAN_MSG_CELLS_VOLTAGE_1);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP1);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -326,7 +318,7 @@ void CAN_CellVoltage1ToTxBuf(void)
 //----------------------------------------------------------------------------
 void CAN_CellVoltage2ToTxBuf(void)
 {
-   g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP2);//CAN_GenerateID(GUI, CAN_MSG_CELLS_VOLTAGE_2);
+   g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP2);
    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -350,7 +342,7 @@ void CAN_CellVoltage2ToTxBuf(void)
 //----------------------------------------------------------------------------
 void CAN_CellVoltage3ToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP3);//CAN_GenerateID(GUI, CAN_MSG_CELLS_VOLTAGE_3);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP3);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -374,7 +366,7 @@ void CAN_CellVoltage3ToTxBuf(void)
 //----------------------------------------------------------------------------
 void CAN_CellVoltage4ToTxBuf(void)
 {
-   g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP4);//CAN_GenerateID(GUI, CAN_MSG_CELLS_VOLTAGE_4);
+   g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP4);
    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -398,7 +390,7 @@ void CAN_CellVoltage4ToTxBuf(void)
 //----------------------------------------------------------------------------
 void CAN_CellVoltage5ToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP5);//CAN_GenerateID(GUI, CAN_MSG_CELLS_VOLTAGE_5);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_VOLT_GRP5);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -422,7 +414,7 @@ void CAN_CellVoltage5ToTxBuf(void)
 //----------------------------------------------------------------------------
 void CAN_CellTempToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_TEMP_GRR1);//CAN_GenerateID(GUI, CAN_MSG_BATTERY_TEMPERATURE);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(BCA,CAN_MSG_BMS_BCA_TEMP_GRR1);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -458,7 +450,7 @@ void CAN_BatteryStateToTxBuf(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	*(uint16_t*)&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = g_BatteryParameter.voltage;// Iso_GetDltAdcRaw();
+	*(uint16_t*)&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = g_BatteryParameter.voltage;
 	*(uint16_t*)&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint16_t)g_BatteryParameter.current;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryParameter.SOC;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
@@ -513,7 +505,7 @@ void CAN_PackWarningToTxBuf(void)
 
 	*(uint32_t*)&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = g_SystemWarning.all;
 
-	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
 		g_CanMsgBuf.TxBuf_Wptr = 0;
 	}	
@@ -538,7 +530,7 @@ void CAN_PackSohToTxBuf(void)
    *(uint32_t*)&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = g_BatteryParameter.ChargedAh;
    *(uint16_t*)&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0;
 
-   if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+   if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
    {
       g_CanMsgBuf.TxBuf_Wptr = 0;
    }
@@ -564,19 +556,11 @@ void CAN_SysVerToTxBuf(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)_FIRMWARE_MINOR_VERSION;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)_FIRMWARE_REVISE_VERSION;
 
-	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
 		g_CanMsgBuf.TxBuf_Wptr = 0;
 	}
 }
-
-
-// -------------------------------------------------------------------
-// 以下是 GUI 发送远程帧要请求的数据
-// 首先将数据放入发送缓冲区
-//---------------------------------------------------------------------
-
-
 
 //============================================================================
 // Function    : CAN_SendMsg_PackPra
@@ -595,13 +579,13 @@ void CAN_GUI_ReadPackPra(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)CELL_PARALLEL_NUM;
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)BATTERY_CAPACITY_RATED;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(BATTERY_CAPACITY_RATED >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(BATTERY_CAPACITY_RATED >> 8);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
 
-	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
 		g_CanMsgBuf.TxBuf_Wptr = 0;
 	}
@@ -836,7 +820,7 @@ void CAN_GUI_ReadNormalRec(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_BatteryParameter.sohCycleTimes;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_BatteryParameter.sohCycleTimes >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_BatteryParameter.sohCycleTimes >> 8);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = g_FaultRecentRec.code_0;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = g_FaultRecentRec.code_1;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_FaultRecentRec.code_2;
@@ -950,7 +934,7 @@ void CAN_GUI_ReadFaultRecDt(void)
 	}
 }
 
-
+#if 0
 // 将 GUI 要读取的Mos错误信息放入发送缓冲区
 void CAN_GUI_ReadFaultRecMos(void)
 {
@@ -974,7 +958,7 @@ void CAN_GUI_ReadFaultRecMos(void)
 		g_CanMsgBuf.TxBuf_Wptr = 0;
 	}
 }
-
+#endif
 
 // 将 GUI 要读取的ltc6803错误信息放入发送缓冲区
 void CAN_GUI_ReadFaultRecHard(void)
@@ -1201,7 +1185,7 @@ void CAN_GUI_ConfigPuvThr(uint8_t *ptrData)
 }
 
 // 配置绝缘性参数 本项目暂时未使用
-#if 0
+
 void CAN_GUI_ConfigIsoThr(uint8_t *ptrData)
 {
     IsoThr.cls_1 = *(uint16_t *)ptrData;
@@ -1210,7 +1194,7 @@ void CAN_GUI_ConfigIsoThr(uint8_t *ptrData)
     IsoThr.crc = calculate_crc8(ptrData, 4);
     EEPROM_WriteBlock(EEPROM_ADDR_ISO_THRHOLD, (uint8_t *)&IsoThr.cls_1, 5);
 }
-#endif
+
 
 //============================================================================
 // Function    : CAN_ClearImage
@@ -1238,49 +1222,6 @@ void CAN_ClearImage(uint8_t *can_msg)
 	}
 }
 
-
-#if 0
-void CAN_PaserNeighborPack(uint8_t *can_msg)
-{
-	NeighborPack.voltage = ((uint16_t)can_msg[1] << 8) | can_msg[0];
-	NeighborPack.min_cell = ((uint16_t)can_msg[3] << 8) | can_msg[2];
-
-	NeighborPack.soc = can_msg[4];
-	NeighborPack.st_relay = can_msg[5];
-//	NeighborPack.handshk  = 1;
-	NeighborPack.timer	 = 0;
-	g_SystemError.nbr_comm = 0;	
-}
-#endif
-
-/*
- * 电池包之间基本信息的传递
- */
-void CAN_SendInterFrame(void)
-{
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(nbrCanId,0);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_BatteryParameter.voltage;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_BatteryParameter.voltage >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_BatteryParameter.CellVoltMin;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_BatteryParameter.CellVoltMin >> 8);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryParameter.SOC;
-
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = g_RelayActFlg.negative;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
-
-	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
-	{
-		g_CanMsgBuf.TxBuf_Wptr = 0;
-	}
-}
 
 //  解析充电器的消息
 void CAN_PaserChargerMsg(void)
@@ -1358,7 +1299,7 @@ void CAN_SendMcsBattInfoFrame(void)
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryParameter.CellTempMax;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = g_BatteryParameter.CellTempMin;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = Soc_GetSoc();
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = g_BatteryParameter.SOC;//Soc_GetSoc();
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
 }
 
@@ -1390,19 +1331,6 @@ void CAN_PaserTduGnrInfo(uint8_t *can_msg)
 
     canTduTimeout = 0;
     g_SystemError.tdu_comm = 0;
-}
-
-
-// 
-void CAN_InterStart(void)
-{
-	uint8_t i = 3;
-
-	do{
-	    CAN_SendInterFrame();
-	}while(i--);
-
-	TskCanSendTxBufMsg();
 }
 
 
@@ -1452,18 +1380,6 @@ void CAN_BroadcastBufUpdate(void)
 }
 
 
-// 电池包之间通信更新 
-void CAN_NbrTskUpdate(void)
-{
-	static uint8_t inter_can_timer = 0;
-
-	if (inter_can_timer++ > 100)
-	{
-		inter_can_timer = 0;
-		CAN_SendInterFrame();
-	}
-}
-
 // 充电器信息更新
 void CAN_ChargerTskUpdate(void)
 {
@@ -1490,8 +1406,6 @@ void CAN_McsTskUpdate(void)
 
 	if (g_SystemError.mcs_comm) 
 		return;
-
-
 
 	if ( !(mcs_can_timer % 100) )
 	{
@@ -1579,10 +1493,6 @@ void TskCanSendTxBufMsg(void)
 			ToggleCanSendTest();
 #endif
 		}
-		else
-		{
-			break;
-		}
 	}
 }
 //----------------------------------------------------------------------------
@@ -1645,27 +1555,7 @@ void TskCanProcessRxMsg(void)
 				case CAN_MSG_CELL_STATE:
 					CAN_CellStateToTxBuf();
 					break;
-#if 0
-				case CAN_MSG_CELLS_VOLTAGE_1:
-					CAN_CellVoltage1ToTxBuf();
-					break;
-
-				case CAN_MSG_CELLS_VOLTAGE_2:
-					CAN_CellVoltage2ToTxBuf();
-					break;
-
-				case CAN_MSG_CELLS_VOLTAGE_3:
-					CAN_CellVoltage3ToTxBuf();
-					break;
-
-				case CAN_MSG_CELLS_VOLTAGE_4:
-					CAN_CellVoltage4ToTxBuf();
-					break;
-
-				case CAN_MSG_CELLS_VOLTAGE_5:
-					CAN_CellVoltage5ToTxBuf();
-					break;
-#endif
+					
 				case CAN_MSG_PACK_WARNING	:
 					CAN_PackWarningToTxBuf();
 					break;
@@ -1775,8 +1665,8 @@ void TskCanProcessRxMsg(void)
 					CAN_GUI_ConfigPuvThr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
 					break;      
 				case  CAN_GUI_CONFIG_ISO_TH:
-					//CAN_GUI_ConfigIsoThr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
-					//break;          
+					CAN_GUI_ConfigIsoThr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
+					break;          
 				// GUI发送的FLASH擦除命令，bootloader启动命令
 				case CAN_MSG_IMAGE_ERASE:
 					CAN_ClearImage(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);

@@ -22,7 +22,7 @@ void TskFaultStoreMgt(void);
 void TskCanMgt(void);
 void TskBatteryModeMgt(void);
 void TskBlncMgt(void);
-
+void TskAfeMgt(void);
 
 
 

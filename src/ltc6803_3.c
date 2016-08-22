@@ -92,7 +92,7 @@ void Ltc6803_Init(void)
 
 	while(g_SysTickMs - delay < 300);  //延时300ms等待ltc6803电源稳定
 
-	Ltc6803_WriteCfgRegGroup(g_ArrayLtc6803Unit);
+	Ltc6803_WriteCfgRegGroup((Ltc6803_Parameter*)g_ArrayLtc6803Unit);
 }
 
 
@@ -476,6 +476,6 @@ uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *dev)
 //============================================================================
 uint8_t Ltc6803_SetBalanceSwitch(uint16_t cells)
 {
-
+    return 0;
 }
 

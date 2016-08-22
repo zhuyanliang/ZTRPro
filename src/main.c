@@ -141,12 +141,13 @@ void ClearHardwareFault(void)
 /*
  * 
  */
-int main(void) 
+void main(void) 
 {
 	static uint8_t TaskList = 0;
 	
     System_Init();    
     LedRed = 0;
+    LedGre = 0;
     for(;;)
     {
         // 查询优先级较高任务
@@ -157,33 +158,29 @@ int main(void)
         TskBatteryModeMgt();
         RelayAction();
         TskCanRecMsgToBuf();
+        DetectRunkey();
 		
         switch(TaskList++)
         {
 		case 0:
 			TskAfeMgt();
-            LedGre = 0;
 			break;
 		case 1:
 			TskSOCMgt();  // 该函数必须放在单体检测后执行 
 			DetectCharger();
-            LedGre = 1;
 			break;
 		case 2:
 			TskCellTempMgt();
-            LedGre = 0;
-			//TskAmbTempMgt(); 电路板温度
+			TskAmbTempMgt(); //电路板温度
 			// 绝缘性检测
 			break;
 		case 3:
 			TskCanMgt();
 			TskFaultStoreMgt(); 
-            LedGre = 1;
 			break;
 		case 4:
 			TskRelayMgt();
 			TaskLedMgt();
-            LedGre = 0;
 			break;
 		default:
 			ClrWdt();
@@ -194,8 +191,6 @@ int main(void)
         while(!PIR4bits.TMR4IF);
         	PIR4bits.TMR4IF = 0; 
     }
-    
-    return 0;
 }
 
 void System_Init(void)

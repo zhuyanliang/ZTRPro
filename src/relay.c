@@ -16,7 +16,6 @@ void Relay_Init(void)
 	TRISBbits.TRISB0 = 0;	// 预充继电器控制端口
 	TRISBbits.TRISB5 = 0;	// 风扇继电器控制端口
 	TRISCbits.TRISC0 = 0;	// 正极继电器控制端口
-	
 
 	RELAY_POSI_CTRL = 0;
 	RELAY_NEGA_CTRL = 0;

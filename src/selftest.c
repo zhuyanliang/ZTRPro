@@ -35,7 +35,9 @@ uint8_t SystemSelftest(void)
 		{
 			g_ProtectDelayCnt = RELAY_ACTION_DELAY_1S;
 		}
-	}    
+	}   
+
+	return 0;
 }
 
 
@@ -142,7 +144,7 @@ void Ltc6803_OpenWireTest(void)
 	timeStamp = g_SysTickMs;
 	while (g_SysTickMs - timeStamp < 30);
 
-	if (!Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
+	if (!Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 	{
 		g_SystemError.ltc_com = 1;
 		return;
@@ -163,7 +165,7 @@ void Ltc6803_OpenWireTest(void)
 		while (g_SysTickMs - timeStamp < 20);
 	}
 
-	if (!Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
+	if (!Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 	{
 		g_SystemError.ltc_com = 1;
 		return;
@@ -216,7 +218,7 @@ void CellVoltSelftest(void)
 		timeStamp = g_SysTickMs;  //记录转换开始时间
 		while (g_SysTickMs - timeStamp < 25);  // 转换完成需要20ms
 
-		if(Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
+		if(Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 		{
 			DetectMaxMinAvgCellVolt();
 			DetectCellsOverVolt();

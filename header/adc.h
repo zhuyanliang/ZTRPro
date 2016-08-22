@@ -84,6 +84,7 @@ int8_t ADCToTempVal(uint16_t dat);
 void TskAdc_Init(void);
 
 
+
 #ifdef	__cplusplus
 }
 #endif

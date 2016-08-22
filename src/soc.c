@@ -51,7 +51,7 @@ void Soc_PowerOnAdjust(void)
 	DelayMs(25);
 
 	// 获取所有电芯电压
-	if (Ltc6803_ReadAllCellVolt(g_ArrayLtc6803Unit))
+	if (Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 	{
 		DetectMaxMinAvgCellVolt();
 	}
@@ -220,27 +220,27 @@ void Soc_StoreSoc(void)
 	{
 	case 0:
 		temp = (uint8_t)g_BatteryParameter.Ah;
-        EEPROM_WriteByte(EEPROM_ADDR_SOC, &temp);
+        EEPROM_WriteByte(EEPROM_ADDR_SOC, temp);
         break;
     case 1:
         temp = (uint8_t)(g_BatteryParameter.Ah >> 8);    
-        EEPROM_WriteByte(EEPROM_ADDR_SOC+1, &temp);
+        EEPROM_WriteByte(EEPROM_ADDR_SOC+1, temp);
         break;
     case 2:
         temp = (uint8_t)(g_BatteryParameter.Accumulator);
-        EEPROM_WriteByte(EEPROM_ADDR_ACC, &temp);
+        EEPROM_WriteByte(EEPROM_ADDR_ACC, temp);
         break;
     case 3:
         temp = (uint8_t)(g_BatteryParameter.Accumulator >> 8);
-        EEPROM_WriteByte(EEPROM_ADDR_ACC+1, &temp);
+        EEPROM_WriteByte(EEPROM_ADDR_ACC+1, temp);
         break;
     case 4:
         temp = (uint8_t)(g_BatteryParameter.Accumulator >> 16);
-        EEPROM_WriteByte(EEPROM_ADDR_ACC+2, &temp);
+        EEPROM_WriteByte(EEPROM_ADDR_ACC+2, temp);
         break;
     case 5:
         temp = (uint8_t)(g_BatteryParameter.Accumulator >> 24);
-        EEPROM_WriteByte(EEPROM_ADDR_ACC+3, &temp);
+        EEPROM_WriteByte(EEPROM_ADDR_ACC+3, temp);
         socSt = 0;
         cnt = 0;
         break;

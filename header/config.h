@@ -145,7 +145,7 @@ extern "C" {
 #define  CELL_BALANCE_PROTECT_VOLT     ((uint16_t)4100)     // 定义单体均衡保护电压
 
 #define MAX_CHARGER_OUTPUT_VOLT		   ((uint16_t)840)		// uint: 0.1V
-#define MAX_CHARGER_OUTPUT_CURR		   ((uint16_t)62)		// uintt: 0.1A
+#define MAX_CHARGER_OUTPUT_CURR		   ((uint16_t)200)		// uintt: 0.1A
 
 
 
