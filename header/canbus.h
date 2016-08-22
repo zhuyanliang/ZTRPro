@@ -22,13 +22,11 @@
 #define  CCS          	0xE5 // 充电器地址
 #define  BCA         	0x50 // 广播地址
 
-#define CAN_ID_INPUT                            PORTDbits.RD4
 
 #define CAN_MSG_BMS_TO_CHGR					    0x06
 #define CAN_MSG_BMS_MCS_HNDSK					0x10
 #define CAN_MSG_BMS_MCS_INFO					0x01
 
-#define CAN_ID_CHGR_BRDC						0x18FF50E5
 
 #define CAN_MSG_BMS_BCA_BATT_WARN                0x01
 #define CAN_MSG_BMS_BCA_BATT_INFO                0x02
