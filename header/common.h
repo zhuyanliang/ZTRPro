@@ -196,6 +196,7 @@ extern VoltWarnClsDef 	g_CellUVThr;
 extern VoltWarnClsDef 	g_CellIBThr;
 extern VoltWarnClsDef 	g_PackOVThr;
 extern VoltWarnClsDef 	g_PackUVThr;
+extern VoltWarnClsDef  g_IsoThr;
 
 extern TempWarnClsDef 	g_CellCOTThr;	//单体充电高温
 extern TempWarnClsDef 	g_CellCUTThr;	//单体充电低温

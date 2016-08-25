@@ -23,6 +23,7 @@ void TskCanMgt(void);
 void TskBatteryModeMgt(void);
 void TskBlncMgt(void);
 void TskAfeMgt(void);
+void TskAmbTempMgt(void);
 
 
 

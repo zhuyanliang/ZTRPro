@@ -42,7 +42,7 @@
 #define CAN_MSG_BMS_BCA_TEMP_GRR1                0x20
 
 
-#define CAN_NEIGHBOR_PACK_TIMEOUT				((uint16_t)(5000 / 5))//((uint16_t)2500)
+#define CAN_NEIGHBOR_PACK_TIMEOUT				((uint16_t)(5000 / 5))
 #define CAN_MCS_COMM_TIMEOUT                    ((uint16_t)(3000 / 5))
 #define CAN_TDU_COMM_TIMEOUT                    ((uint16_t)(3000 / 5))
 #define CAN_CCS_COMM_TIMEOUT                    ((uint16_t)(3000 / 5))
@@ -73,9 +73,9 @@
 #define  CAN_GUI_CONFIG_DOC_TH                 ((uint8_t)0x17) 
 #define  CAN_GUI_CONFIG_DLV_TH                 ((uint8_t)0x18)
 #define  CAN_GUI_CONFIG_DLT_TH                 ((uint8_t)0x19)
-#define  CAN_GUI_CONFIG_POV_TH                  0x1A
-#define  CAN_GUI_CONFIG_PUV_TH                  0x1B
-#define  CAN_GUI_CONFIG_ISO_TH                  0x1C
+#define  CAN_GUI_CONFIG_POV_TH                 ((uint8_t)0x1A)
+#define  CAN_GUI_CONFIG_PUV_TH                 ((uint8_t)0x1B)
+#define  CAN_GUI_CONFIG_ISO_TH                 ((uint8_t)0x1C)
 
 #define  CAN_MSG_PACK_PRA                      ((uint8_t)0x20)  // 定义系统参数，pack参数
 #define  CAN_MSG_PRA_SET_COC                   ((uint8_t)0x22)  // 定义充电过流参数设置
@@ -85,6 +85,11 @@
 #define  CAN_MSG_PRA_SET_CUT                   ((uint8_t)0x26)  // 定义充电低温参数设置
 #define  CAN_MSG_PRA_SET_DUT                   ((uint8_t)0x27)  // 定义放电低温参数设置
 #define  CAN_MSG_PRA_SET_OUC                   ((uint8_t)0x28)  // 定义cell过、欠压参数设置
+#define  CAN_MSG_PRA_SET_IBM                   ((uint8_t)0x29)  // 定义cell一致性参数设置
+//add by zyl
+#define  CAN_MSG_PRA_SET_PDIT                  ((uint8_t)0x2A)  // 定义电池包温差
+#define  CAN_MSG_PRA_SET_POV                   ((uint8_t)0x2B)  // 定义包的过压
+#define  CAN_MSG_PRA_SET_PUV                   ((uint8_t)0x2C)  // 定义包欠压
 
 #define  CAN_MSG_GUI_BUF_WRITE                 ((uint8_t)0x30)  // 定义GUI写BUF命令
 #define  CAN_MSG_GUI_BUF_READ                  ((uint8_t)0x31)  // 定义GUI读BUF命令

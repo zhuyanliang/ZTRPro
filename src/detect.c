@@ -8,10 +8,10 @@ volatile SysWarningDef 	g_SystemWarning;		// 记录系统警告信息
 
 CurrWarnClsDef 	g_BattCOCThr;		// 电池包充电过流
 CurrWarnClsDef 	g_BattDOCThr;		// 放电过流
-VoltWarnClsDef 	g_BattOVThr;
-VoltWarnClsDef 	g_BattUVThr;
 VoltWarnClsDef 	g_PackOVThr;
 VoltWarnClsDef 	g_PackUVThr;
+
+VoltWarnClsDef 	g_IsoThr;   	// 绝缘等级参数设置
 
 //---------------------------------------------------------
 VoltWarnClsDef 	g_CellOVThr;

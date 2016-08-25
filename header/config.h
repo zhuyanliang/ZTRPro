@@ -78,7 +78,7 @@ extern "C" {
 #define  CELL_IB_FAULT                 ((uint16_t)150)      // 定义单体电压不一致故障值 mv/bit
 
 #define  CELL_DOT_FAULT                ((int8_t)65)         // 定义系统超温故障值 ℃/bit
-#define  CELL_DUT_FAULT                ((int8_t)-20)        // 定义系统低温故障值 ℃/bit
+#define  CELL_DUT_FAULT                ((int16_t)-20)        // 定义系统低温故障值 ℃/bit
 #define  CELL_COT_FAULT                ((int8_t)45)         // 定义系统超温故障值 ℃/bit
 #define  CELL_CUT_FAULT                ((int8_t)0)          // 定义系统低温故障值 ℃/bit
 #define  PACK_DOC_FAULT                ((int16_t)2500)       // 定义放电过流故障值 0.1A/bit 
@@ -126,7 +126,7 @@ extern "C" {
 //======================================================================================
 /* 故障保护恢复点设置 */
 #define  CELL_DOT_RECOVER              ((int8_t)53)         // 定义放电超温故障恢复值
-#define  CELL_DUT_RECOVER              ((int8_t)-15)        // 定义放电低温故障恢复值
+#define  CELL_DUT_RECOVER              ((int16_t)-15)        // 定义放电低温故障恢复值
 #define  CELL_COT_RECOVER              ((int8_t)44)         // 定义充电超温故障恢复值
 #define  CELL_CUT_RECOVER              ((int8_t)5)          // 定义充电低温故障恢复值
 #define  PACK_CHARGE_LOW_TEMP          ((int8_t)6)          // 定义低温小电流充电温度值
@@ -160,8 +160,8 @@ extern "C" {
 #define EEPROM_ADDR_CUV_THRHOLD             ((uint16_t)(EEPROM_ADDR_COV_THRHOLD + 5))
 #define EEPROM_ADDR_DLV_THRHOLD             ((uint16_t)(EEPROM_ADDR_CUV_THRHOLD + 5))
 #define EEPROM_ADDR_COT_THRHOLD             ((uint16_t)(EEPROM_ADDR_DLV_THRHOLD + 5))
-#define EEPROM_ADDR_CUT_THRHOLD             ((uint16_t)(EEPROM_ADDR_COT_THRHOLD + 3))
-#define EEPROM_ADDR_DOT_THRHOLD             ((uint16_t)(EEPROM_ADDR_CUT_THRHOLD + 3))
+#define EEPROM_ADDR_CUT_THRHOLD             ((uint16_t)(EEPROM_ADDR_COT_THRHOLD + 5))
+#define EEPROM_ADDR_DOT_THRHOLD             ((uint16_t)(EEPROM_ADDR_CUT_THRHOLD + 5))
 #define EEPROM_ADDR_DUT_THRHOLD             ((uint16_t)(EEPROM_ADDR_DOT_THRHOLD + 3))
 #define EEPROM_ADDR_DLT_THRHOLD             ((uint16_t)(EEPROM_ADDR_DUT_THRHOLD + 3))
 #define EEPROM_ADDR_COC_THRHOLD             ((uint16_t)(EEPROM_ADDR_DLT_THRHOLD + 3))
@@ -212,8 +212,7 @@ extern "C" {
 //========================== application image Id ============================
 #define _IMG_ID                        4//1                    // BMU  hex file
 #define _IMG_APPHDR_ADDR               0x2000
-
-
+    
 #define CANTEST
 
 

@@ -63,6 +63,24 @@ void TskBatteryPra_Init(void)
 		g_CellOVThr = CellOVThrDefault; 
 	}
 
+	// 读取充电单体过温警报等级设定值
+	EEPROM_ReadBlock(EEPROM_ADDR_COT_THRHOLD, buff, 5);
+	crc = calculate_crc8(buff, 4);
+
+	if (crc == buff[4])
+	{
+		ptr = (uint8_t *)&g_CellCOTThr.cls_1;
+
+		for (i = 0; i < 5; i++)
+		{
+			*ptr++ = buff[i];
+		}
+	}
+	else
+	{
+		g_CellCOTThr = CellCOTThrDefault; 
+	}
+
 	// 读取单体放电低压报警等级设定值
 	EEPROM_ReadBlock(EEPROM_ADDR_CUV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
@@ -700,7 +718,7 @@ void TskCanMgt(void)
 	TskCanProcessRxMsg();           // 处理接收数据
 	CAN_BroadcastBufUpdate();       // 将要发送的广播数据更新到发送缓冲区
 	TskCanSendTxBufMsg();           // 发送发送缓冲区数据
-
+#if 0
 	if (g_BatteryMode == CHARGE)
 	{
 		CAN_ChargerTskUpdate();
@@ -713,12 +731,13 @@ void TskCanMgt(void)
 	}
 
 	CAN_TmpBoardTimeoutCheck();
+#endif
 }
 
 
 //============================================================================
 // Function    : TskAmbTempMgt
-// Description : 
+// Description : PCB板的温度
 // Parameters  : none
 // Returns     : 
 //============================================================================
@@ -734,20 +753,22 @@ void TskAmbTempMgt(void)
            g_AdcConvertValue.AmbTempRaw[g_AdcConvertValue.AmbTempIndex++] = ADC_GetConvertVal();
 
            // 采集满一组就计算平均值
-           if (g_AdcConvertValue.AmbTempIndex >= 8)
+           if(g_AdcConvertValue.AmbTempIndex >= 8)
            {
               g_AdcConvertValue.AmbTempAvg = ADC_AverageCalculate(g_AdcConvertValue.AmbTempRaw); 
               g_AdcConvertValue.AmbTempIndex = 0;
 
               state = 1;  // 下一周期计算全部采样值
            }
-      break;
+           break;
 
       case 1:
            g_BatteryParameter.AmbientTemp = ADCToTempVal(g_AdcConvertValue.AmbTempAvg);
+           state = 0;
+           break;
       default: 
            state = 0;
-      break;
+      		break;
    }
 }
 

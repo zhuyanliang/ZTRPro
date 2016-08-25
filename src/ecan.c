@@ -244,6 +244,7 @@ uint8_t ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
    {
       return(0);
    }
+
    return(1);
 }
 

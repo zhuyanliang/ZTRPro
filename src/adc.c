@@ -3,16 +3,6 @@
 int16_t  g_CurrentOffset = 0; //电流的校准偏移
 AdcRawTypedef g_AdcConvertValue; 
 
-
-const TempWarnClsDef CellCOTThrDefault = {40,  45, 0};
-const TempWarnClsDef CellCUTThrDefault = {5,   0,  0};
-const TempWarnClsDef CellDOTThrDefault = {60,  65, 0};
-const TempWarnClsDef CellDUTThrDefault = {-15,-20, 0};
-const TempWarnClsDef CellDLTThrDefault = {3,   5,  0};
-
-const CurrWarnClsDef BattCOCThrDefault = {-220, -250, 0};
-const CurrWarnClsDef BattDOCThrDefault = {2000, 2500, 0};
-
 // ADC值与温度的对照表
 const ThermLookupTypedef ThermLookupTable[] = 
 {
