@@ -78,8 +78,8 @@ const TempWarnClsDef CellDOTThrDefault = {60,  65, 0};
 const TempWarnClsDef CellDUTThrDefault = {-15,-20, 0};
 const TempWarnClsDef CellDLTThrDefault = {3,   5,  0};
 
-const CurrWarnClsDef BattCOCThrDefault = {-220, -250, 0};
-const CurrWarnClsDef BattDOCThrDefault = {2000, 2500, 0};
+const CurrWarnClsDef BattCOCThrDefault = {-220, -250, 0}; // 0.1A
+const CurrWarnClsDef BattDOCThrDefault = {2000, 2500, 0}; // 0.1A
 
 
 extern AdcRawTypedef g_AdcConvertValue;   

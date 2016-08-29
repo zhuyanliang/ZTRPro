@@ -193,9 +193,6 @@ int8_t ADCToTempVal(uint16_t dat)
 void TskAdc_Init(void)
 {
 	uint8_t i;
-	uint8_t crc;
-	uint8_t *ptr;
-	uint8_t buff[5];
 
 	g_AdcConvertValue.AmbTempIndex = 0;
 	g_AdcConvertValue.TheTempIndex[0] = 0;
@@ -214,124 +211,6 @@ void TskAdc_Init(void)
 		g_AdcConvertValue.CurLowRaw[i] = 2048;
 	}
 
-	
-	EEPROM_ReadBlock(EEPROM_ADDR_COT_THRHOLD, buff, 3);
-	crc = calculate_crc8(buff, 2);
-	if (crc == buff[2])
-	{
-		ptr = (uint8_t *)&g_CellCOTThr.cls_1;
-
-		for (i = 0; i < 2; i++)
-		{
-			*ptr++ = buff[i];
-		}
-	}
-	else
-	{
-		g_CellCOTThr = CellCOTThrDefault; 
-	}
-
-    EEPROM_ReadBlock(EEPROM_ADDR_CUT_THRHOLD, buff, 3);
-    crc = calculate_crc8(buff, 2);
-
-    if (crc == buff[2])
-    {
-        ptr = (uint8_t *)&g_CellCUTThr.cls_1;
-
-        for (i = 0; i < 2; i++)
-        {
-            *ptr++ = buff[i];
-        }
-    }
-    else
-    {
-        g_CellCUTThr = CellCUTThrDefault; 
-    }
-
-	EEPROM_ReadBlock(EEPROM_ADDR_DOT_THRHOLD, buff, 3);
-	crc = calculate_crc8(buff, 2);
-
-	if (crc == buff[2])
-	{
-		ptr = (uint8_t *)&g_CellDOTThr.cls_1;
-
-		for (i = 0; i < 2; i++)
-		{
-		    *ptr++ = buff[i];
-		}
-	}
-	else
-	{
-		g_CellDOTThr = CellDOTThrDefault; 
-	}
-
-    EEPROM_ReadBlock(EEPROM_ADDR_DUT_THRHOLD, buff, 3);
-    crc = calculate_crc8(buff, 2);
-
-	if (crc == buff[2])
-	{
-		ptr = (uint8_t *)&g_CellDUTThr.cls_1;
-
-		for (i = 0; i < 2; i++)
-		{
-			*ptr++ = buff[i];
-		}
-	}
-	else
-	{
-		g_CellDUTThr = CellDUTThrDefault; 
-	}
-
-	EEPROM_ReadBlock(EEPROM_ADDR_DLT_THRHOLD, buff, 3);
-	crc = calculate_crc8(buff, 2);
-
-	if (crc == buff[2])
-	{
-		ptr = (uint8_t *)&g_CellDLTThr.cls_1;
-
-		for (i = 0; i < 2; i++)
-		{
-			*ptr++ = buff[i];
-		}
-	}
-	else
-	{
-		g_CellDLTThr = CellDLTThrDefault; 
-	}
-
-    EEPROM_ReadBlock((uint16_t)EEPROM_ADDR_COC_THRHOLD, buff, 5);
-    crc = calculate_crc8(buff, 4);
-
-    if (crc == buff[4])
-    {
-        ptr = (uint8_t *)&g_BattCOCThr.cls_1;
-
-        for (i = 0; i < 4; i++)
-        {
-            *ptr++ = buff[i];
-        }
-    }
-    else
-    {
-        g_BattCOCThr = BattCOCThrDefault; 
-    }
-
-    EEPROM_ReadBlock(EEPROM_ADDR_DOC_THRHOLD, buff, 5);
-    crc = calculate_crc8(buff, 4);
-
-    if (crc == buff[4])
-    {
-        ptr = (uint8_t *)&g_BattDOCThr.cls_1;
-
-        for (i = 0; i < 4; i++)
-        {
-            *ptr++ = buff[i];
-        }
-    }
-    else
-    {
-        g_BattDOCThr = BattDOCThrDefault; 
-    }
 }
 
 

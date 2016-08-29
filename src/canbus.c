@@ -588,87 +588,33 @@ void CAN_GUI_ReadPackPra(void)
 	}
 }
 
-
 //============================================================================
-// Function    : CAN_GUI_ReadSetCOC
-// Description : 发送充电过流保护信息
+// Function    : CAN_GUI_ReadSetOUV
+// Description : 发送高低压故障信息
 // Parameters  : none
 // Returns     : none
 //============================================================================
-void CAN_GUI_ReadSetCOC(void)
+void CAN_GUI_ReadSetOUV(void)
 {
-	uint16_t temp;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_COC);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_OUC);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-#if 0
-	temp = 0xffff - PACK_COC_WARNING + 1;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)temp;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(temp >> 8U);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = PACK_COC_WARNING_DLY;
-
-	temp = 0xffff - PACK_COC_FAULT + 1; 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)temp;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)(temp >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = PACK_COC_FAULT_DLY;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
-#endif
-	temp = 0xffff - g_BattCOCThr.cls_1+ 1;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)temp;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(temp >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = PACK_COC_WARNING_DLY;
-
-	temp = 0xffff - g_BattCOCThr.cls_2+ 1; 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)temp;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)(temp >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = PACK_COC_FAULT_DLY;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_CellOVThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_CellOVThr.cls_1 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_CellOVThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_CellOVThr.cls_2 >> 8U);
 	
-	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
-	{
-		g_CanMsgBuf.TxBuf_Wptr = 0;
-	}
-}
-
-//============================================================================
-// Function    : CAN_GUI_ReadSetDOC
-// Description : 发送放电过流保护信息
-// Parameters  : none
-// Returns     : none
-//============================================================================
-void CAN_GUI_ReadSetDOC(void)
-{
-	uint16_t temp;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_DOC);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)PACK_DOC_WARNING;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(PACK_DOC_WARNING >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = PACK_DOC_WARNING_DLY;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)PACK_DOC_FAULT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)(PACK_DOC_FAULT >> 8U);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = PACK_DOC_FAULT_DLY;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
-
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)g_CellUVThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = (uint8_t)(g_CellUVThr.cls_1 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = (uint8_t)g_CellUVThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = (uint8_t)(g_CellUVThr.cls_2 >> 8U);
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
 		g_CanMsgBuf.TxBuf_Wptr = 0;
 	}	
 }
-
 
 //============================================================================
 // Function    : CAN_GUI_ReadSetCOT
@@ -682,20 +628,43 @@ void CAN_GUI_ReadSetCOT(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
-#if 0
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)CELL_COT_RECOVER;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(CELL_COT_RECOVER >> 8U);
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)CELL_COT_FAULT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(CELL_COT_FAULT >> 8U);
-#endif
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_CellCOTThr.cls_1;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_CellCOTThr.cls_1 >> 8U);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_CellCOTThr.cls_2;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_CellCOTThr.cls_2 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_PACKCOTThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_PACKCOTThr.cls_1 >> 8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_PACKCOTThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_PACKCOTThr.cls_2 >> 8);
 
 	
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+
+	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	{
+		g_CanMsgBuf.TxBuf_Wptr = 0;
+	}
+}
+
+//============================================================================
+// Function    : CAN_GUI_ReadSetCUT
+// Description : 发送充电低温保护信息
+// Parameters  : none
+// Returns     : none
+//============================================================================
+void CAN_GUI_ReadSetCUT(void)
+{
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_CUT);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_PACKCUTThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_PACKCUTThr.cls_1 >> 8U);
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_PACKCUTThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_PACKCUTThr.cls_2 >> 8U);
+
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
@@ -720,42 +689,11 @@ void CAN_GUI_ReadSetDOT(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)CELL_DOT_FAULT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(CELL_DOT_FAULT >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_PACKDOTThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_PACKDOTThr.cls_1 >> 8U);
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)CELL_DOT_RECOVER;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(CELL_DOT_RECOVER >> 8U);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
-
-	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
-	{
-		g_CanMsgBuf.TxBuf_Wptr = 0;
-	}
-}
-
-
-//============================================================================
-// Function    : CAN_GUI_ReadSetCUT
-// Description : 发送充电低温保护信息
-// Parameters  : none
-// Returns     : none
-//============================================================================
-void CAN_GUI_ReadSetCUT(void)
-{
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_CUT);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)CELL_CUT_FAULT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(CELL_CUT_FAULT >> 8U);
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)CELL_CUT_RECOVER;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(CELL_CUT_RECOVER >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_PACKDOTThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_PACKDOTThr.cls_2 >> 8U);
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
@@ -782,11 +720,11 @@ void CAN_GUI_ReadSetDUT(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (int8_t)((int16_t)CELL_DUT_FAULT);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (int8_t)((int16_t)CELL_DUT_FAULT >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (int8_t)(g_PACKDUTThr.cls_1);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (int8_t)(g_PACKDUTThr.cls_1 >> 8U);
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (int8_t)((int16_t)CELL_DUT_RECOVER);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (int8_t)((int16_t)CELL_DUT_RECOVER >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (int8_t)(g_PACKDUTThr.cls_2);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (int8_t)(g_PACKDUTThr.cls_2 >> 8U);
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
@@ -799,48 +737,60 @@ void CAN_GUI_ReadSetDUT(void)
 	}
 }
 
+
+
 //============================================================================
-// Function    : CAN_GUI_ReadSetOUC
-// Description : 发送高低压故障信息
+// Function    : CAN_GUI_ReadSetCOC
+// Description : 发送充电过流保护信息
 // Parameters  : none
 // Returns     : none
 //============================================================================
-void CAN_GUI_ReadSetOUC(void)
+void CAN_GUI_ReadSetCOC(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_OUC);
+	uint16_t temp;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_COC);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_CellOVThr.cls_1;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_CellOVThr.cls_1 >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_CellOVThr.cls_2;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_CellOVThr.cls_2 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_BattCOCThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_BattCOCThr.cls_1 >> 8U);
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_BattCOCThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_BattCOCThr.cls_2 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = PACK_COC_WARNING_DLY;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = PACK_COC_FAULT_DLY;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
 	
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)g_CellUVThr.cls_1;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = (uint8_t)(g_CellUVThr.cls_1 >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = (uint8_t)g_CellUVThr.cls_2;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = (uint8_t)(g_CellUVThr.cls_2 >> 8U);
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
 		g_CanMsgBuf.TxBuf_Wptr = 0;
-	}	
+	}
 }
 
-void CAN_GUI_ReadSetIBM(void)
+//============================================================================
+// Function    : CAN_GUI_ReadSetDOC
+// Description : 发送放电过流保护信息
+// Parameters  : none
+// Returns     : none
+//============================================================================
+void CAN_GUI_ReadSetDOC(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_IBM);
+	uint16_t temp;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_DOC);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)CELL_IB_FAULT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(CELL_IB_FAULT >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0xff;
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_BattDOCThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_BattDOCThr.cls_1 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_BattDOCThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_BattDOCThr.cls_2 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = PACK_DOC_WARNING_DLY;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = PACK_DOC_FAULT_DLY;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
 
@@ -850,18 +800,19 @@ void CAN_GUI_ReadSetIBM(void)
 	}	
 }
 
+
 // 电池包的温度差
-void CAN_GUI_READSetPDIT(void)
+void CAN_GUI_READSetPDLT(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_PDIT);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_PDLT);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_CellDLTThr.cls_1;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_CellDLTThr.cls_1 >> 8U);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_CellDLTThr.cls_2;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_CellDLTThr.cls_2 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_PACKDLTThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_PACKDLTThr.cls_1 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_PACKDLTThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_PACKDLTThr.cls_2 >> 8U);
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
@@ -910,6 +861,30 @@ void CAN_GUI_READSetPUV(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_PackUVThr.cls_1 >> 8U);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_PackUVThr.cls_2;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_PackUVThr.cls_2 >> 8U);
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+	
+	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	{
+		g_CanMsgBuf.TxBuf_Wptr = 0;
+	}	
+}
+
+// 电池包的单体一致性
+void CAN_GUI_ReadSetIBM(void)
+{
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_PRA_SET_IBM);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_CellIBMThr.cls_1;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_CellIBMThr.cls_1 >> 8U);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_CellIBMThr.cls_2;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_CellIBMThr.cls_2 >> 8U);
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
@@ -1181,39 +1156,40 @@ void CAN_GUI_ConfigCuvThr(uint8_t *ptrData)
 // 配置电芯充电高温等级界限值参数
 void CAN_GUI_ConfigCotThr(uint8_t *ptrData)
 {
-	g_CellCOTThr.cls_1 = *(uint16_t *)ptrData;
-	g_CellCOTThr.cls_2 = *(uint16_t *)(ptrData+2);
+	g_PACKCOTThr.cls_1 = *(uint16_t *)ptrData;
+	g_PACKCOTThr.cls_2 = *(uint16_t *)(ptrData+2);
 
-	g_CellCOTThr.crc = calculate_crc8(ptrData, 4);
-	EEPROM_WriteBlock(EEPROM_ADDR_COT_THRHOLD, (uint8_t *)&g_CellCOTThr.cls_1, 5);
+	g_PACKCOTThr.crc = calculate_crc8(ptrData, 4);
+	EEPROM_WriteBlock(EEPROM_ADDR_COT_THRHOLD, (uint8_t *)&g_PACKCOTThr.cls_1, 5);
 }
 
 // 配置电芯充电低温等级界限值参数
 void CAN_GUI_ConfigCutThr(uint8_t *ptrData)
 {
-	g_CellCUTThr.cls_1 = *(uint8_t *)ptrData;
-	g_CellCUTThr.cls_2 = *(uint8_t *)(ptrData+1);
-	g_CellCUTThr.crc = calculate_crc8(ptrData, 2);
-	EEPROM_WriteBlock(EEPROM_ADDR_CUT_THRHOLD, (uint8_t *)&g_CellCUTThr.cls_1, 3);
+	g_PACKCUTThr.cls_1 = *(uint16_t *)ptrData;
+	g_PACKCUTThr.cls_2 = *(uint16_t *)(ptrData+2);
+	g_PACKCUTThr.crc = calculate_crc8(ptrData, 4);
+	EEPROM_WriteBlock(EEPROM_ADDR_CUT_THRHOLD, (uint8_t *)&g_PACKCUTThr.cls_1, 5);
 }
 
 // 配置电芯放电高温等级界限值参数
 void CAN_GUI_ConfigDotThr(uint8_t *ptrData)
 {
-    g_CellDOTThr.cls_1 = *(uint8_t *)ptrData;
-    g_CellDOTThr.cls_2 = *(uint8_t *)(ptrData+1);
-    g_CellDOTThr.crc = calculate_crc8(ptrData, 2);
-    EEPROM_WriteBlock(EEPROM_ADDR_DOT_THRHOLD, (uint8_t *)&g_CellDOTThr.cls_1, 3);
+    g_PACKDOTThr.cls_1 = *(uint16_t *)ptrData;
+    g_PACKDOTThr.cls_2 = *(uint16_t *)(ptrData+2);
+    g_PACKDOTThr.crc = calculate_crc8(ptrData, 4);
+    EEPROM_WriteBlock(EEPROM_ADDR_DOT_THRHOLD, (uint8_t *)&g_PACKDOTThr.cls_1, 5);
 }
 
 // 配置放电低温等级界限值参数
 void CAN_GUI_ConfigDutThr(uint8_t *ptrData)
 {
-	g_CellDUTThr.cls_1 = *(uint8_t *)ptrData;
-	g_CellDUTThr.cls_2 = *(uint8_t *)(ptrData+1);
-	g_CellDUTThr.crc = calculate_crc8(ptrData, 2);
-	EEPROM_WriteBlock(EEPROM_ADDR_DUT_THRHOLD, (uint8_t *)&g_CellDUTThr.cls_1, 3);
+	g_PACKDUTThr.cls_1 = *(uint16_t *)ptrData;
+	g_PACKDUTThr.cls_2 = *(uint16_t *)(ptrData+2);
+	g_PACKDUTThr.crc = calculate_crc8(ptrData, 4);
+	EEPROM_WriteBlock(EEPROM_ADDR_DUT_THRHOLD, (uint8_t *)&g_PACKDUTThr.cls_1, 5);
 }
+
 
 // 配置电池包充电过流等级值参数
 void CAN_GUI_ConfigCocThr(uint8_t *ptrData)
@@ -1233,22 +1209,23 @@ void CAN_GUI_ConfigDocThr(uint8_t *ptrData)
     EEPROM_WriteBlock(EEPROM_ADDR_DOC_THRHOLD, (uint8_t *)&g_BattDOCThr.cls_1, 5);
 }
 
-// 配置单体一致性等级值参数
-void CAN_GUI_ConfigDlvThr(uint8_t *ptrData)
-{
-    g_CellIBThr.cls_1 = *(uint16_t *)ptrData;
-    g_CellIBThr.cls_2 = *(uint16_t *)(ptrData+2);
-    g_CellIBThr.crc = calculate_crc8(ptrData, 4);
-    EEPROM_WriteBlock(EEPROM_ADDR_DLV_THRHOLD, (uint8_t *)&g_CellIBThr.cls_1, 5);
-}
-
 // 配置电池温差告警等级值
 void CAN_GUI_ConfigDltThr(uint8_t *ptrData)
 {
-    g_CellDLTThr.cls_1 = *(uint8_t *)ptrData;
-    g_CellDLTThr.cls_2 = *(uint8_t *)(ptrData+1);
-    g_CellDLTThr.crc = calculate_crc8(ptrData, 2);
-    EEPROM_WriteBlock(EEPROM_ADDR_DLT_THRHOLD, (uint8_t *)&g_CellDLTThr.cls_1, 3);
+    g_PACKDLTThr.cls_1 = *(uint16_t *)ptrData;
+    g_PACKDLTThr.cls_2 = *(uint16_t *)(ptrData+2);
+    g_PACKDLTThr.crc = calculate_crc8(ptrData, 4);
+    EEPROM_WriteBlock(EEPROM_ADDR_DLT_THRHOLD, (uint8_t *)&g_PACKDLTThr.cls_1, 5);
+}
+
+
+// 配置单体一致性等级值参数
+void CAN_GUI_ConfigDlvThr(uint8_t *ptrData)
+{
+    g_CellIBMThr.cls_1 = *(uint16_t *)ptrData;
+    g_CellIBMThr.cls_2 = *(uint16_t *)(ptrData+2);
+    g_CellIBMThr.crc = calculate_crc8(ptrData, 4);
+    EEPROM_WriteBlock(EEPROM_ADDR_DLV_THRHOLD, (uint8_t *)&g_CellIBMThr.cls_1, 5);
 }
 
 
@@ -1272,6 +1249,7 @@ void CAN_GUI_ConfigPuvThr(uint8_t *ptrData)
     g_PackUVThr.crc = calculate_crc8(ptrData, 4);
     EEPROM_WriteBlock(EEPROM_ADDR_PUV_THRHOLD, (uint8_t *)&g_PackUVThr.cls_1, 5);
 }
+
 
 // 配置绝缘性参数
 void CAN_GUI_ConfigIsoThr(uint8_t *ptrData)
@@ -1680,13 +1658,13 @@ void TskCanProcessRxMsg(void)
 					CAN_GUI_ReadSetDUT();
 					break;
 				case CAN_MSG_PRA_SET_OUC :
-					CAN_GUI_ReadSetOUC();
+					CAN_GUI_ReadSetOUV();
 					break;
 				case CAN_MSG_PRA_SET_IBM:
 					CAN_GUI_ReadSetIBM();
 					break;
-				case CAN_MSG_PRA_SET_PDIT:
-					CAN_GUI_READSetPDIT();
+				case CAN_MSG_PRA_SET_PDLT:
+					CAN_GUI_READSetPDLT();
 					break;
 				case CAN_MSG_PRA_SET_POV:
 					CAN_GUI_READSetPOV();
@@ -1757,7 +1735,7 @@ void TskCanProcessRxMsg(void)
 					break;  
 				case  CAN_GUI_CONFIG_PUV_TH:
 					CAN_GUI_ConfigPuvThr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
-					break;      
+					break;
 				case  CAN_GUI_CONFIG_ISO_TH:
 					CAN_GUI_ConfigIsoThr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
 					break;          

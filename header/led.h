@@ -17,6 +17,10 @@ extern "C" {
 #define LedChgRed             LATAbits.LATA6    
 #define LedNormal             LATCbits.LATC1 
 
+#define LedRedOff()			LedRed = 1
+#define LedGreOff()			LedGre = 1
+#define LedRedOn()			LedRed = 0
+#define LedGreOn()			LedGre = 0
 
 void Led_Init(void);
 void SysStateLedMgt(void);

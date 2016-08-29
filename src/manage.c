@@ -45,7 +45,7 @@ void TskBatteryPra_Init(void)
 	g_BatteryParameter.BalanceCellNum = 0;
 	g_BatteryParameter.BalanceFlag = 0;
 
-	// 读取充电单体过充警报等级设定值
+	// 读取充电单体过充警报等级
 	EEPROM_ReadBlock(EEPROM_ADDR_COV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -63,25 +63,8 @@ void TskBatteryPra_Init(void)
 		g_CellOVThr = CellOVThrDefault; 
 	}
 
-	// 读取充电单体过温警报等级设定值
-	EEPROM_ReadBlock(EEPROM_ADDR_COT_THRHOLD, buff, 5);
-	crc = calculate_crc8(buff, 4);
-
-	if (crc == buff[4])
-	{
-		ptr = (uint8_t *)&g_CellCOTThr.cls_1;
-
-		for (i = 0; i < 5; i++)
-		{
-			*ptr++ = buff[i];
-		}
-	}
-	else
-	{
-		g_CellCOTThr = CellCOTThrDefault; 
-	}
-
-	// 读取单体放电低压报警等级设定值
+	
+	// 读取单体放电低压报警等级
 	EEPROM_ReadBlock(EEPROM_ADDR_CUV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -99,13 +82,13 @@ void TskBatteryPra_Init(void)
 		g_CellUVThr = CellUVThrDefault; 
 	}
 
-	// 读取单体非一致性等级设定值
-	EEPROM_ReadBlock(EEPROM_ADDR_DLV_THRHOLD, buff, 5);
+	// 读取充电过温警报等级
+	EEPROM_ReadBlock(EEPROM_ADDR_COT_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
 	if (crc == buff[4])
 	{
-		ptr = (uint8_t *)&g_CellIBThr.cls_1;
+		ptr = (uint8_t *)&g_PACKCOTThr.cls_1;
 
 		for (i = 0; i < 5; i++)
 		{
@@ -114,10 +97,117 @@ void TskBatteryPra_Init(void)
 	}
 	else
 	{
-		g_CellIBThr = CellIBThrDefault; 
+		g_PACKCOTThr = CellCOTThrDefault; 
 	}
 
-	// 读取电池包过压等级设定值
+	//读取充电低温报警等级
+	EEPROM_ReadBlock(EEPROM_ADDR_CUT_THRHOLD, buff, 5);
+    crc = calculate_crc8(buff, 5);
+
+    if (crc == buff[4])
+    {
+        ptr = (uint8_t *)&g_PACKCUTThr.cls_1;
+
+        for (i = 0; i < 5; i++)
+        {
+            *ptr++ = buff[i];
+        }
+    }
+    else
+    {
+        g_PACKCUTThr = CellCUTThrDefault; 
+    }
+    
+	// 读取电池包放电高温
+    EEPROM_ReadBlock(EEPROM_ADDR_DOT_THRHOLD, buff, 5);
+	crc = calculate_crc8(buff, 4);
+
+	if (crc == buff[4])
+	{
+		ptr = (uint8_t *)&g_PACKDOTThr.cls_1;
+
+		for (i = 0; i < 4; i++)
+		{
+		    *ptr++ = buff[i];
+		}
+	}
+	else
+	{
+		g_PACKDOTThr = CellDOTThrDefault; 
+	}
+
+	// 读取电池包放电低温	
+    EEPROM_ReadBlock(EEPROM_ADDR_DUT_THRHOLD, buff, 5);
+    crc = calculate_crc8(buff, 4);
+
+	if (crc == buff[4])
+	{
+		ptr = (uint8_t *)&g_PACKDUTThr.cls_1;
+
+		for (i = 0; i < 4; i++)
+		{
+			*ptr++ = buff[i];
+		}
+	}
+	else
+	{
+		g_PACKDUTThr = CellDUTThrDefault; 
+	}
+
+	// 读取电池包充电过流报警等级
+    EEPROM_ReadBlock(EEPROM_ADDR_COC_THRHOLD, buff, 5);
+    crc = calculate_crc8(buff, 4);
+
+    if (crc == buff[4])
+    {
+        ptr = (uint8_t *)&g_BattCOCThr.cls_1;
+
+        for (i = 0; i < 4; i++)
+        {
+            *ptr++ = buff[i];
+        }
+    }
+    else
+    {
+        g_BattCOCThr = BattCOCThrDefault; 
+    }
+	// 读取电池包放电过流报警等级
+    EEPROM_ReadBlock(EEPROM_ADDR_DOC_THRHOLD, buff, 5);
+    crc = calculate_crc8(buff, 4);
+
+    if (crc == buff[4])
+    {
+        ptr = (uint8_t *)&g_BattDOCThr.cls_1;
+
+        for (i = 0; i < 4; i++)
+        {
+            *ptr++ = buff[i];
+        }
+    }
+    else
+    {
+        g_BattDOCThr = BattDOCThrDefault; 
+    }
+
+    // 读取电池包温差等级报警
+	EEPROM_ReadBlock(EEPROM_ADDR_DLT_THRHOLD, buff, 5);
+	crc = calculate_crc8(buff, 4);
+
+	if (crc == buff[4])
+	{
+		ptr = (uint8_t *)&g_PACKDLTThr.cls_1;
+
+		for (i = 0; i < 4; i++)
+		{
+			*ptr++ = buff[i];
+		}
+	}
+	else
+	{
+		g_PACKDLTThr = CellDLTThrDefault; 
+	}
+
+	// 读取电池包过压等级
 	EEPROM_ReadBlock(EEPROM_ADDR_POV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -134,8 +224,8 @@ void TskBatteryPra_Init(void)
 	{
 		g_PackOVThr = PackOVThrDefault; 
 	}
-
-	// 读取电池包低压等级设定值
+	
+	// 读取电池包低压等级
 	EEPROM_ReadBlock(EEPROM_ADDR_PUV_THRHOLD, buff, 5);
 	crc = calculate_crc8(buff, 4);
 
@@ -152,6 +242,25 @@ void TskBatteryPra_Init(void)
 	{
 		g_PackUVThr = PackUVThrDefault; 
 	}
+	
+	// 读取单体非一致性等级
+	EEPROM_ReadBlock(EEPROM_ADDR_DLV_THRHOLD, buff, 5);
+	crc = calculate_crc8(buff, 4);
+
+	if (crc == buff[4])
+	{
+		ptr = (uint8_t *)&g_CellIBMThr.cls_1;
+
+		for (i = 0; i < 5; i++)
+		{
+			*ptr++ = buff[i];
+		}
+	}
+	else
+	{
+		g_CellIBMThr = CellIBMThrDefault; 
+	}
+
 }
 
 

@@ -105,18 +105,12 @@ void SysClk_Init(void)
 //============================================================================ 
 void GPIO_Init(void)
 {
-	TRISAbits.TRISA1 = 0;  //外部故障清除控制管脚
-	TRISAbits.TRISA5 = 0;  //外部绝缘检测PWM控制管脚
-	TRISAbits.TRISA7 = 0;
-	TRISBbits.TRISB5 = 0; //风扇控制输出
-	TRISBbits.TRISB6 = 0; //风扇控制输出
-	LATAbits.LATA5 = 0;
+	TRISAbits.TRISA5 = 0;  // 外部绝缘检测PWM控制管脚
 
-	TRISDbits.TRISD4 = 1;  //设置点火检测管脚为输入
-	TRISDbits.TRISD5 = 1;  //设置硬件故障检测管脚为输入
+	TRISDbits.TRISD4 = 1;  // 设置keyrun脚为输入
+	TRISDbits.TRISD5 = 1;  // No Used
 	TRISDbits.TRISD6 = 1;  // 预留输入
-
-	TRISDbits.TRISD7 = 1;  //设置充电检测管脚为输入
+	TRISDbits.TRISD7 = 1;  //充电器充电检测引脚
 }
 
 
@@ -126,6 +120,7 @@ void GPIO_Init(void)
 // Parameters  ：none 
 // Returns     ：none
 //============================================================================
+#if 0
 void ClearHardwareFault(void)
 {
    uint32_t time_dly = g_SysTickMs;
@@ -136,7 +131,7 @@ void ClearHardwareFault(void)
    while (time_dly >= g_SysTickMs-10);
    LATAbits.LATA1 = 1;
 } 
-
+#endif
 
 /*
  * 
@@ -146,8 +141,8 @@ void main(void)
 	static uint8_t TaskList = 0;
 	
     System_Init();    
-    LedRed = 0;
-    LedGre = 0;
+    LedRedOn();
+    LedGreOn();
     for(;;)
     {
         // 查询优先级较高任务
@@ -173,6 +168,7 @@ void main(void)
 			TskCellTempMgt();
 			TskAmbTempMgt(); //电路板温度
 			// 绝缘性检测
+			
 			break;
 		case 3:
 			TskCanMgt();
@@ -225,7 +221,7 @@ void System_Init(void)
     g_SystemWarning.all 	= 0;  // clear system warning flags
     g_SystemError.all 		= 0xf8;
 
-	ClearHardwareFault();
+//	ClearHardwareFault();
     SystemSelftest();  		// 系统自检
     Soc_PowerOnAdjust();	// SOC 上电校准
     CurrentZeroOffsetAdjust();  // 上电执行电流零点校准

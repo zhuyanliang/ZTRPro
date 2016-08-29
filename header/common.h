@@ -193,24 +193,22 @@ extern CurrWarnClsDef 	g_BattCOCThr;		//充电过流
 extern CurrWarnClsDef 	g_BattDOCThr;		//放电过流
 extern VoltWarnClsDef 	g_CellOVThr;
 extern VoltWarnClsDef 	g_CellUVThr;
-extern VoltWarnClsDef 	g_CellIBThr;
+extern VoltWarnClsDef 	g_CellIBMThr;	// 单体一致性参数
 extern VoltWarnClsDef 	g_PackOVThr;
 extern VoltWarnClsDef 	g_PackUVThr;
-extern VoltWarnClsDef  g_IsoThr;
+extern VoltWarnClsDef  	g_IsoThr;
 
-extern TempWarnClsDef 	g_CellCOTThr;	//单体充电高温
-extern TempWarnClsDef 	g_CellCUTThr;	//单体充电低温
-extern TempWarnClsDef 	g_CellDOTThr;	//单体放电高温
-extern TempWarnClsDef 	g_CellDUTThr;	//单体放电低温
-extern TempWarnClsDef 	g_CellDLTThr;	//电池温差大告警
+extern TempWarnClsDef 	g_PACKCOTThr;	// 电池包充电高温
+extern TempWarnClsDef 	g_PACKCUTThr;	// 电池包充电低温
+extern TempWarnClsDef 	g_PACKDOTThr;	// 电池包放电高温
+extern TempWarnClsDef 	g_PACKDUTThr;	// 电池包放电低温
+extern TempWarnClsDef 	g_PACKDLTThr;	// 电池包温差大告警
 
-
-const  VoltWarnClsDef CellOVThrDefault = {4180,4200,0};
-const  VoltWarnClsDef CellUVThrDefault = {3500,3000,0};
-const  VoltWarnClsDef CellIBThrDefault = {100,150,0};
-const  VoltWarnClsDef PackOVThrDefault = {820,830,0};
-const  VoltWarnClsDef PackUVThrDefault = {600,550,0};
-
+const  VoltWarnClsDef CellOVThrDefault = {4180,4200,0}; // mV
+const  VoltWarnClsDef CellUVThrDefault = {3500,3000,0}; // mV
+const  VoltWarnClsDef CellIBMThrDefault = {100,150,0};
+const  VoltWarnClsDef PackOVThrDefault = {820,830,0}; // 0.1V
+const  VoltWarnClsDef PackUVThrDefault = {600,550,0}; // 0.1V
 
 
 //-------------------------- 常用宏定义 --------------------------
