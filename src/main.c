@@ -113,32 +113,12 @@ void GPIO_Init(void)
 	TRISDbits.TRISD7 = 1;  //充电器充电检测引脚
 }
 
-
-//============================================================================
-// Function    ：ClearHardwareFault
-// Description ：复位故障锁存状态
-// Parameters  ：none 
-// Returns     ：none
-//============================================================================
-#if 0
-void ClearHardwareFault(void)
-{
-   uint32_t time_dly = g_SysTickMs;
-
-   LATAbits.LATA1 = 1;
-   while (time_dly >= g_SysTickMs-5);
-   LATAbits.LATA1 = 0;
-   while (time_dly >= g_SysTickMs-10);
-   LATAbits.LATA1 = 1;
-} 
-#endif
-
 /*
  * 
  */
 void main(void) 
 {
-	static uint8_t TaskList = 0;
+	static uint8_t taskList = 0;
 	
     System_Init();    
     LedRedOn();
@@ -151,11 +131,12 @@ void main(void)
         Soc_AhAcc();
         Soh_ChargeAhAcc();
         TskBatteryModeMgt();
+        TskRelayMgt();
         RelayAction();
         TskCanRecMsgToBuf();
-        DetectRunkey();
+        //DetectRunkey();
 		
-        switch(TaskList++)
+        switch(taskList++)
         {
 		case 0:
 			TskAfeMgt();
@@ -175,17 +156,16 @@ void main(void)
 			TskFaultStoreMgt(); 
 			break;
 		case 4:
-			TskRelayMgt();
 			TaskLedMgt();
 			break;
 		default:
 			ClrWdt();
-            TaskList = 0;  
+            taskList = 0;  
             Soh_UpdateCycleTime();    
             break;
         }
         while(!PIR4bits.TMR4IF);
-        	PIR4bits.TMR4IF = 0; 
+        PIR4bits.TMR4IF = 0; 
     }
 }
 
@@ -217,11 +197,10 @@ void System_Init(void)
     g_BatteryMode 			= IDLE;
     g_BatterySubMode 		= CHARGING;
     g_ProtectDelayCnt 		= 0xffff;
-    g_EnterLowPoweModeFlg 	= 0;
-    g_SystemWarning.all 	= 0;  // clear system warning flags
-    g_SystemError.all 		= 0xf8;
+    g_EnterLowPoweModeFlg 	= 0;	// 进入低功耗状态
+    g_SystemWarning.all 	= 0;    // clear system warning flags
+    //g_SystemError.all 		= 0xf8;
 
-//	ClearHardwareFault();
     SystemSelftest();  		// 系统自检
     Soc_PowerOnAdjust();	// SOC 上电校准
     CurrentZeroOffsetAdjust();  // 上电执行电流零点校准

@@ -266,12 +266,11 @@ void CAN_PutCellTempPosToTxBuf(void)
    	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = g_BatteryParameter.CellTempMax;
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = g_BatteryParameter.CellTempMin;
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (g_BatteryParameter.CellTempMax>>8);
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = g_BatteryParameter.CellTempMin;
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (g_BatteryParameter.CellTempMin>>8);
 
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0;
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = g_BatteryParameter.MaxTempChnIdx;
-
-    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0;
+    g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryParameter.MaxTempChnIdx;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = g_BatteryParameter.MinTempChnIdx;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
     g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
@@ -416,14 +415,14 @@ void CAN_CellTempToTxBuf(void)
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_BatteryParameter.CellTemp[0];
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)g_BatteryParameter.CellTemp[1];
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_BatteryParameter.CellTemp[2];
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)g_BatteryParameter.CellTemp[3];
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = g_BatteryParameter.CellTemp[0];
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (g_BatteryParameter.CellTemp[0]>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = g_BatteryParameter.CellTemp[1];
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (g_BatteryParameter.CellTemp[1]>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryParameter.CellTemp[2];
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = (g_BatteryParameter.CellTemp[2]>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = g_BatteryParameter.CellTemp[3];
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = (g_BatteryParameter.CellTemp[3]>>8);
 
 
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
@@ -1405,39 +1404,39 @@ void CAN_BroadcastBufUpdate(void)
 { 
     switch (brdTxTimer++)
     {
-        case 5:
+        case 10:
             CAN_PutBattWarnToTxBuf();   
         break;
-        case 10:
+        case 20:
             CAN_PutBattInfoToBuf();
         break;
-        case 15:
+        case 30:
             CAN_PutCellVoltPosToTxBuf();       
         break;
-        case 20:
+        case 40:
             CAN_PutCellTempPosToTxBuf();          
         break;
-        case 25:
+        case 50:
             CAN_CellVoltage1ToTxBuf(); 
         break;
-        case 30:
+        case 60:
             CAN_CellVoltage2ToTxBuf();    
         break;
-        case 35:
+        case 70:
             CAN_CellVoltage3ToTxBuf();
         break;
-        case 40:
+        case 80:
             CAN_CellVoltage4ToTxBuf();
         break;
-        case 45:   
+        case 90:   
             CAN_CellVoltage5ToTxBuf();
             break;  
-        case 50:
+        case 100:
             CAN_CellTempToTxBuf();  
             brdTxTimer = 0;          
         break;
        default: 
-            if (brdTxTimer > 50)
+            if (brdTxTimer > 100)
             {
                 brdTxTimer = 0;  
             }        
@@ -1624,7 +1623,7 @@ void TskCanProcessRxMsg(void)
 					break;
 
 				case CAN_MSG_BATTERY_TEMPERATURE:
-					//CAN_CellTempToTxBuf();
+					CAN_CellTempToTxBuf();
 					break;
 
 				case CAN_MSG_PACK_SOH:

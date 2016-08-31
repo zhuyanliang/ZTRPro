@@ -9,7 +9,7 @@
  */
 
 volatile BatteryPackTypedef g_BatteryParameter;
-BatteryModeTypedef 			g_BatteryMode;
+BatteryModeTypedef 			g_BatteryMode = IDLE;
 SubModeTypedef 				g_BatterySubMode;			
 
 uint16_t 					g_ProtectDelayCnt;	// 保护延时计数 
@@ -274,7 +274,7 @@ void TskCurrentMgt(void)
 {
 	uint8_t i;
 	static uint8_t curr_flg = 0;
-
+#if 0
 	ADC_Convert(CHANNEL_IHIGH);  
 	
 	while(ADCON0bits.GO);  //等待转换完成，大约需要15us
@@ -296,7 +296,8 @@ void TskCurrentMgt(void)
 
 	//根据ADC采样值，结合电流采集器的特性，获取真实的电流值
 	g_BatteryParameter.current = (int16_t)((((int32_t)g_AdcConvertValue.CurHighAvg * 6250) >> 12) - 3125) - g_CurrentOffset;
-
+#endif
+	g_BatteryParameter.current = 0;
 	//检查电池包电流是否超过限定值
 	DetectPackOverCurrent();
 }
@@ -315,16 +316,16 @@ void TskCellTempMgt(void)
 	switch(state++)
 	{
 	case 0:
-		g_BatteryParameter.CellTemp[0] = ADCToTempVal((uint16_t)g_ArrayLtc6803Unit[0].Temp1);
+		g_BatteryParameter.CellTemp[0] = ADCToTempVal(g_ArrayLtc6803Unit[0].Temp1);
 		break;
 	case 1:
-		g_BatteryParameter.CellTemp[1] = ADCToTempVal((uint16_t)g_ArrayLtc6803Unit[0].Temp2); 
+		g_BatteryParameter.CellTemp[1] = ADCToTempVal(g_ArrayLtc6803Unit[0].Temp2); 
 		break;
 	case 2:
-		g_BatteryParameter.CellTemp[2] = ADCToTempVal((uint16_t)g_ArrayLtc6803Unit[1].Temp1);
+		g_BatteryParameter.CellTemp[2] = ADCToTempVal(g_ArrayLtc6803Unit[1].Temp1);
 		break;
 	case 3:
-		g_BatteryParameter.CellTemp[3] = ADCToTempVal((uint16_t)g_ArrayLtc6803Unit[1].Temp2); 
+		g_BatteryParameter.CellTemp[3] = ADCToTempVal(g_ArrayLtc6803Unit[1].Temp2); 
 		break;
 	case 4:
 		// 检测温度值，并得到单体最大最小温度值
@@ -748,7 +749,7 @@ void TskAfeMgt(void)
 		break;
 
 	case AFE_READ_CELL_VOLT:
-		if (g_SysTickMs - TimeStamp >= 50)  // 转换完成需要20ms
+		if (g_SysTickMs - TimeStamp >= 15)  // 转换完成需要20ms
 		{
 			if (Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 			{
@@ -790,19 +791,22 @@ void TskAfeMgt(void)
 		DetectCellsVoltImba();
 		DetectPackOv();
 		DetectPackUv();    
-		AfeState = AFE_READ_TEMP;//AFE_BALANCE;
+		AfeState = AFE_BALANCE;//AFE_BALANCE;
 		break;
 
 	case AFE_BALANCE:
+		TimeStamp = g_SysTickMs;
 		TskBlncMgt();
 		AfeState = AFE_READ_TEMP;
 		break;
 
 	case AFE_READ_TEMP:
-		Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
-		AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
+		if (g_SysTickMs - TimeStamp >= 10)
+		{
+			Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
+			AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
+		}
 		break;
-
 	case AFE_CAL_TEMP:
 		AfeState = AFE_CELL_VOLT_CNVT;
 		break;
@@ -929,6 +933,10 @@ void TskBatteryModeMgt(void)
 					}
 					g_PrechargeTimer =0;  
 				}
+#ifdef DEBUG
+                g_BatteryMode = PRECHARGE;
+				g_BatterySubMode = RUNKEY_IN;
+#endif
 			}
 		}
 		break;
@@ -1022,6 +1030,7 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
+			g_BatteryMode = DISCHARGE;
 			if ( DetectPackDischargeFinish() )
 			{
 				g_BatteryMode = PROTECTION;

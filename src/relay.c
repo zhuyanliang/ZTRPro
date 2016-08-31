@@ -24,8 +24,8 @@ void Relay_Init(void)
 	RELAY_HEAT_CTRL = 0;
 
 	g_RelayActFlg.precharge = FALSE;
-	g_RelayActFlg.positive = TRUE;
-	g_RelayActFlg.negative = TRUE;
+	g_RelayActFlg.positive = FALSE;
+	g_RelayActFlg.negative = FALSE;
 }
 
 //============================================================================
@@ -105,25 +105,6 @@ void RelayAction(void)
 		FanOff();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -48,7 +48,7 @@ void DetectPackOverCurrent(void)
 	{
 		return;
 	}
-	//放点过流
+	// 放电过流
 	if (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
 	{
 		return;
@@ -91,7 +91,7 @@ void DetectPackOverCurrent(void)
 	}
 	else  // 放电情况
 	{
-		if (g_BatteryParameter.current > g_BattCOCThr.cls_2)
+		if (g_BatteryParameter.current > g_BattDOCThr.cls_2)
 		{
 			if (ocErrCnt > PACK_DOC_FAULT_DLY)
 			{
@@ -106,7 +106,7 @@ void DetectPackOverCurrent(void)
 				ocErrCnt++;
 			}
 		}
-		else if (g_BatteryParameter.current > g_BattCOCThr.cls_1)
+		else if (g_BatteryParameter.current > g_BattDOCThr.cls_1)
 		{
 			if (ocErrCnt > PACK_DOC_WARNING_DLY)
 			{
@@ -136,8 +136,8 @@ void DetectPackOverCurrent(void)
 void DetectMaxMinCellTemp(void)
 {
 	uint8_t i;
-	int8_t maxTemp = -40;
-	int8_t minTemp = 125;
+	int16_t maxTemp = 0;
+	int16_t minTemp = 125;
 	int16_t avgTemp = 0;
     
 
@@ -146,13 +146,13 @@ void DetectMaxMinCellTemp(void)
 		if (maxTemp < g_BatteryParameter.CellTemp[i])
 		{
 			maxTemp = g_BatteryParameter.CellTemp[i];
-			g_BatteryParameter.MaxTempChnIdx = i;
+			g_BatteryParameter.MaxTempChnIdx = i+1;
 		}
 
 		if (minTemp > g_BatteryParameter.CellTemp[i])
 		{
 			minTemp = g_BatteryParameter.CellTemp[i];
-			g_BatteryParameter.MinTempChnIdx = i;   
+			g_BatteryParameter.MinTempChnIdx = i+1;   
 		}
 		avgTemp += g_BatteryParameter.CellTemp[i];
 	}
@@ -160,16 +160,6 @@ void DetectMaxMinCellTemp(void)
 	g_BatteryParameter.CellTempMax = maxTemp;
 	g_BatteryParameter.CellTempMin = minTemp;
 	g_BatteryParameter.CellTempAvg = avgTemp / MAX_TEMP_SENSOR;
-
-	//这种情况下视为温度模块开路
-    if ( (g_BatteryParameter.CellTempMax >= 125) || (g_BatteryParameter.CellTempMax <= -40) )
-    {
-        g_SystemError.det_oc = 1;
-    }
-    else
-    {
-        g_SystemError.det_oc = 0;
-    }
 }
 
 //============================================================================

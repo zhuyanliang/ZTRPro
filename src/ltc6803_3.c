@@ -41,7 +41,7 @@ static uint8_t const Crc8Table[256] =
     0xDE,0xD9,0xD0,0xD7,0xC2,0xC5,0xCC,0xCB,0xE6,0xE1,0xE8,0xEF,0xFA,0xFD,0xF4,0xF3
 };
 
-volatile Ltc6803_Parameter g_ArrayLtc6803Unit[ModuleAmount];
+Ltc6803_Parameter g_ArrayLtc6803Unit[ModuleAmount] = {0};
 
 //===========  定义ltc6803寄存器结构体，主要用于通信缓存 =========== //
 static struct
@@ -364,8 +364,10 @@ uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *dev)
       }
       else
       {
-         Ltc6803_ChipUnselect();
-         return(0);
+		dev->Temp1 = 0;
+		dev->Temp2 = 0;
+		Ltc6803_ChipUnselect();
+		return(0);
       }
       dev++;
    }

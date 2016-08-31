@@ -32,12 +32,12 @@ extern int16_t  g_CurrentOffset; //电流的校准偏移
 
 //移植的时候根据需要修改以下宏定义
 //---------------------------- 各模拟量输入通道 ------------------------------
-#define CAHNNEL_ISOVAL			AD_Channel_0
+#define CAHNNEL_ISOVAL			AD_Channel_0 //	绝缘检测通道
 #define CHANNEL_TBAVAL          AD_Channel_3 // PCB板子温度 
 #define CHANNEL_ILOW            AD_Channel_5 // 电流传感器
 #define CHANNEL_IHIGH           AD_Channel_6
 #define CHANNEL_THXVAL          AD_Channel_7  // 热敏电阻数值 
-#define CHANNEL_12VD			AD_Channel_8
+#define CHANNEL_12VD			AD_Channel_8  // 掉电检测
 #define CHANNEL_5VD				AD_Channel_9 
     
 typedef struct {
@@ -45,21 +45,18 @@ typedef struct {
 	// ADC原始值缓冲区，做平均值用
    uint16_t AmbTempRaw[8];  	// 存储PCB板子的温度
    uint16_t TheTempRaw[4][8];   // 存储4路温度传感器数值
-   uint16_t BusVoltRaw[8];
    uint16_t CurLowRaw[8];		// 存储电流传感器数据
    uint16_t CurHighRaw[8];
 
 	// 缓冲区索引指针  
    uint8_t AmbTempIndex;
    uint8_t TheTempIndex[4];
-   uint8_t BusVoltIndex;
    uint8_t CurLowIndex;
    uint8_t CurHighIndex;
 
 	// ADC采样平均值，还是Raw数据
    uint16_t AmbTempAvg;		// PCB板子温度
    uint16_t TheTempAvg[4];
-   uint16_t BusVoltAvg;
    uint16_t CurLowAvg;
    uint16_t CurHighAvg;
 }AdcRawTypedef;  
@@ -80,7 +77,6 @@ const TempWarnClsDef CellDLTThrDefault = {3,   5,  0};
 
 const CurrWarnClsDef BattCOCThrDefault = {-220, -250, 0}; // 0.1A
 const CurrWarnClsDef BattDOCThrDefault = {2000, 2500, 0}; // 0.1A
-
 
 extern AdcRawTypedef g_AdcConvertValue;   
     

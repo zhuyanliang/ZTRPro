@@ -104,7 +104,7 @@ typedef struct
    uint16_t Vref;
 }Ltc6803_Parameter;
 
-extern volatile Ltc6803_Parameter g_ArrayLtc6803Unit[ModuleAmount]; //Ltc6803管理芯片参数
+extern Ltc6803_Parameter g_ArrayLtc6803Unit[ModuleAmount]; //Ltc6803管理芯片参数
 
 //=============================== Function Prototype  ===============================//
 void Ltc6803_Init(void);

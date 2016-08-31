@@ -28,7 +28,7 @@ uint8_t SystemSelftest(void)
 
 
 	// pack×ÜÑ¹×Ô¼ì
-	// TskRelayVoltMgt();
+	//TskRelayVoltMgt();
 	if (g_SystemError.ltc_st || g_SystemError.ltc_com || g_SystemError.det_oc)
 	{
 		if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_1S)
@@ -243,16 +243,14 @@ void CellTempSelftest(void)
 {
 	uint8_t  i, channel;
 	uint16_t timeStamp = 0;
-
+#if 0
 	for (channel=0; channel<4; channel++)
 	{
 		g_AdcConvertValue.TheTempIndex[channel] = 0;
 	}
 
 	for (channel=0; channel<4; channel++)
-	{
-		//Thermal_Sel(channel);
-		
+	{	
 		timeStamp = g_SysTickMs;
 		while (g_SysTickMs - timeStamp <= 10);
 
@@ -272,6 +270,13 @@ void CellTempSelftest(void)
 		g_BatteryParameter.CellTemp[channel] = ADCToTempVal(g_AdcConvertValue.TheTempAvg[channel]);
 		g_AdcConvertValue.TheTempIndex[channel] = 0;
 	}
+#endif
+
+	Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);	
+	g_BatteryParameter.CellTemp[0] = ADCToTempVal(g_ArrayLtc6803Unit[0].Temp1);
+	g_BatteryParameter.CellTemp[1] = ADCToTempVal(g_ArrayLtc6803Unit[0].Temp2);
+	g_BatteryParameter.CellTemp[2] = ADCToTempVal(g_ArrayLtc6803Unit[1].Temp1);
+	g_BatteryParameter.CellTemp[3] = ADCToTempVal(g_ArrayLtc6803Unit[1].Temp2);
 
 	DetectMaxMinCellTemp();
 	DetectCellsOverTemp();

@@ -27,8 +27,6 @@ void SysStateLedMgt(void);
 void SysSocLedMgt(void);
 void TaskLedMgt(void);
 
-
-
 #ifdef	__cplusplus
 }
 #endif

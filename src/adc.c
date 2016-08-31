@@ -199,7 +199,6 @@ void TskAdc_Init(void)
 	g_AdcConvertValue.TheTempIndex[1] = 0;
 	g_AdcConvertValue.TheTempIndex[2] = 0;  
 	g_AdcConvertValue.TheTempIndex[3] = 0; 
-	g_AdcConvertValue.BusVoltIndex = 0;
 	g_AdcConvertValue.CurLowIndex = 0;
 	g_AdcConvertValue.CurHighIndex = 0;
 

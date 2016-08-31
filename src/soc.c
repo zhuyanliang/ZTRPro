@@ -48,7 +48,7 @@ void Soc_PowerOnAdjust(void)
 
 	/* 启动单体电压转换 */
 	Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_ALL);  
-	DelayMs(25);
+	DelayMs(15);
 
 	// 获取所有电芯电压
 	if (Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
