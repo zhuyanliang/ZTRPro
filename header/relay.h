@@ -35,8 +35,8 @@ typedef union{
    };
 }RelayFlagTepedef;
 
-#define FanOn()                            LATBbits.LATB5 = 1      
-#define FanOff()                           LATBbits.LATB5 = 0 
+#define FanOn()                            LATBbits.LATB5 = 0b1      
+#define FanOff()                           LATBbits.LATB5 = 0b0 
 
 extern RelayFlagTepedef g_RelayActFlg;
 

@@ -560,7 +560,7 @@ void CAN_SysVerToTxBuf(void)
 
 //============================================================================
 // Function    : CAN_SendMsg_PackPra
-// Description : 发送Pack信息
+// Description : 发送Pack信息 电池包的充放电状态
 // Parameters  : none
 // Returns     : none
 //============================================================================
@@ -576,7 +576,7 @@ void CAN_GUI_ReadPackPra(void)
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)BATTERY_CAPACITY_RATED;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(BATTERY_CAPACITY_RATED >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = g_BatteryMode;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;

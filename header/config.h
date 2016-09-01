@@ -42,7 +42,8 @@ extern "C" {
 #define FAN_ON_TEMPERATURE_DISCHARGE       55                // 定义充电状态风扇开启温度为55℃
 #define FAN_OFF_TEMPERATURE_DISCHARGE      50                // 定义充电状态风扇关闭温度为50℃
 
-    
+// 需要启动加热的温度
+#define NEEDHEATING 			-18    
 //============================ 定义故障报警等级 ==============================
 #define  WARNING_FIRST_LEVEL                 1
 #define  WARNING_SECOND_LEVEL                2
@@ -207,7 +208,7 @@ extern "C" {
 #define  _HARDWARE_MAJOR_VERSION             1                 //主版本号
 #define  _HARDWARE_MINOR_VERSION             0                 //次版本号
 
-#define  PRE_CHARGE_TIME                     1000       // 定义预充电继电器闭合时间ms
+#define  PRE_CHARGE_TIME                     500       // 定义预充电继电器闭合时间ms
 
 
 //========================== application image Id ============================

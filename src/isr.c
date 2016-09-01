@@ -15,9 +15,7 @@ void ISR_Init(void)
 //interrupt
 void interrupt ISR_High_Handler(void) 
 {
-    CanMsgTypedef msgRx={0},msgTx = {0};
     INTCONbits.GIE   = 0;
-	
 	//------------------------------ 1ms timer --------------------------------
 	if (PIR1bits.TMR1IF)
 	{      
@@ -28,7 +26,6 @@ void interrupt ISR_High_Handler(void)
         g_SysTickMs++;
 
 	}
-	
 	INTCONbits.GIE   = 1;
 }
 

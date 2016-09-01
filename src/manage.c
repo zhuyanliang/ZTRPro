@@ -9,11 +9,11 @@
  */
 
 volatile BatteryPackTypedef g_BatteryParameter;
-BatteryModeTypedef 			g_BatteryMode = IDLE;
+volatile BatteryModeTypedef g_BatteryMode = IDLE;
 SubModeTypedef 				g_BatterySubMode;			
 
 uint16_t 					g_ProtectDelayCnt;	// 保护延时计数 
-uint16_t 					g_PrechargeTimer;
+uint16_t 					g_PrechargeTimer = 0;
 uint8_t 					g_EnterLowPoweModeFlg;
 
 //----------------------------------------------------------------------------
@@ -375,6 +375,9 @@ void TskRelayMgt(void)
 	case HEATING:
 		g_RelayActFlg.heating = TRUE;
 		g_RelayActFlg.cooling = FALSE;
+        g_RelayActFlg.precharge = FALSE;
+		g_RelayActFlg.positive = FALSE;
+		g_RelayActFlg.negative = FALSE;
 		break;
 		
 	case PRECHARGE:  //预充电状态
@@ -407,12 +410,12 @@ void TskRelayMgt(void)
 
 	case PROTECTION:  //保护状态：可能是故障保护、放电截止保护、充电截止保护等等 
 		g_RelayActFlg.precharge = FALSE;
-
 		if (!g_ProtectDelayCnt--)
 		{              
 			g_RelayActFlg.positive = FALSE;
 			g_RelayActFlg.negative = FALSE;
 		}
+        break;
 	default:
 		break;
 	}
@@ -801,17 +804,18 @@ void TskAfeMgt(void)
 		break;
 
 	case AFE_READ_TEMP:
-		if (g_SysTickMs - TimeStamp >= 10)
-		{
-			Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
-			AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
-		}
+        if(g_SysTickMs - TimeStamp >= 15)
+        {
+            Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
+            AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
+        }
 		break;
 	case AFE_CAL_TEMP:
 		AfeState = AFE_CELL_VOLT_CNVT;
 		break;
 
 	default:
+		AfeState = AFE_CELL_VOLT_CNVT;
 		break;
    }
 }
@@ -895,8 +899,6 @@ void TskAmbTempMgt(void)
 //============================================================================
 void TskBatteryModeMgt(void)
 {
-	static uint32_t local_timer = 0;
-
 	switch (g_BatteryMode)
 	{
 	case IDLE:  
@@ -906,7 +908,7 @@ void TskBatteryModeMgt(void)
 			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07) )
+			|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -923,20 +925,18 @@ void TskBatteryModeMgt(void)
 			}
             else
 			{
+			#ifndef DEBUG
 				if(GetKeyrunState())
+			#endif
 				{
 					g_BatteryMode = PRECHARGE;
 					g_BatterySubMode = RUNKEY_IN;
-					if ( g_BatteryParameter.CellTempMin < -18)
+					if ( g_BatteryParameter.CellTempMin < NEEDHEATING)
 					{
 						g_BatteryMode = HEATING;
 					}
 					g_PrechargeTimer =0;  
 				}
-#ifdef DEBUG
-                g_BatteryMode = PRECHARGE;
-				g_BatterySubMode = RUNKEY_IN;
-#endif
 			}
 		}
 		break;
@@ -967,7 +967,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PRECHARGE:  //预充电状态
-		if ((g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
+		if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
 		|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)   // 过流保护
 		|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 		|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
@@ -978,9 +978,13 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
-			if ( (++g_PrechargeTimer << 1) > PRE_CHARGE_TIME )
+			if(++g_PrechargeTimer > PRE_CHARGE_TIME)
 			{
 				g_BatteryMode = DISCHARGE;
+			}
+			else
+			{
+				g_BatteryMode = PRECHARGE;		
 			}
 		}
 		break;
@@ -1045,15 +1049,16 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PROTECTION:  //故障状态 
-		if ( GetChargeState() )  // 检查充电插头是否拔掉
+		if( GetChargeState() )  // 检查充电插头是否拔掉
 		{
-			if (  (g_SystemWarning.COT != WARNING_SECOND_LEVEL) 
+			if((g_SystemWarning.COT != WARNING_SECOND_LEVEL) 
 				&& (g_SystemWarning.CUT != WARNING_SECOND_LEVEL) 
 				&& (g_SystemWarning.COC != WARNING_SECOND_LEVEL) 
 				&& (g_SystemWarning.POV != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.COV != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)  
-				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL) )
+				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL) 
+				&& (g_SystemWarning.DOC != WARNING_SECOND_LEVEL))
 			{
 				g_BatteryMode = CHARGE;
 			}
@@ -1066,10 +1071,10 @@ void TskBatteryModeMgt(void)
 				&& (g_SystemWarning.PUV != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.COV != WARNING_SECOND_LEVEL) 
 				&& (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)  
-				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL) )
+				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL))
 			{
-				if ( g_BatteryParameter.SOC)
-					g_BatteryMode = PRECHARGE;  
+				if(g_BatteryParameter.SOC)
+					g_BatteryMode = PRECHARGE; 
 			}
 		}
 		break;

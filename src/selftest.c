@@ -18,7 +18,7 @@ uint8_t SystemSelftest(void)
 	Ltc6803_Selftest();
 
 	// 检测线开路检查
-	Ltc6803_OpenWireTest();
+	//Ltc6803_OpenWireTest();
 	// cell电压自检
 	CellVoltSelftest();
 
@@ -243,35 +243,9 @@ void CellTempSelftest(void)
 {
 	uint8_t  i, channel;
 	uint16_t timeStamp = 0;
-#if 0
-	for (channel=0; channel<4; channel++)
-	{
-		g_AdcConvertValue.TheTempIndex[channel] = 0;
-	}
 
-	for (channel=0; channel<4; channel++)
-	{	
-		timeStamp = g_SysTickMs;
-		while (g_SysTickMs - timeStamp <= 10);
-
-		for (i=0; i<8; i++)
-		{
-			ADC_Convert(CHANNEL_THXVAL);
-			while(ADCON0bits.GO); 
-			g_AdcConvertValue.TheTempRaw[channel][g_AdcConvertValue.TheTempIndex[channel]++] 
-							= ADC_GetConvertVal();
-		}   
-
-		// 采集满一组计算平均值
-		g_AdcConvertValue.TheTempAvg[channel] 
-		= ADC_AverageCalculate(g_AdcConvertValue.TheTempRaw[channel]); 
-
-		// 计算温度值
-		g_BatteryParameter.CellTemp[channel] = ADCToTempVal(g_AdcConvertValue.TheTempAvg[channel]);
-		g_AdcConvertValue.TheTempIndex[channel] = 0;
-	}
-#endif
-
+	Ltc6803_TempCnvt(TEMP_ALL);
+	DelayMs(20);
 	Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);	
 	g_BatteryParameter.CellTemp[0] = ADCToTempVal(g_ArrayLtc6803Unit[0].Temp1);
 	g_BatteryParameter.CellTemp[1] = ADCToTempVal(g_ArrayLtc6803Unit[0].Temp2);
@@ -282,10 +256,12 @@ void CellTempSelftest(void)
 	DetectCellsOverTemp();
 	DetectCellsUnderTemp();
 
-	if ( (g_BatteryParameter.CellTempMax >= 125) || (g_BatteryParameter.CellTempMax <= -40) )
+	if ( (g_BatteryParameter.CellTempMax >= 125) || (g_BatteryParameter.CellTempMin <= -40) )
 	{
 		g_SystemError.det_oc = 1;
+		LedGreOn();
 	}
+
 }
 
 
