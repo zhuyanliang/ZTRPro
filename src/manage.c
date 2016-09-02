@@ -811,7 +811,6 @@ void TskAfeMgt(void)
 		break;
 
 	case AFE_BALANCE:
-		TimeStamp = g_SysTickMs;
 		TskBlncMgt();
 		AfeState = AFE_READ_TEMP;
 		break;
