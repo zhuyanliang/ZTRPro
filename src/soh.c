@@ -97,8 +97,7 @@ void Soh_ReadCycleTime(void)
 void Soh_ChargeAhAcc(void)
 {
 	// зЂвт!!!
-	if ((g_BatteryMode == CHARGE)
-		&&(g_BatterySubMode == CHARGING))
+	if (g_BatteryMode == CHARGE)
 		g_BatteryParameter.ChargedAh -= g_BatteryParameter.current;
 }
 

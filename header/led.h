@@ -19,12 +19,16 @@ extern "C" {
 
 #define LedRedOff()			LedRed = 1
 #define LedGreOff()			LedGre = 1
+#define LedChgRedOff()		LedChgRed = 1
+#define LedNormalOff()		LedNormal = 1
+
 #define LedRedOn()			LedRed = 0
 #define LedGreOn()			LedGre = 0
+#define LedChgRedOn()		LedChgRed = 0
+#define LedNormalOn()		LedNormal = 0
+
 
 void Led_Init(void);
-void SysStateLedMgt(void);
-void SysSocLedMgt(void);
 void TaskLedMgt(void);
 
 #ifdef	__cplusplus

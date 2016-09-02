@@ -94,6 +94,7 @@ uint32_t CAN_GenerateID(uint8_t des_addr, uint8_t msg_fc)
 //----------------------------------------------------------------------------
 BOOL CAN_IsTxBufFull(void)
 {
+#if 0
 	if (((g_CanMsgBuf.TxBuf_Wptr == (CAN_BUF_DEEP - 1))&&(g_CanMsgBuf.TxBuf_Rptr == 0))
 	|| (g_CanMsgBuf.TxBuf_Rptr == (g_CanMsgBuf.TxBuf_Wptr + 1)))
 	{
@@ -103,6 +104,16 @@ BOOL CAN_IsTxBufFull(void)
 	{
 		return FALSE;
 	}
+#endif
+	if((g_CanMsgBuf.TxBuf_Wptr+1)%CAN_BUF_DEEP == g_CanMsgBuf.TxBuf_Rptr)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+
 }
 
 //----------------------------------------------------------------------------
@@ -131,8 +142,18 @@ BOOL CAN_IsTxBufEmpty(void)
 //----------------------------------------------------------------------------
 BOOL CAN_IsRxBufFull(void)
 {
+#if 0
 	if (((g_CanMsgBuf.RxBuf_Wptr == (CAN_BUF_DEEP - 1))&&(g_CanMsgBuf.RxBuf_Rptr == 0))
 		|| (g_CanMsgBuf.RxBuf_Rptr == (g_CanMsgBuf.RxBuf_Wptr + 1)))
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+#endif 
+	if((g_CanMsgBuf.RxBuf_Wptr+1)%CAN_BUF_DEEP == g_CanMsgBuf.RxBuf_Rptr)
 	{
 		return TRUE;
 	}
@@ -159,7 +180,6 @@ BOOL CAN_IsRxBufEmpty(void)
 		return FALSE;
 	}
 }
-
 
 /* 
  * 将电池包的警告信息放入发送缓冲区
@@ -1270,8 +1290,8 @@ void CAN_GUI_ConfigIsoThr(uint8_t *ptrData)
 //----------------------------------------------------------------------------
 void CAN_ClearImage(uint8_t *can_msg)
 {
-    LedRed = 1;
-    LedGre = 1;
+    LedRedOff();
+    LedGreOff();
 	if (can_msg[0] == 0x01 
 		&& can_msg[1] == 0x23               
 		&& can_msg[2] == 0x45 

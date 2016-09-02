@@ -115,7 +115,7 @@ void Soc_PowerOnAdjust(void)
 //============================================================================
 void Soc_Update (void)
 {
-	static uint16_t timeStamp=0;
+	static uint32_t timeStamp=0;
 
 	/* 充放电上下截止点SOC校准, 注意该校准一定要在系统状态 */
 	/* 切换前完成，否则以下语句将无法得到执行。            */

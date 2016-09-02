@@ -118,7 +118,8 @@ typedef enum
 	DISCHARGE, 
 	CHARGE,
 	HEATING,
-	PROTECTION               
+	COOLING,
+	PROTECTION
 }BatteryModeTypedef;
 
 typedef enum

@@ -43,7 +43,16 @@ extern "C" {
 #define FAN_OFF_TEMPERATURE_DISCHARGE      50                // 定义充电状态风扇关闭温度为50℃
 
 // 需要启动加热的温度
-#define NEEDHEATING 			-18    
+#define ChargeNeedHeatTemp 			0  
+#define DischargeNeedHeatTemp 		-15 
+
+
+// 需要启动散热的温度
+#define ChargeNeedCoolTemp				40 
+#define DischargeNeedCoolTemp			45 
+
+
+
 //============================ 定义故障报警等级 ==============================
 #define  WARNING_FIRST_LEVEL                 1
 #define  WARNING_SECOND_LEVEL                2
@@ -139,7 +148,7 @@ extern "C" {
 /* 充放电截止点设置 */
 #define  CELL_CHARGE_LIMIT_VOLT        ((uint16_t)4200)     // 单体充电截止电压 mv/bit
 #define  CELL_CHARGE_FULL_VOLT         ((uint16_t)4150)     // 单体充电截止电压 mv/bit
-#define  CELL_DISCHARGE_END_VOLT       ((uint16_t)2850)     // 单体放电截止电压 mv/bit
+#define  CELL_DISCHARGE_END_VOLT       ((uint16_t)3000)     // 单体放电截止电压 mv/bit
 
 //-------------------------------- 单体均衡参数定义 --------------------------------
 #define  CELL_BALANCE_THRESHOLD        ((uint8_t)20)        // 定义cell均衡启动门槛压差：10mV

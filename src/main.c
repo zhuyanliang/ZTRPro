@@ -36,7 +36,7 @@
 
 // CONFIG2H
 #pragma config WDTEN = ON  // Watchdog Timer (WDT enabled in hardware; SWDTEN bit disabled)
-#pragma config WDTPS = 512  // Watchdog Postscaler (1:1048576)
+#pragma config WDTPS = 65536  // Watchdog Postscaler (1:1048576)
 
 // CONFIG3H
 #pragma config CANMX = PORTB    // ECAN Mux bit (ECAN TX and RX pins are located on RB2 and RB3, respectively)
@@ -121,19 +121,24 @@ void main(void)
 	static uint8_t taskList = 0;
 	
     System_Init();    
-    //LedRedOn();
+    LedRedOn();
     //LedGreOn();
     for(;;)
     {
         // 查询优先级较高任务
         ClrWdt();
         TskCurrentMgt();
+        ClrWdt();
         Soc_AhAcc();
+        ClrWdt();
         Soh_ChargeAhAcc();
         ClrWdt();
         TskBatteryModeMgt();
+        ClrWdt();
         TskRelayMgt();
+        ClrWdt();
         RelayAction();
+        ClrWdt();
         TskCanRecMsgToBuf();
         //DetectRunkey();
 		ClrWdt();
@@ -145,16 +150,17 @@ void main(void)
 		case 1:
 			TskSOCMgt();  // 该函数必须放在单体检测后执行 
 			DetectCharger();
+			ClrWdt();
 			break;
 		case 2:
 			TskCellTempMgt();
 			TskAmbTempMgt(); //电路板温度
 			// 绝缘性检测
-			
+			ClrWdt();
 			break;
 		case 3:
 			TskCanMgt();
-			//TskFaultStoreMgt(); 
+			TskFaultStoreMgt(); 
 			break;
 		case 4:
 			TaskLedMgt();
@@ -198,7 +204,6 @@ void System_Init(void)
 
     ClrWdt();
     g_BatteryMode 			= IDLE;
-    g_BatterySubMode 		= CHARGING;
     g_ProtectDelayCnt 		= 0xffff;
     g_EnterLowPoweModeFlg 	= 0;	// 进入低功耗状态
     g_SystemWarning.all 	= 0;    // clear system warning flags

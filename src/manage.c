@@ -9,8 +9,7 @@
  */
 
 volatile BatteryPackTypedef g_BatteryParameter;
-volatile BatteryModeTypedef g_BatteryMode = IDLE;
-SubModeTypedef 				g_BatterySubMode;			
+volatile BatteryModeTypedef g_BatteryMode = IDLE;			
 
 uint16_t 					g_ProtectDelayCnt;	// 保护延时计数 
 uint16_t 					g_PrechargeTimer = 0;
@@ -372,6 +371,40 @@ void TskRelayMgt(void)
 		g_RelayActFlg.cooling = FALSE;
 		break;
 
+	case PRECHARGE:  //预充电状态
+		g_RelayActFlg.positive = FALSE;
+		g_RelayActFlg.negative = TRUE;
+		g_RelayActFlg.precharge = TRUE;
+		break;
+
+	case DISCHARGE:  //放电状态
+		if(g_BatteryParameter.CellTempAvg >= (DischargeNeedCoolTemp-5))
+			g_RelayActFlg.cooling = TRUE;
+		else
+			g_RelayActFlg.cooling = FALSE;
+		g_RelayActFlg.precharge = FALSE;
+		g_RelayActFlg.positive = TRUE;
+		g_RelayActFlg.negative = TRUE;
+		break;
+	
+	case CHARGE:  //充电状态
+		if(g_BatteryParameter.CellTempAvg >= (ChargeNeedCoolTemp-5))
+			g_RelayActFlg.cooling = TRUE;
+		else
+			g_RelayActFlg.cooling = FALSE;	
+		g_RelayActFlg.precharge = FALSE;
+		if(g_BatteryParameter.SOC > 99) // 充电完成
+		{
+			g_RelayActFlg.positive = FALSE;
+			g_RelayActFlg.negative = FALSE;
+		}
+		else
+		{
+			g_RelayActFlg.positive = TRUE;
+			g_RelayActFlg.negative = TRUE;
+		}
+		break;
+
 	case HEATING:
 		g_RelayActFlg.heating = TRUE;
 		g_RelayActFlg.cooling = FALSE;
@@ -379,33 +412,13 @@ void TskRelayMgt(void)
 		g_RelayActFlg.positive = FALSE;
 		g_RelayActFlg.negative = FALSE;
 		break;
-		
-	case PRECHARGE:  //预充电状态
+
+	case COOLING:
+		g_RelayActFlg.heating = FALSE;
+		g_RelayActFlg.cooling = TRUE;
+        g_RelayActFlg.precharge = FALSE;
 		g_RelayActFlg.positive = FALSE;
-		g_RelayActFlg.negative = TRUE;
-		g_RelayActFlg.precharge = TRUE;
-		break;
-
-	case CHARGE:  //充电状态
-		g_RelayActFlg.precharge = FALSE;
-		g_RelayActFlg.cooling = TRUE;
-		if (g_BatterySubMode == CHARGING)  //正在充电
-		{
-			g_RelayActFlg.positive = TRUE;
-			g_RelayActFlg.negative = TRUE;
-		}
-		else                             //充电完成
-		{
-			g_RelayActFlg.positive = FALSE;
-			g_RelayActFlg.negative = FALSE;
-		}
-		break;
-
-	case DISCHARGE:  //放电状态
-		g_RelayActFlg.cooling = TRUE;
-		g_RelayActFlg.precharge = FALSE;
-		g_RelayActFlg.positive = TRUE;
-		g_RelayActFlg.negative = TRUE;
+		g_RelayActFlg.negative = FALSE;
 		break;
 
 	case PROTECTION:  //保护状态：可能是故障保护、放电截止保护、充电截止保护等等 
@@ -902,12 +915,20 @@ void TskBatteryModeMgt(void)
 	switch (g_BatteryMode)
 	{
 	case IDLE:  
-		if ( (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)    // 过温保护
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
+		if ( (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL))    // 过温保护
+		{
+			g_BatteryMode = COOLING;
+		}
+		else if((g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL))
+		{
+			g_BatteryMode = HEATING;
+		}
+		else if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
 			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
 			|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
@@ -917,53 +938,13 @@ void TskBatteryModeMgt(void)
 			if(GetChargeState()) // 充电器接入
 			{
 				g_BatteryMode = CHARGE;
-				if(g_BatteryParameter.CellTempMin < 0)
-				{
-					g_BatteryMode = HEATING;
-					g_BatterySubMode =  CHARGER_IN;
-				}
 			}
             else
 			{
-			#ifndef DEBUG
-				if(GetKeyrunState())
-			#endif
-				{
-					g_BatteryMode = PRECHARGE;
-					g_BatterySubMode = RUNKEY_IN;
-					if ( g_BatteryParameter.CellTempMin < NEEDHEATING)
-					{
-						g_BatteryMode = HEATING;
-					}
-					g_PrechargeTimer =0;  
-				}
-			}
-		}
-		break;
-
-	case HEATING:
-		if ( (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)    // 过温保护
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
-			|| (g_SystemError.all & 0x07) )
-		{
-			g_BatteryMode = PROTECTION;
-		}
-		else if (g_BatterySubMode ==  CHARGER_IN)
-		{
-			if (g_BatteryParameter.CellTempMin > 0)
-			{
-				g_BatteryMode = CHARGE;
-			}
-		}
-		else if (g_BatterySubMode ==  RUNKEY_IN)
-		{
-			if (g_BatteryParameter.CellTempMin > -18)
-			{
 				g_BatteryMode = PRECHARGE;
-			}                
-		}    
+				g_PrechargeTimer =0;  
+			}
+		}
 		break;
 
 	case PRECHARGE:  //预充电状态
@@ -972,6 +953,7 @@ void TskBatteryModeMgt(void)
 		|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 		|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
 		|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+		|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
 		|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
@@ -981,40 +963,11 @@ void TskBatteryModeMgt(void)
 			if(++g_PrechargeTimer > PRE_CHARGE_TIME)
 			{
 				g_BatteryMode = DISCHARGE;
+				g_PrechargeTimer = 0;
 			}
 			else
 			{
 				g_BatteryMode = PRECHARGE;		
-			}
-		}
-		break;
-
-	case CHARGE:  //充电状态  
-		if ((g_SystemWarning.COT == WARNING_SECOND_LEVEL)     // 过温保护
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)     // 低温保护
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)    // cell过压故障
-			|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)    // 过流保护
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
-			|| (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07))
-		{
-			g_BatteryMode = PROTECTION;
-		}
-		else
-		{
-			if ( !GetChargeState() )  // 检查充电插头是否拔掉
-			{
-				g_BatteryMode = IDLE;
-				g_BatterySubMode = CHARGE_END;
-			}
-			else if ( DetectPackChargeFinish() )  //检测充电是否完成
-			{
-				g_BatterySubMode = CHARGE_END;
-			}
-			else
-			{
-				g_BatterySubMode = CHARGING;
 			}
 		}
 		break;
@@ -1028,6 +981,7 @@ void TskBatteryModeMgt(void)
 			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)   
 			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)    
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
 			|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
@@ -1040,11 +994,81 @@ void TskBatteryModeMgt(void)
 				g_BatteryMode = PROTECTION;
 				g_ProtectDelayCnt = RELAY_ACTION_DELAY_20S;
 			}
-			if (GetChargeState())
+			if(GetChargeState())
 			{
 				g_BatteryMode = PROTECTION;
 				g_ProtectDelayCnt = RELAY_ACTION_DELAY_1S;                    
 			}  
+		}
+		break;
+
+	
+	case CHARGE:  //充电状态  
+			if ((g_SystemWarning.COT == WARNING_SECOND_LEVEL)	  // 过温保护
+				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)	 // 低温保护
+				|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)	// cell过压故障
+				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)	// 过流保护
+				|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
+				|| (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
+				|| (g_SystemError.all & 0x07))
+			{
+				g_BatteryMode = PROTECTION;
+			}
+			else
+			{
+				if ( !GetChargeState() )  // 检查充电插头是否拔掉
+				{
+					g_BatteryMode = IDLE;
+				}
+				else
+				{
+					g_BatteryMode = CHARGE;
+				}
+			}
+			break;
+
+	case HEATING:
+		if ( (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)    // 过温保护
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
+			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
+			|| (g_SystemError.all & 0x07) )
+		{
+			g_BatteryMode = PROTECTION;
+		}
+		if ((g_BatteryParameter.CellTempMin > ChargeNeedHeatTemp) && GetChargeState())
+		{
+			g_BatteryMode = CHARGE;
+		}
+		else if((g_BatteryParameter.CellTempMin > ChargeNeedHeatTemp) 
+				&& (!GetChargeState()))
+		{
+			g_BatteryMode = IDLE;
+		}             
+		   
+		break;
+
+	case COOLING:
+		if ( (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
+			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
+			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
+			|| (g_SystemError.all & 0x07) )
+		{
+			g_BatteryMode = PROTECTION;
+		}
+		else if ((g_BatteryParameter.CellTempMax<ChargeNeedCoolTemp)
+				&& GetChargeState())
+		{
+			g_BatteryMode = CHARGE;
+		}
+		else if((g_BatteryParameter.CellTempMax<DischargeNeedCoolTemp) 
+				&&(!GetChargeState()))
+		{
+			g_BatteryMode = IDLE;
 		}
 		break;
 
@@ -1057,10 +1081,14 @@ void TskBatteryModeMgt(void)
 				&& (g_SystemWarning.POV != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.COV != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)  
-				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL) 
+				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL)
+				&& (g_SystemWarning.ISO != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.DOC != WARNING_SECOND_LEVEL))
 			{
-				g_BatteryMode = CHARGE;
+				if(DetectPackChargeFinish())
+					g_BatteryMode = PROTECTION;
+				else	
+					g_BatteryMode = CHARGE;
 			}
 		}
 		else
@@ -1071,13 +1099,15 @@ void TskBatteryModeMgt(void)
 				&& (g_SystemWarning.PUV != WARNING_SECOND_LEVEL)
 				&& (g_SystemWarning.COV != WARNING_SECOND_LEVEL) 
 				&& (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)  
-				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL))
+				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL)
+				&& (g_SystemWarning.ISO != WARNING_SECOND_LEVEL))
 			{
 				if(g_BatteryParameter.SOC)
-					g_BatteryMode = PRECHARGE; 
+					g_BatteryMode = IDLE; 
 			}
 		}
 		break;
+
 	default:  
 		break;
     }
