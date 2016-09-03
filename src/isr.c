@@ -29,20 +29,9 @@ void interrupt ISR_High_Handler(void)
 	INTCONbits.GIE   = 1;
 }
 
-//----------------------------------------------------------------------------
-// Function    : getSysTickCounter
-// Description : Returns tick count from ms timer
-// Parameters  : none
-// Returns     : none
-//----------------------------------------------------------------------------
-uint32_t GetSysTickCounter(void)
-{
-   return (g_SysTickMs);
-}
-
 void DelayMs(uint16_t nTime)
 { 
-   uint16_t CurTime = GetSysTickCounter();
+   uint32_t curTime = g_SysTickMs;
 
-   while(!(GetSysTickCounter() - CurTime >= nTime));
+   while((g_SysTickMs - curTime) <= nTime);
 }

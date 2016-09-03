@@ -51,7 +51,9 @@ extern "C" {
 #define ChargeNeedCoolTemp				40 
 #define DischargeNeedCoolTemp			45 
 
-
+// PCB板子温度阀值
+#define PcbOverTempValue				60
+#define PcbUnderTempValue				0
 
 //============================ 定义故障报警等级 ==============================
 #define  WARNING_FIRST_LEVEL                 1

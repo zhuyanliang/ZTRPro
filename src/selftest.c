@@ -26,7 +26,6 @@ uint8_t SystemSelftest(void)
 	CellTempSelftest();
 	AmbTempSelftest();
 
-
 	// pack总压自检
 	//TskRelayVoltMgt();
 	if (g_SystemError.ltc_st || g_SystemError.ltc_com || g_SystemError.det_oc)
@@ -50,14 +49,10 @@ uint8_t SystemSelftest(void)
 //============================================================================
 void Ltc6803_Selftest(void)
 {
-	uint16_t timeStamp;
 	uint8_t pec, i, j;
-
 	/* 执行cell voltage selftest1 */
 	Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_TEST1);
-    
-	timeStamp = g_SysTickMs;
-	while (g_SysTickMs - timeStamp < 30);
+	DelayMs(300);
 
 	/* 读取cell voltage寄存器，判断寄存器是否全部为0x55, */
 	/* 若不是，则自检不通过 */
@@ -75,7 +70,7 @@ void Ltc6803_Selftest(void)
 		{
 			for (j=0; j<18; j++)
 			{
-				if ((ltc6803TestBuf[j] != 0x55) && (ltc6803TestBuf[j] != 0xAA))
+				if (ltc6803TestBuf[j] != 0x55)
 				{
 					g_SystemError.ltc_st = 1;
 					break;
@@ -92,8 +87,7 @@ void Ltc6803_Selftest(void)
 
 	/* 执行selftest2 */
 	Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_TEST2);
-	timeStamp = g_SysTickMs;
-	while (g_SysTickMs - timeStamp < 30);
+	DelayMs(300);
 
 	/* 读取cell voltage寄存器，判断寄存器是否全部为0xAA, */
 	/* 若不是，则自检不通过 */
@@ -111,7 +105,7 @@ void Ltc6803_Selftest(void)
 		{
 			for (j=0; j<18; j++)
 			{
-				if((ltc6803TestBuf[j] != 0x55) && (ltc6803TestBuf[j] != 0xAA))
+				if(ltc6803TestBuf[j] != 0xAA)
 				{
 					g_SystemError.ltc_st = 1;
 					break;
@@ -137,12 +131,10 @@ void Ltc6803_Selftest(void)
 //============================================================================
 void Ltc6803_OpenWireTest(void)
 {
-	uint16_t timeStamp;
 	uint8_t i, j;
 
 	Ltc6803_CellVoltCnvt(STOWAD_CMD, CELL_ALL);
-	timeStamp = g_SysTickMs;
-	while (g_SysTickMs - timeStamp < 30);
+	DelayMs(300);
 
 	if (!Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 	{
@@ -161,8 +153,7 @@ void Ltc6803_OpenWireTest(void)
 	for (i=0; i<15; i++)
 	{
 		Ltc6803_CellVoltCnvt(STOWAD_CMD, CELL_ALL);
-		timeStamp = g_SysTickMs;
-		while (g_SysTickMs - timeStamp < 20);
+		DelayMs(300);
 	}
 
 	if (!Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
@@ -182,7 +173,7 @@ void Ltc6803_OpenWireTest(void)
 
 	for (i=1; i<10; i++)
 	{
-		if ((g_ArrayLtc6803Unit[0].CellVolt[i] - cellVoltTest[0][i] > 200)
+		if ((g_ArrayLtc6803Unit[0].CellVolt[i] - cellVoltTest[0][i] > 300)
 			|| (g_ArrayLtc6803Unit[0].CellVolt[i] >= 5370))
 		{
 			g_SystemError.det_oc = 1;
@@ -191,7 +182,7 @@ void Ltc6803_OpenWireTest(void)
 
 	for (i=0; i<9; i++)
 	{
-		if ((g_ArrayLtc6803Unit[1].CellVolt[i] - cellVoltTest[1][i] > 200)
+		if ((g_ArrayLtc6803Unit[1].CellVolt[i] - cellVoltTest[1][i] > 300)
 			|| (g_ArrayLtc6803Unit[1].CellVolt[i] >= 5370))
 		{
 			g_SystemError.det_oc = 1;
@@ -209,14 +200,12 @@ void Ltc6803_OpenWireTest(void)
 //============================================================================
 void CellVoltSelftest(void)
 {
-	uint16_t timeStamp;
 	uint8_t cnt = 5;
 
 	while (cnt--)
 	{
 		Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_ALL);  //启动单体电压转换
-		timeStamp = g_SysTickMs;  //记录转换开始时间
-		while (g_SysTickMs - timeStamp < 25);  // 转换完成需要20ms
+		DelayMs(250);;  // 转换完成需要20ms
 
 		if(Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 		{
@@ -241,9 +230,6 @@ void CellVoltSelftest(void)
 //============================================================================
 void CellTempSelftest(void)
 {
-	uint8_t  i, channel;
-	uint16_t timeStamp = 0;
-
 	Ltc6803_TempCnvt(TEMP_ALL);
 	DelayMs(20);
 	Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);	

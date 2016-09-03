@@ -750,22 +750,21 @@ void TskBlncMgt(void)
 //============================================================================
 void TskAfeMgt(void)
 {
-	static uint32_t TimeStamp;
+	static uint32_t timeStamp;
 	static uint8_t ComErrCnt = 5;
 	static AfeStateTypedef AfeState = AFE_CELL_VOLT_CNVT;
 	uint8_t i;
-	int16_t temp_dlt;
         
 	switch (AfeState)
 	{
 	case AFE_CELL_VOLT_CNVT:
 		Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_ALL);  //启动单体电压转换
-		TimeStamp = g_SysTickMs;  //记录转换开始时间
+		timeStamp = g_SysTickMs;  //记录转换开始时间
 		AfeState = AFE_READ_CELL_VOLT;  //状态切换
 		break;
 
 	case AFE_READ_CELL_VOLT:
-		if (g_SysTickMs - TimeStamp >= 15)  // 转换完成需要20ms
+		if (g_SysTickMs - timeStamp >= 10)  // 转换完成需要20ms
 		{
 			if (Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 			{
@@ -796,7 +795,7 @@ void TskAfeMgt(void)
 
 	case AFE_TEMP_CNVT:
 		Ltc6803_TempCnvt(TEMP_ALL);  //启动温度转换
-		TimeStamp = g_SysTickMs;  //记录转换开始时间
+		timeStamp = g_SysTickMs;  //记录转换开始时间
 		AfeState = AFE_CAL_CELL_VOLT;  //状态切换
 		break;
 
@@ -816,14 +815,11 @@ void TskAfeMgt(void)
 		break;
 
 	case AFE_READ_TEMP:
-        if(g_SysTickMs - TimeStamp >= 15)
+        if(g_SysTickMs - timeStamp >= 10)
         {
             Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
             AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
         }
-		break;
-	case AFE_CAL_TEMP:
-		AfeState = AFE_CELL_VOLT_CNVT;
 		break;
 
 	default:
@@ -831,8 +827,6 @@ void TskAfeMgt(void)
 		break;
    }
 }
-
-
 
 //----------------------------------------------------------------------------
 // Function    : TskCanMgt
@@ -872,33 +866,35 @@ void TskCanMgt(void)
 //============================================================================
 void TskAmbTempMgt(void)
 {
-   static uint8_t state = 0;
+	static uint8_t state = 0;
 
-   switch(state)
-   {
-      case 0:  // start conversion 
-           ADC_Convert(CHANNEL_TBAVAL);  
-           while(ADCON0bits.GO);  //等待转换完成，大约需要15us
-           g_AdcConvertValue.AmbTempRaw[g_AdcConvertValue.AmbTempIndex++] = ADC_GetConvertVal();
+	switch(state)
+	{
+	case 0:  // start conversion 
+		ADC_Convert(CHANNEL_TBAVAL);  
+		while(ADCON0bits.GO);  //等待转换完成，大约需要15us
+		g_AdcConvertValue.AmbTempRaw[g_AdcConvertValue.AmbTempIndex++] = ADC_GetConvertVal();
 
-           // 采集满一组就计算平均值
-           if(g_AdcConvertValue.AmbTempIndex >= 8)
-           {
-              g_AdcConvertValue.AmbTempAvg = ADC_AverageCalculate(g_AdcConvertValue.AmbTempRaw); 
-              g_AdcConvertValue.AmbTempIndex = 0;
+		// 采集满一组就计算平均值
+		if(g_AdcConvertValue.AmbTempIndex >= 8)
+		{
+			g_AdcConvertValue.AmbTempAvg = ADC_AverageCalculate(g_AdcConvertValue.AmbTempRaw); 
+			g_AdcConvertValue.AmbTempIndex = 0;
 
-              state = 1;  // 下一周期计算全部采样值
-           }
-           break;
+			state = 1;  // 下一周期计算全部采样值
+		}
+		break;
 
-      case 1:
-           g_BatteryParameter.AmbientTemp = ADCToTempVal(g_AdcConvertValue.AmbTempAvg);
-           state = 0;
-           break;
-      default: 
-           state = 0;
-      		break;
-   }
+	case 1:
+		g_BatteryParameter.AmbientTemp = ADCToTempVal(g_AdcConvertValue.AmbTempAvg);
+		state = 0;
+		break;
+	default: 
+		state = 0;
+		break;
+	}
+
+	DetectPCBOverTemp();
 }
 
 
@@ -947,13 +943,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PRECHARGE:  //预充电状态
-		if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
-		|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)   // 过流保护
-		|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-		|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-		|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-		|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
-		|| (g_SystemError.all & 0x07))
+		if((g_SystemWarning.all != 0) || (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -972,16 +962,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case DISCHARGE:  //放电状态
-		if ((g_SystemWarning.DOT == WARNING_SECOND_LEVEL)     // 过温保护
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)     // 低温保护
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)     // cell欠压故障
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)     // cell过压故障
-			|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)     // 过流保护    
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)   
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)    
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07))
+		if ((g_SystemWarning.all != 0) || (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -1003,15 +984,7 @@ void TskBatteryModeMgt(void)
 
 	
 	case CHARGE:  //充电状态  
-			if ((g_SystemWarning.COT == WARNING_SECOND_LEVEL)	  // 过温保护
-				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)	 // 低温保护
-				|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)	// cell过压故障
-				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)	// 过流保护
-				|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
-				|| (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
-				|| (g_SystemError.all & 0x07))
+			if ( (g_SystemWarning.all != 0) || (g_SystemError.all & 0x07))
 			{
 				g_BatteryMode = PROTECTION;
 			}
@@ -1029,12 +1002,7 @@ void TskBatteryModeMgt(void)
 			break;
 
 	case HEATING:
-		if ( (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)    // 过温保护
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07) )
+		if ( (g_SystemWarning.all != 0) || (g_SystemError.all & 0x07) )
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -1051,11 +1019,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case COOLING:
-		if ( (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL) 
-			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07) )
+		if ( (g_SystemWarning.all != 0) || (g_SystemError.all & 0x07) )
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -1074,15 +1038,7 @@ void TskBatteryModeMgt(void)
 	case PROTECTION:  //故障状态 
 		if( GetChargeState() )  // 检查充电插头是否拔掉
 		{
-			if((g_SystemWarning.COT != WARNING_SECOND_LEVEL) 
-				&& (g_SystemWarning.CUT != WARNING_SECOND_LEVEL) 
-				&& (g_SystemWarning.COC != WARNING_SECOND_LEVEL) 
-				&& (g_SystemWarning.POV != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.COV != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)  
-				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.ISO != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.DOC != WARNING_SECOND_LEVEL))
+			if(g_SystemWarning.all != 0)
 			{
 				if(DetectPackChargeFinish())
 					g_BatteryMode = PROTECTION;
@@ -1092,14 +1048,7 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
-			if ( (g_SystemWarning.DOT != WARNING_SECOND_LEVEL) 
-				&& (g_SystemWarning.DUT != WARNING_SECOND_LEVEL) 
-				&& (g_SystemWarning.DOC != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.PUV != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.COV != WARNING_SECOND_LEVEL) 
-				&& (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)  
-				&& (g_SystemWarning.TIB != WARNING_SECOND_LEVEL)
-				&& (g_SystemWarning.ISO != WARNING_SECOND_LEVEL))
+			if (g_SystemWarning.all != 0)
 			{
 				if(g_BatteryParameter.SOC)
 					g_BatteryMode = IDLE; 

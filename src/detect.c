@@ -400,6 +400,49 @@ void DetectCellsUnderTemp(void)
 	}
 }
 
+void DetectPCBOverTemp(void)
+{
+	static uint8_t otErrCnt = 0;
+
+	if(g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+	{
+		if(g_BatteryParameter.AmbientTemp < PcbOverTempValue)
+		{
+			otErrCnt++;
+			if(otErrCnt >= 5)
+			{
+				otErrCnt = 0;
+				g_SystemWarning.PCBOT = 0;
+			}
+		}
+	}
+	else
+	{
+		if(g_BatteryParameter.AmbientTemp >= PcbOverTempValue)
+		{
+			otErrCnt++;
+			if(otErrCnt >= 5)
+			{
+				otErrCnt = 0;
+				g_SystemWarning.PCBOT = WARNING_SECOND_LEVEL;
+				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_1S)
+				{
+					g_ProtectDelayCnt = RELAY_ACTION_DELAY_1S;
+				}
+			}
+			else
+			{
+				otErrCnt++;
+			}
+		}
+		else
+		{
+			otErrCnt = 0;
+			g_SystemWarning.PCBOT = 0;
+		}
+	}
+}
+
 
 //============================================================================
 // Function    : DetectCellsUnderTemp
@@ -831,8 +874,6 @@ void DetectCharger(void)
 	}       
 }
 
-
-
 //============================================================================
 // Function    £ºTskRunkeyCheck
 // Description £º¼ì²âµã»ðÔ¿³××´Ì¬
@@ -888,17 +929,3 @@ uint8_t GetKeyrunState(void)
 {
    return (keyChgrState & 0x02);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

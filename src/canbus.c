@@ -1291,7 +1291,7 @@ void CAN_GUI_ConfigIsoThr(uint8_t *ptrData)
 void CAN_ClearImage(uint8_t *can_msg)
 {
     LedRedOff();
-    LedGreOff();
+    
 	if (can_msg[0] == 0x01 
 		&& can_msg[1] == 0x23               
 		&& can_msg[2] == 0x45 
@@ -1303,6 +1303,7 @@ void CAN_ClearImage(uint8_t *can_msg)
 	{
 		INTCON = 0x00;                            // Disable all interrupts
 		FLASH_Erase64Bytes( _IMG_APPHDR_ADDR );     // Invalidate AppImage
+		LedGreOn();
 		Reset();                                 
 	}
 }

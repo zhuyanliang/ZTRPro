@@ -16,6 +16,7 @@ void 	DetectPackOverCurrent(void);
 void 	DetectMaxMinCellTemp(void);
 void 	DetectCellsOverTemp(void);
 void 	DetectCellsUnderTemp(void);
+void 	DetectPCBOverTemp(void);
 void 	DetectCellTempDlt(void);
 void 	DetectPackUv(void);
 void 	DetectPackOv(void);

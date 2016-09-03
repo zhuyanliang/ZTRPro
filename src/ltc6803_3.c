@@ -72,7 +72,6 @@ uint8_t Ltc6803_ByteCrc8Cal(uint8_t crcByte)
 void Ltc6803_Init(void)
 {
 	uint8_t i;
-	uint32_t delay = g_SysTickMs;
 
 	TRISCbits.TRISC2 = 0;  //设置ltc6802片选管脚(C2)为输出
 
@@ -86,11 +85,11 @@ void Ltc6803_Init(void)
 		g_ArrayLtc6803Unit[i].GenrCfg.CDC = 1;
 		g_ArrayLtc6803Unit[i].CellBal = 0;        
 		g_ArrayLtc6803Unit[i].CellMask = 0x0FFF;
-		g_ArrayLtc6803Unit[i].UndVoltThre = 0;
-		g_ArrayLtc6803Unit[i].OveVoltThre = 0;
+		g_ArrayLtc6803Unit[i].UndVoltThre = 4200;
+		g_ArrayLtc6803Unit[i].OveVoltThre = 3000;
 	}
 
-	while(g_SysTickMs - delay < 300);  //延时300ms等待ltc6803电源稳定
+	DelayMs(300);//延时300ms等待ltc6803电源稳定
 
 	Ltc6803_WriteCfgRegGroup((Ltc6803_Parameter*)g_ArrayLtc6803Unit);
 }
@@ -367,14 +366,14 @@ uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *dev)
 		dev->Temp1 = 0;
 		dev->Temp2 = 0;
 		Ltc6803_ChipUnselect();
-		return(0);
+		return 0;
       }
       dev++;
    }
 
    Ltc6803_ChipUnselect();
 
-   return(1);
+   return 1;
 }
 
 //============================================================================

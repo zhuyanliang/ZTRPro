@@ -100,8 +100,8 @@ typedef union
 		unsigned COC :2;		// 充电过流
 		unsigned DOC :2;		// 放电过流  	
 		unsigned CIB :2;     	// 单体电池一致性   
-		unsigned RCOT :2;    	// 继电器充电高温     
-		unsigned RDOT :2;    	// 继电器放电高温    
+		unsigned PCBOT :2;    	// PCB板高温     
+		unsigned PCBUT :2;    	// PCB板低温    
 		unsigned POV :2;		// 整包总压高
 		unsigned PUV :2;		// 整包总压低
 		unsigned TIB :2;		// 电池温差大

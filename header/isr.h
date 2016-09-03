@@ -16,10 +16,7 @@ extern volatile uint32_t g_SysTickMs;
 
 
 void ISR_Init(void);
-uint16_t GetSysTickCounter(void);
 void DelayMs(uint16_t nTime);
-
-
 
 
 #ifdef	__cplusplus

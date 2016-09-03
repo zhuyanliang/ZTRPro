@@ -51,10 +51,8 @@ void Timer_Init(void)
 
 #ifdef USETIMER2
     
-	//
-	// Timer2配置，2us产生重置
 	// 用于产生SPI clock
-	PR2 = 9;
+	PR2 = 18;
 	T2CON = 0x04;
 	PIE1bits.TMR2IE = 0b0;	// 不允许定时器2的中断
 
