@@ -128,17 +128,11 @@ void main(void)
         // 查询优先级较高任务
         ClrWdt();
         TskCurrentMgt();
-        ClrWdt();
         Soc_AhAcc();
-        ClrWdt();
         Soh_ChargeAhAcc();
         ClrWdt();
         TskBatteryModeMgt();
-        ClrWdt();
         TskRelayMgt();
-        ClrWdt();
-        RelayAction();
-        ClrWdt();
         TskCanRecMsgToBuf();
         //DetectRunkey();
 		ClrWdt();
@@ -146,34 +140,37 @@ void main(void)
         {
 		case 0:
 			TskAfeMgt();
+			RelayAction();
 			break;
 		case 1:
 			TskSOCMgt();  // 该函数必须放在单体检测后执行 
 			DetectCharger();
-			ClrWdt();
 			break;
 		case 2:
 			TskCellTempMgt();
 			TskAmbTempMgt(); //电路板温度
+			RelayAction();
 			// 绝缘性检测
-			ClrWdt();
 			break;
 		case 3:
 			TskCanMgt();
 			TskFaultStoreMgt(); 
+			RelayAction();
 			break;
 		case 4:
 			TaskLedMgt();
+			RelayAction();
 			break;
-		default:
-			ClrWdt();
-            taskList = 0;  
+		case 5:
             Soh_UpdateCycleTime();  
+			taskList = 0;
             break;
+		default:
+			taskList = 0;
+			break;	
         }
         while(!PIR4bits.TMR4IF);
-        PIR4bits.TMR4IF = 0; 
-        //LedRedOff();
+            PIR4bits.TMR4IF = 0;       
         ClrWdt();
     }
 }
@@ -212,8 +209,9 @@ void System_Init(void)
     SystemSelftest();  		// 系统自检
     Soc_PowerOnAdjust();	// SOC 上电校准
     CurrentZeroOffsetAdjust();  // 上电执行电流零点校准
-    
+
 	WDTCONbits.SWDTE = 1; 	// 开启看门狗
+
     ClrWdt();
 
 }

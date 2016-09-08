@@ -142,19 +142,16 @@ void Ltc6803_OpenWireTest(void)
 		return;
 	}
 
-	for (i=0; i<2; i++)
+	for (i=0; i<ModuleAmount; i++)
 	{
-		for (j=0; j<12; j++)
+		for (j=0; j<CellsAmount; j++)
 		{
 			cellVoltTest[i][j] = (int16_t)g_ArrayLtc6803Unit[i].CellVolt[j];
 		}
 	}
 
-	for (i=0; i<15; i++)
-	{
-		Ltc6803_CellVoltCnvt(STOWAD_CMD, CELL_ALL);
-		DelayMs(300);
-	}
+	Ltc6803_CellVoltCnvt(STOWAD_CMD, CELL_ALL);
+	DelayMs(300);
 
 	if (!Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 	{
@@ -171,21 +168,20 @@ void Ltc6803_OpenWireTest(void)
 		g_SystemError.det_oc = 1;
 	}
 
-	for (i=1; i<10; i++)
+	for (i=1; i<9; i++)
 	{
-		if ((g_ArrayLtc6803Unit[0].CellVolt[i] - cellVoltTest[0][i] > 300)
-			|| (g_ArrayLtc6803Unit[0].CellVolt[i] >= 5370))
+		if ((g_ArrayLtc6803Unit[0].CellVolt[i] - cellVoltTest[0][i] > 200)
+			|| (g_ArrayLtc6803Unit[0].CellVolt[i] >= 5375))
 		{
 			g_SystemError.det_oc = 1;
+			break;
 		}
-	}
 
-	for (i=0; i<9; i++)
-	{
 		if ((g_ArrayLtc6803Unit[1].CellVolt[i] - cellVoltTest[1][i] > 300)
 			|| (g_ArrayLtc6803Unit[1].CellVolt[i] >= 5370))
 		{
 			g_SystemError.det_oc = 1;
+			break;
 		}
 	}
 }

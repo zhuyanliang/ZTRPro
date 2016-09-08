@@ -163,13 +163,12 @@ typedef union
 // 模拟前端管理数据类型
 typedef enum 
 {
-	AFE_CELL_VOLT_CNVT = 0,      
-	AFE_READ_CELL_VOLT,
+	AFE_VOLT_CNVT = 0,      
+	AFE_READ_VOLT,
+	AFE_VOLT_DETECT,
 	AFE_TEMP_CNVT,
-	AFE_CAL_CELL_VOLT,
-	AFE_BALANCE,
-	AFE_READ_TEMP,            
-	AFE_CAL_TEMP               
+	AFE_READ_TEMP, 
+	AFE_BALANCE           
 }AfeStateTypedef;
 
 

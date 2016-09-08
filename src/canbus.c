@@ -1569,13 +1569,11 @@ void TskCanSendTxBufMsg(void)
 	/* 缓冲区中是否有待发送的帧 */
 	while(!CAN_IsTxBufEmpty())
 	{
-		if (ECAN_TransmitMsg(&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr]))
-		{
-			if (++g_CanMsgBuf.TxBuf_Rptr >= CAN_BUF_DEEP)
-			{
-				g_CanMsgBuf.TxBuf_Rptr = 0;
-			}
-		}
+		ECAN_TransmitMsg(&g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Rptr]);
+        if (++g_CanMsgBuf.TxBuf_Rptr >= CAN_BUF_DEEP)
+        {
+            g_CanMsgBuf.TxBuf_Rptr = 0;
+        }
 	}
 }
 //----------------------------------------------------------------------------

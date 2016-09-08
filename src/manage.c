@@ -273,7 +273,7 @@ void TskCurrentMgt(void)
 {
 	uint8_t i;
 	static uint8_t curr_flg = 0;
-#if 0
+
 	ADC_Convert(CHANNEL_IHIGH);  
 	
 	while(ADCON0bits.GO);  //等待转换完成，大约需要15us
@@ -295,8 +295,10 @@ void TskCurrentMgt(void)
 
 	//根据ADC采样值，结合电流采集器的特性，获取真实的电流值
 	g_BatteryParameter.current = (int16_t)((((int32_t)g_AdcConvertValue.CurHighAvg * 6250) >> 12) - 3125) - g_CurrentOffset;
-#endif
-	g_BatteryParameter.current = 0;
+	//g_BatteryParameter.current = (int16_t)((g_AdcConvertValue.CurHighAvg-g_CurrentOffset)/3276.0 * 5000); 
+	//g_BatteryParameter.current = (int16_t)((g_AdcConvertValue.CurHighAvg-g_CurrentOffset)/4096.0 * 5000); 
+	//g_BatteryParameter.current -= 2500;
+	
 	//检查电池包电流是否超过限定值
 	DetectPackOverCurrent();
 }
@@ -678,65 +680,55 @@ void TskFaultStoreMgt(void)
 //============================================================================
 void TskBlncMgt(void)
 {
-#if (0)
-   static uint8_t BalFlg = 0;
-   static uint8_t n = 0;
-   static uint16_t TimeStamp = 0;
-   uint8_t i, j;
+	static uint8_t balFlg = 0;
+	static uint8_t n = 0;
+	static uint16_t timeStamp = 0;
+	uint8_t i, j;
 
-   if (BatteryMode == CHARGE)
-   {
-      if (getSysTickCounter() - TimeStamp > 5000)
-      {
-         BatteryUnit[0].CellBal = 0;
-         BatteryUnit[1].CellBal = 0;
+	if (g_BatteryMode == CHARGE)
+	{
+		if (g_SysTickMs - timeStamp > 5000)
+		{
+			g_ArrayLtc6803Unit[0].CellBal = 0;
+			g_ArrayLtc6803Unit[1].CellBal = 0;
 
-         if (((BatterySubMode == CHARGING)
-          && (BatteryParameter.CellVoltMin 
-                > CELL_BALANCE_OPEN_VOLT))
-         || ((BatterySubMode == CHARGE_END)
-          && (BatteryParameter.CellVoltMax 
-                > CELL_BALANCE_PROTECT_VOLT)))
-         {
-            if (BatteryParameter.CellVoltMin 
-                > CELL_BALANCE_OPEN_VOLT)
-            {
-               for (i=0; i<ModuleAmount; i++)
-               {
-                  for (j=0;j<(CellsAmount/ModuleAmount);j++)
-                  {
-                     if (BatteryUnit[i].CellVolt[j] - BatteryParameter.CellVoltMin 
-                         > CELL_BALANCE_THRESHOLD)
-                     {
-                        BatteryUnit[i].CellBal |= 0x0001 << j;
-                     }
-                  }
-               }
-            }
-         }
+			if (g_BatteryParameter.CellVoltMin 
+				> CELL_BALANCE_OPEN_VOLT)
+			{
+				for(i=0; i<ModuleAmount; i++)
+				{
+					for(j=0;j<(CellsAmount/ModuleAmount);j++)
+					{
+						if(g_ArrayLtc6803Unit[i].CellVolt[j] - g_BatteryParameter.CellVoltMin 
+							> CELL_BALANCE_THRESHOLD)
+						{
+							g_ArrayLtc6803Unit[i].CellBal |= 0x0001 << j;
+						}
+					}
+				}
+			}
 
-         Ltc6803_WriteCfgRegGroup(BatteryUnit);
+			Ltc6803_WriteCfgRegGroup(g_ArrayLtc6803Unit);
 
-         BalFlg = 1;
-         TimeStamp = getSysTickCounter();
-      }
-   }
-   else if (BalFlg == 1)
-   {
-      if (n++ < 3)
-      {
-         BatteryUnit[0].CellBal = 0;
-         BatteryUnit[1].CellBal = 0;
+			balFlg = 1;
+			timeStamp = g_SysTickMs;
+		}
+	}
+	else if(balFlg == 1)
+	{
+		if(n++ < 3)
+		{
+			g_ArrayLtc6803Unit[0].CellBal = 0;
+			g_ArrayLtc6803Unit[1].CellBal = 0;
 
-         Ltc6803_WriteCfgRegGroup(BatteryUnit);
-      }
-      else
-      {
-         BalFlg = 0;
-         n = 0;
-      }
-   }
-#endif
+			Ltc6803_WriteCfgRegGroup(g_ArrayLtc6803Unit);
+		}
+		else
+		{
+			balFlg = 0;
+			n = 0;
+		}
+	}
 }
 
 
@@ -752,29 +744,29 @@ void TskAfeMgt(void)
 {
 	static uint32_t timeStamp;
 	static uint8_t ComErrCnt = 5;
-	static AfeStateTypedef AfeState = AFE_CELL_VOLT_CNVT;
+	static AfeStateTypedef AfeState = AFE_VOLT_CNVT;
 	uint8_t i;
         
 	switch (AfeState)
 	{
-	case AFE_CELL_VOLT_CNVT:
+	case AFE_VOLT_CNVT:
 		Ltc6803_CellVoltCnvt(STCVAD_CMD, CELL_ALL);  //启动单体电压转换
 		timeStamp = g_SysTickMs;  //记录转换开始时间
-		AfeState = AFE_READ_CELL_VOLT;  //状态切换
+		AfeState = AFE_READ_VOLT;  //状态切换
 		break;
 
-	case AFE_READ_CELL_VOLT:
+	case AFE_READ_VOLT:
 		if (g_SysTickMs - timeStamp >= 10)  // 转换完成需要20ms
 		{
 			if (Ltc6803_ReadAllCellVolt((Ltc6803_Parameter *)g_ArrayLtc6803Unit))
 			{
-				AfeState = AFE_TEMP_CNVT;
+				AfeState = AFE_VOLT_DETECT;
 				g_SystemError.ltc_com = 0;
 				ComErrCnt = 5;
 			}
 			else
 			{
-				AfeState = AFE_CELL_VOLT_CNVT;
+				AfeState = AFE_VOLT_CNVT;
 
 				/* mcu与ltc6803 spi通信错误检测 */
 				if (ComErrCnt)
@@ -792,38 +784,37 @@ void TskAfeMgt(void)
 			}
 		}
 		break;
-
-	case AFE_TEMP_CNVT:
-		Ltc6803_TempCnvt(TEMP_ALL);  //启动温度转换
-		timeStamp = g_SysTickMs;  //记录转换开始时间
-		AfeState = AFE_CAL_CELL_VOLT;  //状态切换
-		break;
-
-	case AFE_CAL_CELL_VOLT:
+	case AFE_VOLT_DETECT:
 		DetectMaxMinAvgCellVolt();
 		DetectCellsOverVolt();
 		DetectCellsUnderVolt();
 		DetectCellsVoltImba();
 		DetectPackOv();
 		DetectPackUv();    
-		AfeState = AFE_BALANCE;//AFE_BALANCE;
+		AfeState = AFE_TEMP_CNVT;//AFE_BALANCE;
 		break;
-
-	case AFE_BALANCE:
-		TskBlncMgt();
-		AfeState = AFE_READ_TEMP;
+		
+	case AFE_TEMP_CNVT:
+		Ltc6803_TempCnvt(TEMP_ALL);  //启动温度转换
+		timeStamp = g_SysTickMs;  //记录转换开始时间
+		AfeState = AFE_READ_TEMP;  //状态切换
 		break;
 
 	case AFE_READ_TEMP:
         if(g_SysTickMs - timeStamp >= 10)
         {
             Ltc6803_ReadAllTemp((Ltc6803_Parameter *)g_ArrayLtc6803Unit);
-            AfeState = AFE_CELL_VOLT_CNVT;// AFE_CAL_TEMP;
+            AfeState = AFE_BALANCE;// AFE_CAL_TEMP;
         }
+		break;
+		
+	case AFE_BALANCE:
+		//TskBlncMgt();
+		AfeState = AFE_VOLT_CNVT;
 		break;
 
 	default:
-		AfeState = AFE_CELL_VOLT_CNVT;
+		AfeState = AFE_VOLT_CNVT;
 		break;
    }
 }
@@ -943,7 +934,18 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PRECHARGE:  //预充电状态
-		if((g_SystemWarning.all != 0) || (g_SystemError.all & 0x07))
+		if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -962,7 +964,18 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case DISCHARGE:  //放电状态
-		if ((g_SystemWarning.all != 0) || (g_SystemError.all & 0x07))
+		if ((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) 
+			|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -984,7 +997,18 @@ void TskBatteryModeMgt(void)
 
 	
 	case CHARGE:  //充电状态  
-			if ( (g_SystemWarning.all != 0) || (g_SystemError.all & 0x07))
+			if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL)  
+				|| (g_SystemError.all & 0x07))
 			{
 				g_BatteryMode = PROTECTION;
 			}
@@ -1002,7 +1026,18 @@ void TskBatteryModeMgt(void)
 			break;
 
 	case HEATING:
-		if ( (g_SystemWarning.all != 0) || (g_SystemError.all & 0x07) )
+		if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) 
+			|| (g_SystemError.all & 0x07) )
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -1019,7 +1054,18 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case COOLING:
-		if ( (g_SystemWarning.all != 0) || (g_SystemError.all & 0x07) )
+		if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) 
+			|| (g_SystemError.all & 0x07) )
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -1038,20 +1084,46 @@ void TskBatteryModeMgt(void)
 	case PROTECTION:  //故障状态 
 		if( GetChargeState() )  // 检查充电插头是否拔掉
 		{
-			if(g_SystemWarning.all != 0)
+			if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL))
 			{
-				if(DetectPackChargeFinish())
+				g_BatteryMode = PROTECTION;
+			}
+            else
+            {
+                if(DetectPackChargeFinish())
 					g_BatteryMode = PROTECTION;
 				else	
 					g_BatteryMode = CHARGE;
-			}
+            }
 		}
 		else
 		{
-			if (g_SystemWarning.all != 0)
+			if ((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) )
 			{
 				if(g_BatteryParameter.SOC)
-					g_BatteryMode = IDLE; 
+					g_BatteryMode = IDLE;
+				else
+					g_BatteryMode = PROTECTION;
 			}
 		}
 		break;

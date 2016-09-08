@@ -85,11 +85,11 @@ void Ltc6803_Init(void)
 		g_ArrayLtc6803Unit[i].GenrCfg.CDC = 1;
 		g_ArrayLtc6803Unit[i].CellBal = 0;        
 		g_ArrayLtc6803Unit[i].CellMask = 0x0FFF;
-		g_ArrayLtc6803Unit[i].UndVoltThre = 4200;
-		g_ArrayLtc6803Unit[i].OveVoltThre = 3000;
+		g_ArrayLtc6803Unit[i].UndVoltThre = 0;
+		g_ArrayLtc6803Unit[i].OveVoltThre = 0;
 	}
 
-	DelayMs(300);//延时300ms等待ltc6803电源稳定
+	DelayMs(500);//延时300ms等待ltc6803电源稳定
 
 	Ltc6803_WriteCfgRegGroup((Ltc6803_Parameter*)g_ArrayLtc6803Unit);
 }
@@ -120,12 +120,12 @@ uint8_t Ltc6803_BlockCrc8Cal(uint8_t *CrcByte, uint8_t len)
 // Parameters  : 
 // Returns     : none
 //============================================================================
-void Ltc6803_WriteCfgRegGroup(Ltc6803_Parameter *Dev)
+void Ltc6803_WriteCfgRegGroup(Ltc6803_Parameter *dev)
 {
 	uint8_t i, pec;
 	Ltc6803_Parameter *ptr;
 
-	ptr = Dev + ModuleAmount - 1;
+	ptr = dev + ModuleAmount - 1;
 
 	Ltc6803_ChipSelect();	// CSBI拉低
 

@@ -129,6 +129,7 @@ uint16_t ADC_AverageCalculate(uint16_t *TableEntry)
 void CurrentZeroOffsetAdjust(void)
 {
 	uint8_t i, j;
+	DelayMs(500);
 
 	for (j=0; j<8; j++)
 	{
@@ -140,11 +141,12 @@ void CurrentZeroOffsetAdjust(void)
 		}
 
 		g_AdcConvertValue.CurHighAvg = ADC_AverageCalculate(g_AdcConvertValue.CurHighRaw);
+        //g_CurrentOffset += (g_AdcConvertValue.CurHighAvg - 2048);
 		g_CurrentOffset += (int16_t)((((int32_t)g_AdcConvertValue.CurHighAvg * 6250) >> 12) - 3125);
 	}
 
 	g_CurrentOffset >>= 3;
-	g_CurrentOffset += 2;
+	//g_CurrentOffset += 2;
 }
 
 

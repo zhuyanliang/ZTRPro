@@ -7,12 +7,12 @@ void Led_Init(void)
 	TRISCbits.TRISC7 = 0;   // PCB板红灯控制端口
 	
 	TRISAbits.TRISA6 = 0;   // 充电LED闪烁控制端口
-	TRISCbits.TRISC1 = 0;	// 放电LED闪烁控制端口
+	TRISCbits.TRISC1 = 0;	// 放电LED控制端口
 
     LedRedOff();
     LedGreOff();
-    LedChgRedOff();
-    LedNormalOff();  
+    LedChargeOff();
+    LedRunOff();  
 }
 
 //============================================================================
@@ -27,35 +27,33 @@ void TaskLedMgt(void)
 
 	if (g_BatteryMode == PROTECTION) // 保护模式中 LedNormal 熄灭
 	{
-		LedNormalOff();
+		LedRunOff();
+		LedChargeOff();
 	}
-	else
+	else if(g_BatteryMode == DISCHARGE)
 	{
-		LedNormalOn();
-
-		if( g_BatteryMode == CHARGE ) // 充电模式中，LedChgRed闪烁
+		LedRunOn();
+		LedChargeOff();
+	}
+	else if(g_BatteryMode == CHARGE)
+	{
+		LedRunOff();
+		if(g_BatteryParameter.SOC > 99) // 充满电后长亮
 		{
-			if(g_BatteryParameter.SOC > 99) // 充满电后长亮
-			{
-				LedNormalOn(); 
-				return;
-			}
-			if (++timeStamp < 50)
-			{
-				LedNormalOn();            
-			}
-			else if (timeStamp < 100)
-			{
-				LedNormalOff();
-			}
-			else
-			{
-				timeStamp = 0;
-			}
+			LedChargeOn();
+			return;
+		}
+		if (++timeStamp < 50)
+		{
+			LedChargeOn();           
+		}
+		else if (timeStamp < 100)
+		{
+			LedChargeOff();
 		}
 		else
 		{
-			LedNormalOff(); 
+			timeStamp = 0;
 		}
 	}
 }

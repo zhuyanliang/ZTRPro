@@ -50,7 +50,7 @@ void RelayAction(void)
 
 	if(g_RelayActFlg.positive == TRUE)
 	{
-		RELAY_POSI_CTRL = 0b1;
+		RELAY_POSI_CTRL ^= 0b1;
 	}
 	else
 	{
@@ -59,7 +59,7 @@ void RelayAction(void)
 
 	if(g_RelayActFlg.negative == TRUE)
 	{
-		RELAY_NEGA_CTRL = 0b1;
+		RELAY_NEGA_CTRL ^= 0x0b1;
 	}
 	else
 	{
