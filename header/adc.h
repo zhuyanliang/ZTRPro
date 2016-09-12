@@ -73,7 +73,7 @@ const TempWarnClsDef CellCOTThrDefault = {40,  45, 0};
 const TempWarnClsDef CellCUTThrDefault = {5,   0,  0};
 const TempWarnClsDef CellDOTThrDefault = {60,  65, 0};
 const TempWarnClsDef CellDUTThrDefault = {-15,-20, 0};
-const TempWarnClsDef CellDLTThrDefault = {3,   5,  0};
+const TempWarnClsDef CellDLTThrDefault = {8,   15,  0};
 
 const CurrWarnClsDef BattCOCThrDefault = {-220, -250, 0}; // 0.1A
 const CurrWarnClsDef BattDOCThrDefault = {2000, 2500, 0}; // 0.1A

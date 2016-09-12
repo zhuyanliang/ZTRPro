@@ -131,7 +131,7 @@ void CurrentZeroOffsetAdjust(void)
 	uint8_t i, j;
 	DelayMs(500);
 
-	for (j=0; j<8; j++)
+	for(j=0; j<8; j++)
 	{
 		for (i=0; i<8; i++)
 		{
@@ -146,7 +146,7 @@ void CurrentZeroOffsetAdjust(void)
 	}
 
 	g_CurrentOffset >>= 3;
-	//g_CurrentOffset += 2;
+	//g_CurrentOffset += 4;
 }
 
 

@@ -121,8 +121,7 @@ void main(void)
 	static uint8_t taskList = 0;
 	
     System_Init();    
-    LedRedOn();
-    //LedGreOn();
+    LedGreOn();
     for(;;)
     {
         // 查询优先级较高任务

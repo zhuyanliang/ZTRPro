@@ -21,7 +21,7 @@ void Relay_Init(void)
 	RELAY_NEGA_CTRL = 0b0;
 	RELAY_PREC_CTRL = 0b0;
 	RELAY_FAN_CTRL  = 0b0;
-	RELAY_HEAT_CTRL = 0b0;
+	RELAY_HEAT_CTRL = 0b1;
 
 	g_RelayActFlg.precharge = FALSE;
 	g_RelayActFlg.positive = FALSE;
@@ -59,7 +59,7 @@ void RelayAction(void)
 
 	if(g_RelayActFlg.negative == TRUE)
 	{
-		RELAY_NEGA_CTRL ^= 0x0b1;
+		RELAY_NEGA_CTRL ^= 0b1;
 	}
 	else
 	{
@@ -68,20 +68,20 @@ void RelayAction(void)
 
 	if (g_RelayActFlg.heating == TRUE)
 	{
-		RELAY_HEAT_CTRL = 0b1;
+		//RELAY_HEAT_CTRL = 0b0;
 	}
 	else
 	{
-		RELAY_HEAT_CTRL = 0b0;
+		//RELAY_HEAT_CTRL = 0b1;
 	}   
 
 	if (g_RelayActFlg.cooling == TRUE)
 	{
-		RELAY_FAN_CTRL = 0b1;
+		//RELAY_FAN_CTRL = 0b1;
 	}
 	else
 	{
-		RELAY_FAN_CTRL = 0b0;
+		//RELAY_FAN_CTRL = 0b0;
 	}  
 
 	if(g_BatteryMode == CHARGE)
@@ -98,11 +98,11 @@ void RelayAction(void)
 	/* ·çÉÈÆôÍ£¹ÜÀí */
 	if (g_BatteryParameter.CellTempMax >= fan_on_temp)
 	{
-		FanOn();
+		//FanOn();
 	}
 	else if (g_BatteryParameter.CellTempMax <= fan_off_temp)
 	{
-		FanOff();
+		//FanOff();
 	}
 }
 

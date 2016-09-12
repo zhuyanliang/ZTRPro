@@ -9,8 +9,6 @@ void Led_Init(void)
 	TRISAbits.TRISA6 = 0;   // 充电LED闪烁控制端口
 	TRISCbits.TRISC1 = 0;	// 放电LED控制端口
 
-    LedRedOff();
-    LedGreOff();
     LedChargeOff();
     LedRunOff();  
 }
@@ -29,6 +27,11 @@ void TaskLedMgt(void)
 	{
 		LedRunOff();
 		LedChargeOff();
+		if((g_BatteryParameter.SOC > 99)&&
+			(GetChargeState)) // 充满电后长亮
+		{
+			LedChargeOn();
+		}
 	}
 	else if(g_BatteryMode == DISCHARGE)
 	{

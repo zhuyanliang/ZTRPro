@@ -124,7 +124,7 @@ void Soc_Update (void)
 		g_BatteryParameter.Ah = BATTERY_CAPACITY_TOTAL;
 		g_BatteryParameter.SOC = 100;
 	}
-	else if((g_BatteryParameter.CellVoltMin <= CELL_DISCHARGE_END_VOLT)  // 放电下止点校准
+	else if((g_BatteryParameter.CellVoltMin <= g_CellUVThr.cls_2)  // 放电下止点校准
 				&& (g_BatteryMode == DISCHARGE))
 	{
 		g_BatteryParameter.Ah = 0;
