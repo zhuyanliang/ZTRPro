@@ -98,7 +98,9 @@ void Soh_ChargeAhAcc(void)
 {
 	// зЂвт!!!
 	if (g_BatteryMode == CHARGE)
+	{
 		g_BatteryParameter.ChargedAh -= g_BatteryParameter.current;
+	}
 }
 
 //============================================================================

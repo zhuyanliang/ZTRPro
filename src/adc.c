@@ -74,10 +74,15 @@ void ADC_Convert(uint8_t channel)
 //============================================================================
 uint16_t ADC_GetCvtRaw(void)
 {
-	uint16_t adcRaw;  
+	uint16_t adcRaw = 0;  
 
-	adcRaw = ((uint16_t)ADRESH << 8) | ADRESL;
+	/*adcRaw = ((uint16_t)ADRESH << 8) | ADRESL;
+	adcRaw &= 0x0FFF;*/
+	adcRaw = ADRESH;
+	adcRaw <<= 8;
+	adcRaw |= ADRESL;
 	adcRaw &= 0x0FFF;
+	
 	return adcRaw;
 }
 
@@ -93,7 +98,11 @@ uint16_t ADC_GetConvertVal(void)
 	uint32_t temp;   
 
 	//adcRaw = ADRESL + ADRESH * 256;
-	adcRaw = ((uint16_t)ADRESH << 8) | ADRESL;
+	/*adcRaw = ((uint16_t)ADRESH << 8) | ADRESL;
+	adcRaw &= 0x0FFF;*/
+	adcRaw = ADRESH;
+	adcRaw <<= 8;
+	adcRaw |= ADRESL;
 	adcRaw &= 0x0FFF;
 	//精度是12位，参考电压5V  转换成电压值
 	temp = ((uint32_t)adcRaw*5000) >> 12;
@@ -146,7 +155,7 @@ void CurrentZeroOffsetAdjust(void)
 	}
 
 	g_CurrentOffset >>= 3;
-	//g_CurrentOffset += 4;
+	//g_CurrentOffset += 2;
 }
 
 

@@ -448,6 +448,12 @@ void TskFaultStoreMgt(void)
 {
 	static uint16_t state = 0;
 
+	ADC_Convert(CHANNEL_12VD);  
+	while(ADCON0bits.GO);  //等待转换完成，大约需要15us
+	//检测到BMS板电压低于12V，停止存储数据
+	if(ADC_GetCvtRaw()< 1840)// 2.25V/5V*4096 
+		return;
+	
 	switch(state & 0x0001) // 充电低压
 	{
 	case 0:
@@ -909,6 +915,7 @@ void TskBatteryModeMgt(void)
 			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
+			|| (g_BatteryParameter.SOC == 0)
 			|| (g_SystemError.all & 0x07))    
 		{
 			g_BatteryMode = PROTECTION;
@@ -1103,6 +1110,8 @@ void TskBatteryModeMgt(void)
 			{
 				if(g_BatteryParameter.SOC > 0)
 					g_BatteryMode = IDLE;
+				else
+					g_BatteryMode = PROTECTION;
 			}
 		}
 		
