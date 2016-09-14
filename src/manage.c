@@ -451,7 +451,7 @@ void TskFaultStoreMgt(void)
 	ADC_Convert(CHANNEL_12VD);  
 	while(ADCON0bits.GO);  //等待转换完成，大约需要15us
 	//检测到BMS板电压低于12V，停止存储数据
-	if(ADC_GetCvtRaw()< 1840)// 2.25V/5V*4096 
+	if(ADC_GetCvtRaw() < 1840)// 2.25V/5V*4096 
 		return;
 	
 	switch(state & 0x0001) // 充电低压
@@ -835,6 +835,7 @@ void TskAfeMgt(void)
 
 void TskCanMgt(void)
 {
+	
 	TskCanProcessRxMsg();           // 处理接收数据
 	CAN_BroadcastBufUpdate();       // 将要发送的广播数据更新到发送缓冲区
 	TskCanSendTxBufMsg();           // 发送发送缓冲区数据

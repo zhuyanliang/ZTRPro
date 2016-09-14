@@ -78,6 +78,8 @@
 #pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
 
 
+#define TEST_PIN
+
 void System_Init(void);
 
 //============================================================================
@@ -95,6 +97,10 @@ void SysClk_Init(void)
     OSCTUNEbits.PLLEN 	= 0b1;      //enable PLL  系统时钟运行在16MHz*4 
 }
 
+void TRIG_TEST(void)
+{
+	LATDbits.LATD0 ^= 0x1;   
+}
 
 //============================================================================
 // Function    ：GPIO_Init
@@ -106,7 +112,7 @@ void SysClk_Init(void)
 void GPIO_Init(void)
 {
 	TRISAbits.TRISA5 = 0;  // 外部绝缘检测PWM控制管脚
-
+	
 	TRISDbits.TRISD4 = 1;  // 设置keyrun脚为输入
 	TRISDbits.TRISD5 = 1;  // No Used
 	TRISDbits.TRISD6 = 1;  // 预留输入
@@ -126,6 +132,9 @@ void main(void)
     {
         // 查询优先级较高任务
         ClrWdt();
+        #ifdef TEST_PIN
+        TRIG_TEST(); 
+        #endif
         TskCurrentMgt();
         Soc_AhAcc();
         Soh_ChargeAhAcc();

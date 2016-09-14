@@ -130,7 +130,7 @@
 
 
 //=================================== struct definition =======================================
-#define  CAN_BUF_DEEP                    ((uint8_t)10)  //CAN缓冲区深度
+#define  CAN_BUF_DEEP                    ((uint8_t)16)  //CAN缓冲区深度
 
 typedef struct
 {

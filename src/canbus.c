@@ -1425,39 +1425,39 @@ void CAN_BroadcastBufUpdate(void)
 { 
     switch (brdTxTimer++)
     {
-        case 10:
+        case 5:
             CAN_PutBattWarnToTxBuf();   
         break;
-        case 20:
+        case 10:
             CAN_PutBattInfoToBuf();
         break;
-        case 30:
+        case 15:
             CAN_PutCellVoltPosToTxBuf();       
         break;
-        case 40:
+        case 20:
             CAN_PutCellTempPosToTxBuf();          
         break;
-        case 50:
+        case 25:
             CAN_CellVoltage1ToTxBuf(); 
         break;
-        case 60:
+        case 30:
             CAN_CellVoltage2ToTxBuf();    
         break;
-        case 70:
+        case 35:
             CAN_CellVoltage3ToTxBuf();
         break;
-        case 80:
+        case 40:
             CAN_CellVoltage4ToTxBuf();
         break;
-        case 90:   
+        case 45:   
             CAN_CellVoltage5ToTxBuf();
             break;  
-        case 100:
+        case 50:
             CAN_CellTempToTxBuf();  
             brdTxTimer = 0;          
         break;
        default: 
-            if (brdTxTimer > 100)
+            if (brdTxTimer > 50)
             {
                 brdTxTimer = 0;  
             }        
@@ -1586,6 +1586,8 @@ void TskCanRecMsgToBuf(void)
 {
 	if (CAN_IsRxBufFull())
 	{
+		RXB0CONbits.RXFUL = 0; // 如果接受缓冲区满，仍然接受数据，但丢弃
+		RXB1CONbits.RXFUL = 0;
 		return;
 	}
 
