@@ -97,11 +97,6 @@ void SysClk_Init(void)
     OSCTUNEbits.PLLEN 	= 0b1;      //enable PLL  系统时钟运行在16MHz*4 
 }
 
-void TRIG_TEST(void)
-{
-	LATDbits.LATD0 ^= 0x1;   
-}
-
 //============================================================================
 // Function    ：GPIO_Init
 // Description ：单片机部分IO管脚初始化，部分IO的初始化可能在相应模块初始化函
@@ -119,6 +114,12 @@ void GPIO_Init(void)
 	TRISDbits.TRISD7 = 1;  //充电器充电检测引脚
 }
 
+void TRIG_TEST(void)
+{
+	LATDbits.LATD0 ^= 0b1;   
+}
+
+
 /*
  * 
  */
@@ -132,11 +133,9 @@ void main(void)
     {
         // 查询优先级较高任务
         ClrWdt();
-        #ifdef TEST_PIN
-        TRIG_TEST(); 
-        #endif
         TskCurrentMgt();
-        Soc_AhAcc();
+		TRIG_TEST();
+		Soc_AhAcc();
         Soh_ChargeAhAcc();
         ClrWdt();
         TskBatteryModeMgt();
@@ -151,8 +150,7 @@ void main(void)
 			RelayAction();
 			break;
 		case 1:
-			TskSOCMgt();  // 该函数必须放在单体检测后执行 
-			DetectCharger();
+			TskSOCMgt();  
 			break;
 		case 2:
 			TskCellTempMgt();
@@ -161,20 +159,21 @@ void main(void)
 			// 绝缘性检测
 			break;
 		case 3:
-			TskCanMgt();
+			DetectCharger();
 			TskFaultStoreMgt(); 
 			RelayAction();
 			break;
 		case 4:
 			TaskLedMgt();
+			TskCanMgt();
 			RelayAction();
 			break;
 		case 5:
             Soh_UpdateCycleTime();
-			if(g_BatteryMode == CHARGE)
+			/*if(g_BatteryMode == CHARGE)
 			{
 				Soh_StoreChargedAh();
-			}
+			}*/
 			taskList = 0;
             break;
 		default:
@@ -182,7 +181,7 @@ void main(void)
 			break;	
         }
         while(!PIR4bits.TMR4IF);
-            PIR4bits.TMR4IF = 0;       
+        PIR4bits.TMR4IF = 0;       
         ClrWdt();
     }
 }

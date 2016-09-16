@@ -22,10 +22,10 @@ void interrupt ISR_High_Handler(void)
         TMR1H = TMR1H_INIT;
         TMR1L = TMR1L_INIT;
         PIR1bits.TMR1IF = 0;
-
+		
         g_SysTickMs++;
-
 	}
+	
 	INTCONbits.GIE   = 1;
 }
 

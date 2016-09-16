@@ -56,6 +56,7 @@ void DetectPackOverCurrent(void)
 		}
 		return;
 	}
+	
 	// 放电过流
 	if (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
 	{
@@ -945,7 +946,7 @@ void DetectCharger(void)
 		{
 			keyChgrState &= ~0x01;
 		}
-	}       
+	} 
 }
 
 //============================================================================

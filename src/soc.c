@@ -159,13 +159,14 @@ void Soc_Update (void)
 //============================================================================
 void Soc_AhAcc(void)
 {
-   if((g_BatteryMode == CHARGE) || (g_BatteryMode == DISCHARGE))
-   {
-	   if ( (g_BatteryParameter.current > 3) || (g_BatteryParameter.current < -3) )
-	   {
-	      g_BatteryParameter.Accumulator += g_BatteryParameter.current;
-	   }
+	if((g_BatteryMode == CHARGE) || (g_BatteryMode == DISCHARGE))
+	{
+		if ( (g_BatteryParameter.current > 3) || (g_BatteryParameter.current < -3) )
+		{
+			g_BatteryParameter.Accumulator += g_BatteryParameter.current;
+		}
 	}
+
 }
 
 

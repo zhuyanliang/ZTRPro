@@ -298,7 +298,6 @@ void TskCurrentMgt(void)
 	//g_BatteryParameter.current = (int16_t)((g_AdcConvertValue.CurHighAvg-g_CurrentOffset)/3276.0 * 5000); 
 	//g_BatteryParameter.current = (int16_t)((g_AdcConvertValue.CurHighAvg-g_CurrentOffset)/4096.0 * 5000); 
 	//g_BatteryParameter.current -= 2500;
-	
 	//检查电池包电流是否超过限定值
 	DetectPackOverCurrent();
 }
@@ -447,7 +446,7 @@ void TskRelayMgt(void)
 void TskFaultStoreMgt(void)
 {
 	static uint16_t state = 0;
-
+		
 	ADC_Convert(CHANNEL_12VD);  
 	while(ADCON0bits.GO);  //等待转换完成，大约需要15us
 	//检测到BMS板电压低于12V，停止存储数据
@@ -1001,6 +1000,7 @@ void TskBatteryModeMgt(void)
 	case CHARGE:  //充电状态  
 			if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)

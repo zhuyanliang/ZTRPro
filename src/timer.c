@@ -81,7 +81,6 @@ void Timer_Init(void)
 	T4CON = 0x4F;
 	PIR4bits.TMR4IF = 0;
 	PIE4bits.TMR4IE = 0;
-	
 #endif
 
 

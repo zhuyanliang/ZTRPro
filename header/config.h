@@ -129,7 +129,7 @@ extern "C" {
 #define CELL_CUT_FAULT_DLY				((uint8_t)(1000 / 330))
 #define CELL_TIB_FAULT_DLY              ((uint8_t)(2000 / 330))
 #define PACK_DOC_FAULT_DLY				((uint16_t)(3000 >> 1))
-#define PACK_COC_FAULT_DLY				((uint16_t)(1000 >> 1))
+#define PACK_COC_FAULT_DLY				((uint16_t)(20 >> 1))
 #define SYS_ISO_FAULT_DLY               ((uint8_t)(1000 / 20))   
 #define RELAY_ACTION_DELAY_1S           ((uint16_t)100)
 #define RELAY_ACTION_DELAY_5S           ((uint16_t)500)
