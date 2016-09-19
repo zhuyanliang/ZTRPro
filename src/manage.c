@@ -379,20 +379,12 @@ void TskRelayMgt(void)
 		break;
 
 	case DISCHARGE:  //放电状态
-		if(g_BatteryParameter.CellTempAvg >= (DischargeNeedCoolTemp-5))
-			g_RelayActFlg.cooling = TRUE;
-		else
-			g_RelayActFlg.cooling = FALSE;
 		g_RelayActFlg.precharge = FALSE;
 		g_RelayActFlg.positive = TRUE;
 		g_RelayActFlg.negative = TRUE;
 		break;
 	
 	case CHARGE:  //充电状态
-		//if(g_BatteryParameter.CellTempAvg >= (ChargeNeedCoolTemp-5))
-			//g_RelayActFlg.cooling = TRUE;
-		//else
-			//g_RelayActFlg.cooling = FALSE;	
 		g_RelayActFlg.precharge = FALSE;
 		if(g_BatteryParameter.SOC > 99) // 充电完成
 		{
@@ -404,22 +396,6 @@ void TskRelayMgt(void)
 			g_RelayActFlg.positive = TRUE;
 			g_RelayActFlg.negative = TRUE;
 		}
-		break;
-
-	case HEATING:
-		g_RelayActFlg.heating = TRUE;
-		g_RelayActFlg.cooling = FALSE;
-        g_RelayActFlg.precharge = FALSE;
-		g_RelayActFlg.positive = FALSE;
-		g_RelayActFlg.negative = FALSE;
-		break;
-
-	case COOLING:
-		g_RelayActFlg.heating = FALSE;
-		g_RelayActFlg.cooling = TRUE;
-        g_RelayActFlg.precharge = FALSE;
-		g_RelayActFlg.positive = FALSE;
-		g_RelayActFlg.negative = FALSE;
 		break;
 
 	case PROTECTION:  //保护状态：可能是故障保护、放电截止保护、充电截止保护等等 
@@ -939,7 +915,7 @@ void TskBatteryModeMgt(void)
 			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
 			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
@@ -969,7 +945,7 @@ void TskBatteryModeMgt(void)
 			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
 			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
@@ -1003,7 +979,7 @@ void TskBatteryModeMgt(void)
 				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+				|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
 				|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
@@ -1027,64 +1003,8 @@ void TskBatteryModeMgt(void)
 			}
 			break;
 
-	case HEATING:
-		if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) 
-			|| (g_SystemError.all & 0x07) )
-		{
-			g_BatteryMode = PROTECTION;
-		}
-		if ((g_BatteryParameter.CellTempMin > ChargeNeedHeatTemp) && GetChargeState())
-		{
-			g_BatteryMode = CHARGE;
-		}
-		else if((g_BatteryParameter.CellTempMin > ChargeNeedHeatTemp) 
-				&& (!GetChargeState()))
-		{
-			g_BatteryMode = IDLE;
-		}             
-		   
-		break;
-
-	case COOLING:
-		if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) 
-			|| (g_SystemError.all & 0x07) )
-		{
-			g_BatteryMode = PROTECTION;
-		}
-		else if ((g_BatteryParameter.CellTempMax<ChargeNeedCoolTemp)
-				&& GetChargeState())
-		{
-			g_BatteryMode = CHARGE;
-		}
-		else if((g_BatteryParameter.CellTempMax<DischargeNeedCoolTemp) 
-				&&(!GetChargeState()))
-		{
-			g_BatteryMode = IDLE;
-		}
-		break;
-
 	case PROTECTION:  //保护状态 
-		if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+		if((g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
 			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
@@ -1097,6 +1017,11 @@ void TskBatteryModeMgt(void)
 			|| g_SystemError.all)
 		{
 			g_BatteryMode = PROTECTION;
+			if((g_SystemWarning.CUV == WARNING_THIRD_LEVEL) 
+				&&(GetChargeState()))
+			{
+				g_BatteryMode = CHARGE;
+			}
 		}
 		else
 		{

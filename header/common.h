@@ -117,8 +117,6 @@ typedef enum
 	PRECHARGE,
 	DISCHARGE, 
 	CHARGE,
-	HEATING,
-	COOLING,
 	PROTECTION
 }BatteryModeTypedef;
 

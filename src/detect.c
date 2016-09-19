@@ -593,11 +593,11 @@ void DetectCellsUnderVolt(void)
 {
 	static uint8_t uvErrCnt = 0;
 
-	if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+	if (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
 	{
-		if(g_BatteryParameter.CellVoltMin > g_CellUVThr.cls_2)
+		if(g_BatteryParameter.CellVoltMin > RELAYOPENVOLT)
 		{
-			if (uvErrCnt > CELL_UV_FAULT_DLY)
+			if(uvErrCnt > CELL_UV_FAULT_DLY)
 			{
 				uvErrCnt = 0;
 				g_SystemWarning.CUV = 0;
@@ -610,7 +610,7 @@ void DetectCellsUnderVolt(void)
 		return;
 	}
 
-	if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_2)
+	if(g_BatteryParameter.CellVoltMin < RELAYOPENVOLT)
 	{
 		if (uvErrCnt > CELL_UV_FAULT_DLY)
 		{
@@ -618,13 +618,26 @@ void DetectCellsUnderVolt(void)
 			{
 			    g_ProtectDelayCnt = RELAY_ACTION_DELAY_20S;
 			}
-			g_SystemWarning.CUV = WARNING_SECOND_LEVEL;
+			g_SystemWarning.CUV = WARNING_THIRD_LEVEL;
 		}
 		else
 		{
 			uvErrCnt++;
 		}
 	}
+	else if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_2)
+	{
+		if (uvErrCnt > CELL_UV_FAULT_DLY)
+		{
+			g_SystemWarning.CUV = WARNING_SECOND_LEVEL;
+			uvErrCnt = 0;
+		}
+		else
+		{
+			uvErrCnt++;
+		}
+	}
+		
 	else if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_1)
 	{
 		if (uvErrCnt > CELL_UV_WARNING_DLY)

@@ -42,15 +42,6 @@ extern "C" {
 #define FAN_ON_TEMPERATURE_DISCHARGE       55                // 定义充电状态风扇开启温度为55℃
 #define FAN_OFF_TEMPERATURE_DISCHARGE      50                // 定义充电状态风扇关闭温度为50℃
 
-// 需要启动加热的温度
-#define ChargeNeedHeatTemp 			0  
-#define DischargeNeedHeatTemp 		-15 
-
-
-// 需要启动散热的温度
-#define ChargeNeedCoolTemp				40 
-#define DischargeNeedCoolTemp			45 
-
 // PCB板子温度阀值
 #define PcbOverTempValue				60
 #define PcbUnderTempValue				0
@@ -58,7 +49,11 @@ extern "C" {
 //============================ 定义故障报警等级 ==============================
 #define  WARNING_FIRST_LEVEL                 1
 #define  WARNING_SECOND_LEVEL                2
+#define  WARNING_THIRD_LEVEL                 3
 
+
+//停止放电电压
+#define RELAYOPENVOLT  2850
 
 /* 电池包基本信息 */
 #define  CELL_SERIES_NUM               ((uint8_t)20)     	// 定义电池串数

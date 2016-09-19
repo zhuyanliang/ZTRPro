@@ -73,16 +73,7 @@ void RelayAction(void)
 	else
 	{
 		//RELAY_HEAT_CTRL = 0b1;
-	}   
-
-	if (g_RelayActFlg.cooling == TRUE)
-	{
-		//RELAY_FAN_CTRL = 0b1;
-	}
-	else
-	{
-		//RELAY_FAN_CTRL = 0b0;
-	}  
+	}     
 
 	if(g_BatteryMode == CHARGE)
 	{
@@ -98,11 +89,11 @@ void RelayAction(void)
 	/* ·çÉÈÆôÍ£¹ÜÀí */
 	if (g_BatteryParameter.CellTempMax >= fan_on_temp)
 	{
-		//FanOn();
+		FanOn();
 	}
 	else if (g_BatteryParameter.CellTempMax <= fan_off_temp)
 	{
-		//FanOff();
+		FanOff();
 	}
 }
 
