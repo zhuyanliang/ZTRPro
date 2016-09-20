@@ -432,7 +432,7 @@ void TskFaultStoreMgt(void)
 	switch(state & 0x0001) // ³äµçµÍÑ¹
 	{
 	case 0:
-		if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
 		{
 			if (g_FaultRecord.cuv < FAULT_REC_LIMIT)
 			{
@@ -445,7 +445,7 @@ void TskFaultStoreMgt(void)
 		break;
 
 	case 1:
-		if (g_SystemWarning.CUV != WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.CUV != WARNING_THIRD_LEVEL)
 		{
 			state &= ~0x0001;
 		}
@@ -911,8 +911,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PRECHARGE:  //Ô¤³äµç×´Ì¬
-		if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+		if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
@@ -941,8 +940,7 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case DISCHARGE:  //·Åµç×´Ì¬
-		if ((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+		if ((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
@@ -974,8 +972,7 @@ void TskBatteryModeMgt(void)
 
 	
 	case CHARGE:  //³äµç×´Ì¬  
-			if ( (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+			if ( (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)

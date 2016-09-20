@@ -150,7 +150,7 @@ uint32_t CAN_Generate_ID(uint8_t des_addr, uint8_t msg_fc);
 BOOL CAN_IsTxBufFull(void);
 void CAN_BatteryStateToTxBuf(void);
 void CAN_BatteryStateToTxBuf(void);
-void CAN_PutBattWarnToTxBuf(void);
+void CAN_PutBattWarnErrorToTxBuf(void);
 void CAN_PutBattInfoToBuf(void);
 void CAN_PutCellVoltPosToTxBuf(void);
 void CAN_PutCellTempPosToTxBuf(void); 

@@ -185,7 +185,7 @@ BOOL CAN_IsRxBufEmpty(void)
  * 将电池包的警告信息放入发送缓冲区
  * 
  */
-void CAN_PutBattWarnToTxBuf(void)
+void CAN_PutBattWarnErrorToTxBuf(void)
 {
 	if(CAN_IsTxBufFull())
 		return;
@@ -1426,7 +1426,7 @@ void CAN_BroadcastBufUpdate(void)
     switch (brdTxTimer++)
     {
         case 5:
-            CAN_PutBattWarnToTxBuf();   
+            CAN_PutBattWarnErrorToTxBuf();   
         break;
         case 10:
             CAN_PutBattInfoToBuf();

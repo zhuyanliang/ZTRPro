@@ -169,11 +169,19 @@ void main(void)
 			RelayAction();
 			break;
 		case 5:
-            Soh_UpdateCycleTime();
-			/*if(g_BatteryMode == CHARGE)
 			{
-				Soh_StoreChargedAh();
-			}*/
+				static uint8_t cnt = 0;
+				cnt++;
+				if(cnt>= 50)
+				{
+					cnt = 0;				
+					if(g_BatteryMode == CHARGE)
+					{
+						Soh_UpdateCycleTime();	
+						Soh_StoreChargedAh();
+					}
+				}
+			}
 			taskList = 0;
             break;
 		default:

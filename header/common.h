@@ -208,7 +208,6 @@ const  VoltWarnClsDef CellIBMThrDefault = {200,300,0};
 const  VoltWarnClsDef PackOVThrDefault = {820,830,0}; // 0.1V
 const  VoltWarnClsDef PackUVThrDefault = {600,550,0}; // 0.1V
 
-
 //-------------------------- 常用宏定义 --------------------------
 
 // 1.求最大值和最小值 
