@@ -24,6 +24,7 @@ void TskBatteryModeMgt(void);
 void TskBlncMgt(void);
 void TskAfeMgt(void);
 void TskAmbTempMgt(void);
+void TskSohMgt(void);
 
 
 

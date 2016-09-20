@@ -169,19 +169,7 @@ void main(void)
 			RelayAction();
 			break;
 		case 5:
-			{
-				static uint8_t cnt = 0;
-				cnt++;
-				if(cnt>= 50)
-				{
-					cnt = 0;				
-					if(g_BatteryMode == CHARGE)
-					{
-						Soh_UpdateCycleTime();	
-						Soh_StoreChargedAh();
-					}
-				}
-			}
+			TskSohMgt();
 			taskList = 0;
             break;
 		default:

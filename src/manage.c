@@ -400,7 +400,7 @@ void TskRelayMgt(void)
 
 	case PROTECTION:  //保护状态：可能是故障保护、放电截止保护、充电截止保护等等 
 		g_RelayActFlg.precharge = FALSE;
-		if (!g_ProtectDelayCnt--)
+		if ((g_ProtectDelayCnt--) <= 0)
 		{              
 			g_RelayActFlg.positive = FALSE;
 			g_RelayActFlg.negative = FALSE;
@@ -432,7 +432,7 @@ void TskFaultStoreMgt(void)
 	switch(state & 0x0001) // 充电低压
 	{
 	case 0:
-		if (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
+		if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 		{
 			if (g_FaultRecord.cuv < FAULT_REC_LIMIT)
 			{
@@ -445,7 +445,7 @@ void TskFaultStoreMgt(void)
 		break;
 
 	case 1:
-		if (g_SystemWarning.CUV != WARNING_THIRD_LEVEL)
+		if (g_SystemWarning.CUV != WARNING_SECOND_LEVEL)
 		{
 			state &= ~0x0001;
 		}
@@ -914,7 +914,7 @@ void TskBatteryModeMgt(void)
 		if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
@@ -943,7 +943,7 @@ void TskBatteryModeMgt(void)
 		if ((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
@@ -976,7 +976,7 @@ void TskBatteryModeMgt(void)
 				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
+				|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
@@ -1001,7 +1001,7 @@ void TskBatteryModeMgt(void)
 			break;
 
 	case PROTECTION:  //保护状态 
-		if((g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
+		if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
@@ -1014,7 +1014,7 @@ void TskBatteryModeMgt(void)
 			|| g_SystemError.all)
 		{
 			g_BatteryMode = PROTECTION;
-			if((g_SystemWarning.CUV == WARNING_THIRD_LEVEL) 
+			if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL) 
 				&&(GetChargeState()))
 			{
 				g_BatteryMode = CHARGE;
@@ -1045,6 +1045,35 @@ void TskBatteryModeMgt(void)
     }
 }
 
+
+void TskSohMgt(void)
+{
+	static uint8_t cnt = 0;
+	static uint8_t state = 0;
+	
+	if(g_BatteryMode == CHARGE)
+	{
+		cnt++;
+		if(cnt>= 50)
+		{
+			switch(state)
+			{
+			case 0:
+				Soh_UpdateCycleTime();	
+				state = 1;
+				break;
+			case 1:
+				Soh_StoreChargedAh();
+				state = 0;
+				cnt = 0;
+				break;
+			default:
+				state = 0;
+				break;
+			}
+		}
+	}	
+}
 
 
 

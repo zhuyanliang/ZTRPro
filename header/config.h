@@ -49,11 +49,6 @@ extern "C" {
 //============================ 定义故障报警等级 ==============================
 #define  WARNING_FIRST_LEVEL                 1
 #define  WARNING_SECOND_LEVEL                2
-#define  WARNING_THIRD_LEVEL                 3
-
-
-//停止放电电压
-#define RELAYOPENVOLT  2850
 
 /* 电池包基本信息 */
 #define  CELL_SERIES_NUM               ((uint8_t)20)     	// 定义电池串数
@@ -98,38 +93,38 @@ extern "C" {
 
 //======================================================================================
 /* 系统报警时间设置 */
-#define CELL_OV_WARNING_DLY				((uint8_t)(3000 / 70))
-#define CELL_UV_WARNING_DLY				((uint8_t)(3000 / 70))
-#define CELL_IB_WARNING_DLY				((uint8_t)(3000 / 70))
-#define CELL_DOT_WARNING_DLY			((uint8_t)(3000 / 330))
-#define CELL_DUT_WARNING_DLY			((uint8_t)(3000 / 330))
-#define CELL_COT_WARNING_DLY			((uint8_t)(3000 / 330))
-#define CELL_CUT_WARNING_DLY			((uint8_t)(3000 / 330))
-#define CELL_TIB_WARNING_DLY            ((uint8_t)(3000 / 330))
-#define PACK_DOC_WARNING_DLY			((uint16_t)(15000 >> 1))
-#define PACK_COC_WARNING_DLY			((uint16_t)(3000 >> 1))
-#define PACK_UV_WARNING_DLY             ((uint8_t)(5000 / 330))
-#define PACK_OV_WARNING_DLY             ((uint8_t)(5000 / 330))
-#define SYS_ISO_WARNING_DLY             ((uint8_t)(5000 / 20)) 
+#define CELL_OV_WARNING_DLY				((uint8_t)30)
+#define CELL_UV_WARNING_DLY				((uint8_t)30)
+#define CELL_IB_WARNING_DLY				((uint8_t)30)
+#define CELL_DOT_WARNING_DLY			((uint8_t)30)
+#define CELL_DUT_WARNING_DLY			((uint8_t)12)
+#define CELL_COT_WARNING_DLY			((uint8_t)12)
+#define CELL_CUT_WARNING_DLY			((uint8_t)12)
+#define CELL_TIB_WARNING_DLY            ((uint8_t)12)
+#define PACK_DOC_WARNING_DLY			((uint16_t)7500)
+#define PACK_COC_WARNING_DLY			((uint16_t)1500)
+#define PACK_UV_WARNING_DLY             ((uint8_t)18)
+#define PACK_OV_WARNING_DLY             ((uint8_t)18)
+#define SYS_ISO_WARNING_DLY             ((uint8_t)25) 
 
 /* 系统故障时间设置 */
-#define CELL_OV_FAULT_DLY				((uint8_t)(1000 / 70))
-#define CELL_UV_FAULT_DLY				((uint8_t)(1000 / 70))
-#define CELL_IB_FAULT_DLY				((uint8_t)(1000 / 70))            
-#define PACK_UV_FAULT_DLY               ((uint8_t)(3000 / 70))
-#define PACK_OV_FAULT_DLY               ((uint8_t)(3000 / 70))
-#define CELL_DOT_FAULT_DLY				((uint8_t)(1000 / 330))
-#define CELL_DUT_FAULT_DLY				((uint8_t)(1000 / 330))
-#define CELL_COT_FAULT_DLY				((uint8_t)(1000 / 330))
-#define CELL_CUT_FAULT_DLY				((uint8_t)(1000 / 330))
-#define CELL_TIB_FAULT_DLY              ((uint8_t)(2000 / 330))
-#define PACK_DOC_FAULT_DLY				((uint16_t)(3000 >> 1))
-#define PACK_COC_FAULT_DLY				((uint16_t)(20 >> 1))
-#define SYS_ISO_FAULT_DLY               ((uint8_t)(1000 / 20))   
-#define RELAY_ACTION_DELAY_1S           ((uint16_t)100)
-#define RELAY_ACTION_DELAY_5S           ((uint16_t)500)
-#define RELAY_ACTION_DELAY_10S          ((uint16_t)1000)
-#define RELAY_ACTION_DELAY_20S          ((uint16_t)2000)
+#define CELL_OV_FAULT_DLY				((uint8_t)30)
+#define CELL_UV_FAULT_DLY				((uint8_t)30)
+#define CELL_IB_FAULT_DLY				((uint8_t)30)            
+#define PACK_UV_FAULT_DLY               ((uint8_t)40)
+#define PACK_OV_FAULT_DLY               ((uint8_t)40)
+#define CELL_DOT_FAULT_DLY				((uint8_t)3)
+#define CELL_DUT_FAULT_DLY				((uint8_t)3)
+#define CELL_COT_FAULT_DLY				((uint8_t)3)
+#define CELL_CUT_FAULT_DLY				((uint8_t)3)
+#define CELL_TIB_FAULT_DLY              ((uint8_t)6)
+#define PACK_DOC_FAULT_DLY				((uint16_t)1500)
+#define PACK_COC_FAULT_DLY				((uint16_t)10)
+#define SYS_ISO_FAULT_DLY               ((uint8_t)50)   
+#define RELAY_ACTION_DELAY_1S           ((uint16_t)500)
+#define RELAY_ACTION_DELAY_5S           ((uint16_t)2500)
+#define RELAY_ACTION_DELAY_10S          ((uint16_t)5000)
+#define RELAY_ACTION_DELAY_20S          ((uint16_t)10000)
 
 //======================================================================================
 /* 故障保护恢复点设置 */

@@ -593,9 +593,9 @@ void DetectCellsUnderVolt(void)
 {
 	static uint8_t uvErrCnt = 0;
 
-	if (g_SystemWarning.CUV == WARNING_THIRD_LEVEL)
+	if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.CellVoltMin > RELAYOPENVOLT)
+		if(g_BatteryParameter.CellVoltMin > g_CellUVThr.cls_2)
 		{
 			if(uvErrCnt > CELL_UV_FAULT_DLY)
 			{
@@ -610,7 +610,7 @@ void DetectCellsUnderVolt(void)
 		return;
 	}
 
-	if(g_BatteryParameter.CellVoltMin < RELAYOPENVOLT)
+	if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_2)
 	{
 		if (uvErrCnt > CELL_UV_FAULT_DLY)
 		{
@@ -618,19 +618,7 @@ void DetectCellsUnderVolt(void)
 			{
 			    g_ProtectDelayCnt = RELAY_ACTION_DELAY_20S;
 			}
-			g_SystemWarning.CUV = WARNING_THIRD_LEVEL;
-		}
-		else
-		{
-			uvErrCnt++;
-		}
-	}
-	else if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_2)
-	{
-		if (uvErrCnt > CELL_UV_FAULT_DLY)
-		{
 			g_SystemWarning.CUV = WARNING_SECOND_LEVEL;
-			uvErrCnt = 0;
 		}
 		else
 		{
