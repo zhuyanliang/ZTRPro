@@ -114,9 +114,9 @@ void DetectPackOverCurrent(void)
 			if (ocErrCnt > PACK_DOC_FAULT_DLY)
 			{
 				g_SystemWarning.DOC = WARNING_SECOND_LEVEL;
-				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
+				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_3S)
 				{
-					g_ProtectDelayCnt = RELAY_ACTION_DELAY_10S;
+					g_ProtectDelayCnt = RELAY_ACTION_DELAY_3S;
 				}
 			}
 			else

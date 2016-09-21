@@ -122,6 +122,7 @@ extern "C" {
 #define PACK_COC_FAULT_DLY				((uint16_t)10)
 #define SYS_ISO_FAULT_DLY               ((uint8_t)50)   
 #define RELAY_ACTION_DELAY_1S           ((uint16_t)500)
+#define RELAY_ACTION_DELAY_3S           ((uint16_t)1500)
 #define RELAY_ACTION_DELAY_5S           ((uint16_t)2500)
 #define RELAY_ACTION_DELAY_10S          ((uint16_t)5000)
 #define RELAY_ACTION_DELAY_20S          ((uint16_t)10000)

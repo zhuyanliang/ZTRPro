@@ -202,11 +202,11 @@ extern TempWarnClsDef 	g_PACKDOTThr;	// 电池包放电高温
 extern TempWarnClsDef 	g_PACKDUTThr;	// 电池包放电低温
 extern TempWarnClsDef 	g_PACKDLTThr;	// 电池包温差大告警
 
-const  VoltWarnClsDef CellOVThrDefault = {4180,4200,0}; // mV
+const  VoltWarnClsDef CellOVThrDefault = {4150,4180,0}; // mV
 const  VoltWarnClsDef CellUVThrDefault = {3000,2850,0}; // mV
 const  VoltWarnClsDef CellIBMThrDefault = {200,300,0};
 const  VoltWarnClsDef PackOVThrDefault = {820,830,0}; // 0.1V
-const  VoltWarnClsDef PackUVThrDefault = {600,550,0}; // 0.1V
+const  VoltWarnClsDef PackUVThrDefault = {600,570,0}; // 0.1V
 
 //-------------------------- 常用宏定义 --------------------------
 
