@@ -190,13 +190,9 @@ void DetectCellsOverTemp(void)
 {
 	static uint8_t otErrCnt = 0;
 
-	//温度模块通讯错误
-	if (g_SystemError.tdu_comm ) 
-		return;
-
 	if(g_SystemWarning.COT == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.CellTempMax < g_PACKCOTThr.cls_2)
+		if(g_BatteryParameter.CellTempMax < g_PACKCOTThr.cls_1)
 		{
 			otErrCnt++;
 			if (otErrCnt > CELL_COT_FAULT_DLY)
@@ -209,7 +205,7 @@ void DetectCellsOverTemp(void)
 	}
 	if(g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 	{
-		if (g_BatteryParameter.CellTempMax < g_PACKCOTThr.cls_2)
+		if (g_BatteryParameter.CellTempMax < g_PACKDOTThr.cls_1)
 		{ 
 			otErrCnt++;
 			if (otErrCnt > CELL_DOT_FAULT_DLY)
@@ -308,7 +304,7 @@ void DetectCellsUnderTemp(void)
 
 	if(g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.CellTempMin > g_PACKCUTThr.cls_2)
+		if(g_BatteryParameter.CellTempMin > g_PACKCUTThr.cls_1)
 		{       
 			if(utErrCnt > CELL_CUT_FAULT_DLY)
 			{
@@ -324,7 +320,7 @@ void DetectCellsUnderTemp(void)
 	}
 	if(g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.CellTempMin > g_PACKCUTThr.cls_2)
+		if(g_BatteryParameter.CellTempMin > g_PACKDUTThr.cls_1)
 		{
 			if(utErrCnt > CELL_DUT_FAULT_DLY)
 			{
