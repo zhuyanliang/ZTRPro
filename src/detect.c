@@ -454,7 +454,7 @@ void DetectCellTempDlt(void)
 	static uint8_t tImbErrCnt = 0;
 	int8_t temp;
 
-	temp = g_BatteryParameter.CellTempMax - g_BatteryParameter.CellTempAvg;
+	temp = g_BatteryParameter.CellTempMax - g_BatteryParameter.CellTempMin;
 	if (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
 	{
 		if(temp < g_PACKDLTThr.cls_1)
@@ -619,7 +619,7 @@ void DetectCellsVoltImba(void)
 	static uint8_t imbErrCnt = 0;
 	uint16_t temp;
 
-   	temp = g_BatteryParameter.CellVoltMax - g_BatteryParameter.CellVoltAvg;
+   	temp = g_BatteryParameter.CellVoltMax - g_BatteryParameter.CellVoltMin;
 
 	if (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
 	{
