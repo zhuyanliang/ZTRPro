@@ -45,15 +45,6 @@ void DetectPackOverCurrent(void)
 	// ³äµç¹ýÁ÷
 	if (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.current > g_BattCOCThr.cls_2)
-		{
-			ocErrCnt++;
-			if(ocErrCnt > PACK_COC_WARNING_DLY)
-			{
-				g_SystemWarning.COC = 0;
-				ocErrCnt = 0;
-			}
-		}
 		return;
 	}
 	
@@ -466,16 +457,16 @@ void DetectCellTempDlt(void)
 	temp = g_BatteryParameter.CellTempMax - g_BatteryParameter.CellTempAvg;
 	if (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
 	{
-		if(temp < g_PACKDLTThr.cls_2)
+		if(temp < g_PACKDLTThr.cls_1)
 		{
-			if (tImbErrCnt > CELL_TIB_FAULT_DLY)
+			if(tImbErrCnt > CELL_TIB_FAULT_DLY)
 			{
 				tImbErrCnt = 0;
 				g_SystemWarning.TIB = 0;
 			}
 			else
 			{
-				tImbErrCnt++;
+				tImbErrCnt ++;
 			}
 		}
 		return;
@@ -529,18 +520,6 @@ void DetectCellsOverVolt(void)
 
 	if (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 	{    
-		if(g_BatteryParameter.CellVoltMax < g_CellOVThr.cls_2)
-		{
-			if (ovErrCnt > CELL_TIB_FAULT_DLY)
-			{
-				ovErrCnt = 0;
-				g_SystemWarning.COV = 0;
-			}
-			else
-			{
-				ovErrCnt++;
-			}
-		}
 		return;
 	}
 
@@ -591,18 +570,6 @@ void DetectCellsUnderVolt(void)
 
 	if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.CellVoltMin > g_CellUVThr.cls_2)
-		{
-			if(uvErrCnt > CELL_UV_FAULT_DLY)
-			{
-				uvErrCnt = 0;
-				g_SystemWarning.CUV = 0;
-			}
-			else
-			{
-				uvErrCnt++;
-			}
-		}
 		return;
 	}
 
@@ -656,18 +623,6 @@ void DetectCellsVoltImba(void)
 
 	if (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
 	{
-		if(temp < g_CellIBMThr.cls_2)
-		{
-			if (imbErrCnt > CELL_UV_FAULT_DLY)
-			{
-				imbErrCnt = 0;
-				g_SystemWarning.CIB = 0;
-			}
-			else
-			{
-				imbErrCnt++;
-			}
-		}
 		return;
 	}
 	
@@ -715,18 +670,6 @@ void DetectPackOv(void)
 
 	if (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.voltage < g_PackOVThr.cls_2)
-		{
-			if (pOvErrCnt > PACK_OV_FAULT_DLY)
-			{
-				pOvErrCnt = 0;
-				g_SystemWarning.POV = 0;
-			}
-			else
-			{
-				pOvErrCnt ++;
-			}
-		}
 		return;
 	}
 
@@ -772,18 +715,6 @@ void DetectPackUv(void)
 
 	if (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.voltage > g_PackUVThr.cls_2)
-		{
-			if(pUvErrCnt > PACK_UV_FAULT_DLY)
-			{
-				pUvErrCnt = 0;
-				g_SystemWarning.PUV = 0;
-			}
-			else
-			{
-				pUvErrCnt++;
-			}
-		}
 		return;
 	}
 

@@ -15,6 +15,29 @@ uint16_t 					g_ProtectDelayCnt;	// 保护延时计数
 uint16_t 					g_PrechargeTimer = 0;
 uint8_t 					g_EnterLowPoweModeFlg;
 
+//不检测欠压二级警告
+static BOOL DetectSecondWarning(void)
+{
+	if((g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
+			|| (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)// 充电过流
+			|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)// 放点过流
+			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL))
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
 //----------------------------------------------------------------------------
 // Function    : TskAfe_Init
 // Description : 电池部分参数的初始化
@@ -883,14 +906,9 @@ void TskBatteryModeMgt(void)
 	switch (g_BatteryMode)
 	{
 	case IDLE:  
-		if ( (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)   // cell过压故障
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
+		if ( DetectSecondWarning() 
+			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 			|| (g_BatteryParameter.SOC == 0)
 			|| (g_SystemError.all & 0x07))    
 		{
@@ -911,45 +929,22 @@ void TskBatteryModeMgt(void)
 		break;
 
 	case PRECHARGE:  //预充电状态
-		if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07))
+		if(++g_PrechargeTimer > PRE_CHARGE_TIME)
 		{
-			g_BatteryMode = PROTECTION;
+			g_BatteryMode = DISCHARGE;
+			g_PrechargeTimer = 0;
 		}
 		else
 		{
-			if(++g_PrechargeTimer > PRE_CHARGE_TIME)
-			{
-				g_BatteryMode = DISCHARGE;
-				g_PrechargeTimer = 0;
-			}
-			else
-			{
-				g_BatteryMode = PRECHARGE;		
-			}
+			g_BatteryMode = PRECHARGE;		
 		}
+		
 		break;
 
 	case DISCHARGE:  //放电状态
-		if ((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+		if (DetectSecondWarning() 
 			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL) 
 			|| (g_SystemError.all & 0x07))
 		{
 			g_BatteryMode = PROTECTION;
@@ -972,17 +967,9 @@ void TskBatteryModeMgt(void)
 
 	
 	case CHARGE:  //充电状态  
-			if ( (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+			if ( DetectSecondWarning() 
 				|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 				|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL)  
 				|| (g_SystemError.all & 0x07))
 			{
 				g_BatteryMode = PROTECTION;
@@ -1001,27 +988,20 @@ void TskBatteryModeMgt(void)
 			break;
 
 	case PROTECTION:  //保护状态 
-		if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.COT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBOT == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PCBUT == WARNING_SECOND_LEVEL)
+		if( DetectSecondWarning() 
 			|| g_SystemError.all)
 		{
 			g_BatteryMode = PROTECTION;
-			if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL) 
+		}
+		else
+		{
+			if(((g_SystemWarning.CUV == WARNING_SECOND_LEVEL) 
+				||(g_SystemWarning.PUV == WARNING_SECOND_LEVEL)) 
 				&&(GetChargeState()))
 			{
 				g_BatteryMode = CHARGE;
 			}
-		}
-		else
-		{
+			
 			if( GetChargeState() )  // 检查充电插头是否拔掉
 			{
 				if(DetectPackChargeFinish())
