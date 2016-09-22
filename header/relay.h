@@ -19,7 +19,6 @@ extern "C" {
 #define  RELAY_POSI_CTRL                LATCbits.LATC0     // 定义主控正继电器控制管脚
 #define  RELAY_NEGA_CTRL                LATAbits.LATA2     // 定义主控负继电器控制管脚
 #define  RELAY_PREC_CTRL                LATBbits.LATB0     // 定义预充电继电器控制管脚
-#define  RELAY_HEAT_CTRL                LATAbits.LATA7 
 #define  RELAY_FAN_CTRL                 LATBbits.LATB5    
 //-------------------------- variable definition -----------------------------
 typedef union{

@@ -16,18 +16,19 @@ extern "C" {
 #define LedGre         	LATCbits.LATC6  
 #define LedCharge    	LATAbits.LATA6   
 #define LedRun      	LATCbits.LATC1 
-
+#define LedFault        LATAbits.LATA7 
 
 #define LedRedOff()			LedRed = 1
 #define LedGreOff()			LedGre = 1
 #define LedChargeOff()		LedCharge = 1
 #define LedRunOff()			LedRun = 1
+#define LedFaultOff()       LedFault = 1
 
 #define LedRedOn()			LedRed = 0
 #define LedGreOn()			LedGre = 0
 #define LedChargeOn()		LedCharge = 0
 #define LedRunOn()			LedRun = 0
-
+#define LedFaultOn()       LedFault = 0
 
 void Led_Init(void);
 void TaskLedMgt(void);

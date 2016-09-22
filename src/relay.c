@@ -12,7 +12,6 @@ void Relay_Init(void)
 {
 	// 控制管脚设为输出
 	TRISAbits.TRISA2 = 0b0;	// 负极继电器控制机端口
-	TRISAbits.TRISA7 = 0b0;	// 加热继电器控制机端口
 	TRISBbits.TRISB0 = 0b0;	// 预充继电器控制端口
 	TRISBbits.TRISB5 = 0b0;	// 风扇继电器控制端口
 	TRISCbits.TRISC0 = 0b0;	// 正极继电器控制端口
@@ -21,7 +20,6 @@ void Relay_Init(void)
 	RELAY_NEGA_CTRL = 0b0;
 	RELAY_PREC_CTRL = 0b0;
 	RELAY_FAN_CTRL  = 0b0;
-	RELAY_HEAT_CTRL = 0b1;
 
 	g_RelayActFlg.precharge = FALSE;
 	g_RelayActFlg.positive = FALSE;

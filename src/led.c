@@ -8,9 +8,11 @@ void Led_Init(void)
 	
 	TRISAbits.TRISA6 = 0;   // 充电LED闪烁控制端口
 	TRISCbits.TRISC1 = 0;	// 放电LED控制端口
+    TRISAbits.TRISA7 = 0;   // 故障灯检测
 
     LedChargeOff();
     LedRunOff();  
+    LedFaultOff();
 }
 
 //============================================================================
@@ -27,6 +29,20 @@ void TaskLedMgt(void)
 	{
 		LedRunOff();
 		LedChargeOff();
+        
+        if (++timeStamp < 50)
+		{
+			LedFaultOn();           
+		}
+		else if (timeStamp < 100)
+		{
+			LedFaultOff();
+		}
+		else
+		{
+			timeStamp = 0;
+		}
+        
 		if((g_BatteryParameter.SOC > 99)&&
 			(GetChargeState)) // 充满电后长亮
 		{
@@ -37,10 +53,12 @@ void TaskLedMgt(void)
 	{
 		LedRunOn();
 		LedChargeOff();
+        LedFaultOff();
 	}
 	else if(g_BatteryMode == CHARGE)
 	{
 		LedRunOff();
+        LedFaultOff();
 		if(g_BatteryParameter.SOC > 99) // 充满电后长亮
 		{
 			LedChargeOn();
