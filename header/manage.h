@@ -27,7 +27,6 @@ void TskAmbTempMgt(void);
 void TskSohMgt(void);
 
 
-
 #ifdef	__cplusplus
 }
 #endif

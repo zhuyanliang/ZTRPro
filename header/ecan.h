@@ -19,7 +19,7 @@ extern "C" {
 #define CAN_RTR_DATA                ((uint8_t)0x00)         
 #define CAN_RTR_REMOTE              ((uint8_t)0x40)
 
-#define CAN_BAUDRATE    250         //设置CAN波特率为250kbps
+#define CAN_BAUDRATE    125         //设置CAN波特率为125kbps
     
 //CAN message structure definition  
 typedef struct

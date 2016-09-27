@@ -578,6 +578,142 @@ void CAN_SysVerToTxBuf(void)
 	}
 }
 
+void CAN_AckMcsToTxBuf(void)
+{
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x72C;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = 0x05;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0x00;
+
+	if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	{
+		g_CanMsgBuf.TxBuf_Wptr = 0;
+	}
+}
+
+void CAN_SendHeartToTxBuf(void)
+{
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x72C;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = 0x7F;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0x00;
+
+	if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	{
+		g_CanMsgBuf.TxBuf_Wptr = 0;
+	}
+}
+
+void CAN_SendSTDBattInfoToTxBuf(void)
+{
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x1AC;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
+
+	uint8_t levelone = 0x00;
+	uint8_t leveltwo = 0x00;
+
+	if(g_SystemWarning.COT == 1)
+	{
+		levelone |= 0x01;
+	}
+
+	if(g_SystemWarning.CUT == 1)
+	{
+		levelone |= 0x02;
+	}
+
+	if(g_SystemWarning.TIB == 1)
+	{
+		levelone |= 0x04;
+	}
+
+	if(g_SystemWarning.COV == 1)
+	{
+		levelone |= 0x08;
+	}
+
+	if(g_SystemWarning.CUV == 1)
+	{
+		levelone |= 0x10;
+	}
+
+	if(g_SystemWarning.COT == 2)
+	{
+		leveltwo |= 0x01;
+	}
+
+	if(g_SystemWarning.CUT == 2)
+	{
+		leveltwo |= 0x02;
+	}
+
+	if(g_SystemWarning.TIB == 2)
+	{
+		leveltwo |= 0x04;
+	}
+
+	if(g_SystemWarning.COV == 2)
+	{
+		leveltwo |= 0x08;
+	}
+
+	if(g_SystemWarning.CUV == 2)
+	{
+		leveltwo |= 0x10;
+	}
+	if(g_BatteryParameter.voltage == 0)// 电池不存在
+	{
+		leveltwo |= 0x20;
+	}
+	if(g_SystemWarning.DOC== 2)
+	{
+		leveltwo |= 0x40;
+	}
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = levelone;
+			
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = leveltwo;
+
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = g_BatteryParameter.SOC;
+	// 充电为正，放电为负
+	uint16_t current = 0 - g_BatteryParameter.current;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)current;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)(current>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = g_BatteryParameter.CellTempMax;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = g_BatteryParameter.CellTempMin;
+
+	if(g_BatteryMode == CHARGE)
+		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xaa;
+	else if(g_BatteryMode == DISCHARGE)
+		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+	
+	if(++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
+	{
+		g_CanMsgBuf.TxBuf_Wptr = 0;
+	}
+}
+
+
 //============================================================================
 // Function    : CAN_SendMsg_PackPra
 // Description : 发送Pack信息 电池包的充放电状态
@@ -1319,29 +1455,24 @@ void CAN_PaserChargerMsg(void)
 // 将要发送给充电机的信息放入发送缓冲区
 void CAN_CharggerMsgToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(CCS,CAN_MSG_BMS_TO_CHGR);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x111;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)(MAX_CHARGER_OUTPUT_VOLT >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)MAX_CHARGER_OUTPUT_VOLT;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)(MAX_CHARGER_OUTPUT_CURR >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)MAX_CHARGER_OUTPUT_CURR;
-
-	if (g_BatteryMode == PROTECTION)
-	{
-		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 1;
-	}
-	else
-	{
-		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0;
-	}
-
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
-
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)(MAXCHARGEVOLT>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(MAXCHARGEVOLT);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)(MAXCHARGECURRENT>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(MAXCHARGECURRENT);
+	
+	if(g_BatteryMode == CHARGE)
+		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0x00;
+	else 
+		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0x01;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0x0;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0x0;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0x0;
+		
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
 		g_CanMsgBuf.TxBuf_Wptr = 0;
@@ -1471,7 +1602,7 @@ void CAN_ChargerTskUpdate(void)
 {
 	static uint8_t chgr_can_timer = 0;
 
-	if (chgr_can_timer++ > 200)
+	if (chgr_can_timer++ > 100)
 	{
 		chgr_can_timer = 0;
 		CAN_CharggerMsgToTxBuf();	
@@ -1599,6 +1730,7 @@ void TskCanRecMsgToBuf(void)
 		}
 	}
 }
+
 
 //----------------------------------------------------------------------------
 // Function    ：CAN_ProcessRxMsg
@@ -1775,6 +1907,13 @@ void TskCanProcessRxMsg(void)
 			}
 			else if(MCS == can_sa)
 				CAN_PaserMcsInfo(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
+		}
+		else if(CAN_ID_STD == g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].IDE)
+		{
+			if(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID == 0x100)
+			{
+				CAN_AckMcsToTxBuf();
+			}
 		}
 
 		// read指针指向下一条待处理的消息

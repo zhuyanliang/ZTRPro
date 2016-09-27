@@ -126,9 +126,11 @@ void TRIG_TEST(void)
 void main(void) 
 {
 	static uint8_t taskList = 0;
+	static uint8_t cnt = 0;
 	
     System_Init();    
     LedGreOn();
+    CAN_SendHeartToTxBuf();
     for(;;)
     {
         // 查询优先级较高任务
@@ -143,6 +145,13 @@ void main(void)
         TskCanRecMsgToBuf();
         //DetectRunkey();
 		ClrWdt();
+		// 发送标准真的电池组信息
+		if(16 == cnt++)
+		{
+			cnt = 0;
+			CAN_SendHeartToTxBuf();
+			CAN_SendSTDBattInfoToTxBuf();
+		}
         switch(taskList++)
         {
 		case 0:
