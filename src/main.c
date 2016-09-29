@@ -163,7 +163,7 @@ void main(void)
 			break;
 		case 2:
 			TskCellTempMgt();
-			TskAmbTempMgt(); //电路板温度
+			//TskAmbTempMgt(); //电路板温度 暂时不检测
 			RelayAction();
 			// 绝缘性检测
 			break;

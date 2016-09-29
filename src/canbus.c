@@ -632,12 +632,12 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 	uint8_t levelone = 0x00;
 	uint8_t leveltwo = 0x00;
 
-	if(g_SystemWarning.COT == 1)
+	if(g_SystemWarning.DOT == 1)
 	{
 		levelone |= 0x01;
 	}
 
-	if(g_SystemWarning.CUT == 1)
+	if(g_SystemWarning.DUT == 1)
 	{
 		levelone |= 0x02;
 	}
@@ -657,12 +657,12 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 		levelone |= 0x10;
 	}
 
-	if(g_SystemWarning.COT == 2)
+	if(g_SystemWarning.DOT == 2)
 	{
 		leveltwo |= 0x01;
 	}
 
-	if(g_SystemWarning.CUT == 2)
+	if(g_SystemWarning.DUT == 2)
 	{
 		leveltwo |= 0x02;
 	}
@@ -681,13 +681,14 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 	{
 		leveltwo |= 0x10;
 	}
+	// 以下集团给的协议有误，
 	if(g_BatteryParameter.voltage == 0)// 电池不存在
 	{
-		leveltwo |= 0x20;
-	}
-	if(g_SystemWarning.DOC== 2)
-	{
 		leveltwo |= 0x40;
+	}
+	if(g_SystemWarning.DOC == 2)
+	{
+		leveltwo |= 0x20;
 	}
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = levelone;

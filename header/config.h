@@ -16,8 +16,8 @@ extern "C" {
 
 #define DEBUG
 
-#define MAXCHARGEVOLT   	((uint16_t)830)
-#define MAXCHARGECURRENT   	((uint16_t)200)
+#define MAXCHARGEVOLT   	((uint16_t)835)
+#define MAXCHARGECURRENT   	((uint16_t)150)
 
 
 // 配置的测试标志 如果进行发送数据测试，可以打开
@@ -97,33 +97,33 @@ extern "C" {
 
 //======================================================================================
 /* 系统报警时间设置 */
-#define CELL_OV_WARNING_DLY				((uint8_t)30)
-#define CELL_UV_WARNING_DLY				((uint8_t)30)
-#define CELL_IB_WARNING_DLY				((uint8_t)30)
-#define CELL_DOT_WARNING_DLY			((uint8_t)30)
-#define CELL_DUT_WARNING_DLY			((uint8_t)12)
-#define CELL_COT_WARNING_DLY			((uint8_t)12)
-#define CELL_CUT_WARNING_DLY			((uint8_t)12)
-#define CELL_TIB_WARNING_DLY            ((uint8_t)12)
+#define CELL_OV_WARNING_DLY				((uint8_t)16)
+#define CELL_UV_WARNING_DLY				((uint8_t)16)
+#define CELL_IB_WARNING_DLY				((uint8_t)16)
+#define CELL_DOT_WARNING_DLY			((uint8_t)25)
+#define CELL_DUT_WARNING_DLY			((uint8_t)25)
+#define CELL_COT_WARNING_DLY			((uint8_t)100)
+#define CELL_CUT_WARNING_DLY			((uint8_t)25)
+#define CELL_TIB_WARNING_DLY            ((uint8_t)25)
 #define PACK_DOC_WARNING_DLY			((uint16_t)7500)
 #define PACK_COC_WARNING_DLY			((uint16_t)1500)
-#define PACK_UV_WARNING_DLY             ((uint8_t)18)
-#define PACK_OV_WARNING_DLY             ((uint8_t)18)
+#define PACK_UV_WARNING_DLY             ((uint8_t)16)
+#define PACK_OV_WARNING_DLY             ((uint8_t)16)
 #define SYS_ISO_WARNING_DLY             ((uint8_t)25) 
 
 /* 系统故障时间设置 */
-#define CELL_OV_FAULT_DLY				((uint8_t)30)
-#define CELL_UV_FAULT_DLY				((uint8_t)30)
-#define CELL_IB_FAULT_DLY				((uint8_t)30)            
-#define PACK_UV_FAULT_DLY               ((uint8_t)40)
-#define PACK_OV_FAULT_DLY               ((uint8_t)40)
-#define CELL_DOT_FAULT_DLY				((uint8_t)3)
-#define CELL_DUT_FAULT_DLY				((uint8_t)3)
-#define CELL_COT_FAULT_DLY				((uint8_t)3)
-#define CELL_CUT_FAULT_DLY				((uint8_t)3)
-#define CELL_TIB_FAULT_DLY              ((uint8_t)6)
+#define CELL_OV_FAULT_DLY				((uint8_t)16)
+#define CELL_UV_FAULT_DLY				((uint8_t)16)
+#define CELL_IB_FAULT_DLY				((uint8_t)16)            
+#define PACK_UV_FAULT_DLY               ((uint8_t)16)
+#define PACK_OV_FAULT_DLY               ((uint8_t)16)
+#define CELL_DOT_FAULT_DLY				((uint8_t)25)
+#define CELL_DUT_FAULT_DLY				((uint8_t)25)
+#define CELL_COT_FAULT_DLY				((uint8_t)100)
+#define CELL_CUT_FAULT_DLY				((uint8_t)25)
+#define CELL_TIB_FAULT_DLY              ((uint8_t)25)
 #define PACK_DOC_FAULT_DLY				((uint16_t)1500)
-#define PACK_COC_FAULT_DLY				((uint16_t)10)
+#define PACK_COC_FAULT_DLY				((uint16_t)500)
 #define SYS_ISO_FAULT_DLY               ((uint8_t)50)   
 #define RELAY_ACTION_DELAY_1S           ((uint16_t)500)
 #define RELAY_ACTION_DELAY_3S           ((uint16_t)1500)

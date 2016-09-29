@@ -34,7 +34,8 @@ static uint8_t keyChgrState = 0;
 
 //============================================================================
 // Function    : DetectPackOverCurrent
-// Description : 电池包过流检测（包括放电过流和充电过流）
+// Description : 电池包过流检测（包括放电过流和充电过流），
+// 				 执行周期2Ms
 // Parameters  : none
 // Returns     : 
 //============================================================================
@@ -51,15 +52,6 @@ void DetectPackOverCurrent(void)
 	// 放电过流
 	if (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
 	{
-		if(g_BatteryParameter.current > g_BattDOCThr.cls_2)
-		{
-			ocErrCnt++;
-			if(ocErrCnt > PACK_DOC_WARNING_DLY)
-			{
-				g_SystemWarning.DOC = 0;
-				ocErrCnt = 0;
-			}
-		}
 		return;
 	}
 	
@@ -105,9 +97,9 @@ void DetectPackOverCurrent(void)
 			if (ocErrCnt > PACK_DOC_FAULT_DLY)
 			{
 				g_SystemWarning.DOC = WARNING_SECOND_LEVEL;
-				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_3S)
+				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
 				{
-					g_ProtectDelayCnt = RELAY_ACTION_DELAY_3S;
+					g_ProtectDelayCnt = RELAY_ACTION_DELAY_10S;
 				}
 			}
 			else
@@ -173,7 +165,7 @@ void DetectMaxMinCellTemp(void)
 
 //============================================================================
 // Function    : DetectCellsOverTemp
-// Description : 检测温度过高
+// Description : 检测温度过高,执行周期40Ms
 // Parameters  : none
 // Returns     : 
 //============================================================================
@@ -186,7 +178,7 @@ void DetectCellsOverTemp(void)
 		if(g_BatteryParameter.CellTempMax < g_PACKCOTThr.cls_1)
 		{
 			otErrCnt++;
-			if (otErrCnt > CELL_COT_FAULT_DLY)
+			if (otErrCnt > CELL_COT_FAULT_DLY) // 4S
 			{
 				otErrCnt = 0;
 				g_SystemWarning.COT = 0;
@@ -199,7 +191,7 @@ void DetectCellsOverTemp(void)
 		if (g_BatteryParameter.CellTempMax < g_PACKDOTThr.cls_1)
 		{ 
 			otErrCnt++;
-			if (otErrCnt > CELL_DOT_FAULT_DLY)
+			if (otErrCnt > CELL_DOT_FAULT_DLY) // 4S
 			{
 				otErrCnt = 0;
 				g_SystemWarning.DOT = 0;
@@ -247,7 +239,7 @@ void DetectCellsOverTemp(void)
 	{
 		if(g_BatteryParameter.CellTempMax > g_PACKDOTThr.cls_2)
 		{   
-			if(otErrCnt > CELL_DOT_FAULT_DLY)
+			if(otErrCnt > CELL_DOT_FAULT_DLY) // 1S
 			{
 				g_SystemWarning.DOT = WARNING_SECOND_LEVEL;
 				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -262,7 +254,7 @@ void DetectCellsOverTemp(void)
 		}
 		else if(g_BatteryParameter.CellTempMax > g_PACKDOTThr.cls_1)
 		{
-			if(otErrCnt > CELL_DOT_WARNING_DLY)
+			if(otErrCnt > CELL_DOT_WARNING_DLY) // 1S
 			{
 				g_SystemWarning.DOT = WARNING_FIRST_LEVEL;
 				otErrCnt = 0;
@@ -282,7 +274,7 @@ void DetectCellsOverTemp(void)
 
 //============================================================================
 // Function    : DetectCellsUnderTemp
-// Description : 检测温度是否过低
+// Description : 检测温度是否过低 执行周期40Ms
 // Parameters  : none
 // Returns     : 
 //============================================================================
@@ -445,7 +437,7 @@ void DetectPCBOverTemp(void)
 
 //============================================================================
 // Function    : DetectCellsUnderTemp
-// Description : 检测温度差
+// Description : 检测温度差 执行周期40Ms
 // Parameters  : none
 // Returns     : 
 //============================================================================
@@ -459,7 +451,7 @@ void DetectCellTempDlt(void)
 	{
 		if(temp < g_PACKDLTThr.cls_1)
 		{
-			if(tImbErrCnt > CELL_TIB_FAULT_DLY)
+			if(tImbErrCnt > CELL_TIB_FAULT_DLY) // 1S
 			{
 				tImbErrCnt = 0;
 				g_SystemWarning.TIB = 0;
@@ -477,9 +469,9 @@ void DetectCellTempDlt(void)
 		if (tImbErrCnt > CELL_TIB_FAULT_DLY)
 		{
 			g_SystemWarning.TIB = WARNING_SECOND_LEVEL;
-			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_5S)
+			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
 			{
-				g_ProtectDelayCnt = RELAY_ACTION_DELAY_5S;
+				g_ProtectDelayCnt = RELAY_ACTION_DELAY_10S;
 			}
 		}
 		else
@@ -510,7 +502,7 @@ void DetectCellTempDlt(void)
 
 //============================================================================
 // Function    : DetectCellsOverVolt
-// Description : 检测单体电池过压
+// Description : 检测单体电池过压 执行周期60Ms
 // Parameters  : none
 // Returns     : none
 //============================================================================
@@ -525,12 +517,12 @@ void DetectCellsOverVolt(void)
 
 	if(g_BatteryParameter.CellVoltMax > g_CellOVThr.cls_2)
 	{
-		if (ovErrCnt > CELL_OV_FAULT_DLY)
+		if (ovErrCnt > CELL_OV_FAULT_DLY)// 接近1S
 		{
 			g_SystemWarning.COV = WARNING_SECOND_LEVEL;
-			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_1S)
+			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_5S)
 			{
-				g_ProtectDelayCnt = RELAY_ACTION_DELAY_1S;
+				g_ProtectDelayCnt = RELAY_ACTION_DELAY_5S;
 			}
 		}
 		else
@@ -540,7 +532,7 @@ void DetectCellsOverVolt(void)
 	}
 	else if(g_BatteryParameter.CellVoltMax > g_CellOVThr.cls_1)
 	{
-		if (ovErrCnt > CELL_OV_WARNING_DLY)
+		if (ovErrCnt > CELL_OV_WARNING_DLY) // 接近1S
 		{
 			ovErrCnt = 0;
 			g_SystemWarning.COV = WARNING_FIRST_LEVEL;
@@ -560,7 +552,7 @@ void DetectCellsOverVolt(void)
 
 //============================================================================
 // Function    : DetectCellsUnderVolt
-// Description : 检测单体电池欠压
+// Description : 检测单体电池欠压 执行周期60Ms
 // Parameters  : none
 // Returns     : none
 //============================================================================
@@ -610,7 +602,7 @@ void DetectCellsUnderVolt(void)
 
 //============================================================================
 // Function    : DetectCellsVoltImba
-// Description : 检测单体电压不一致性
+// Description : 检测单体电压不一致性 执行周期60Ms
 // Parameters  : none
 // Returns     : none
 //============================================================================
@@ -628,7 +620,7 @@ void DetectCellsVoltImba(void)
 	
 	if(temp > g_CellIBMThr.cls_2)
 	{
-		if (imbErrCnt > CELL_IB_WARNING_DLY)
+		if (imbErrCnt > CELL_IB_FAULT_DLY)
 		{
 			g_SystemWarning.CIB = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -658,12 +650,9 @@ void DetectCellsVoltImba(void)
 		g_SystemWarning.CIB = 0;
 		imbErrCnt = 0;
 	}
-	
-	//TO-DO 添加电芯最小值得检测
-	// ......
 }
 
-//电池包的过压检测
+//电池包的过压检测 执行周期60Ms
 void DetectPackOv(void)
 {
 	static uint8_t pOvErrCnt = 0;
@@ -708,7 +697,7 @@ void DetectPackOv(void)
 }
 
 
-//电池包的欠压检测
+//电池包的欠压检测 执行周期60Ms
 void DetectPackUv(void)
 {
 	static uint8_t pUvErrCnt = 0;
@@ -785,15 +774,18 @@ uint8_t DetectPackChargeFinish(void)
 	static uint16_t chgEndTimer = 0;
 
 	if ((g_BatteryParameter.CellVoltMax >= g_CellOVThr.cls_2)
-		|| (g_BatteryParameter.SOC == 100))
+		|| (g_BatteryParameter.SOC == 100)
+		|| (g_BatteryParameter.voltage > g_PackOVThr.cls_2)
+		|| ((g_BatteryParameter.current <= 31) // 充电电流降到3A
+		&& (g_BatteryParameter.current >= 30)))
 	{
-		if ( chgEndTimer++ < 10 ) 
+		if ( chgEndTimer++ < 100 ) 
 		{
 			return 0;
 		}
 		else 
 		{
-			chgEndTimer = 15;
+			chgEndTimer = 200;
 			return 1;
 		}
 	}

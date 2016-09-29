@@ -835,7 +835,7 @@ void TskCanMgt(void)
 {
 	
 	TskCanProcessRxMsg();           // 处理接收数据
-	//CAN_BroadcastBufUpdate();       // 将要发送的广播数据更新到发送缓冲区
+	CAN_BroadcastBufUpdate();       // 将要发送的广播数据更新到发送缓冲区
 	TskCanSendTxBufMsg();           // 发送发送缓冲区数据
 
 	CAN_ChargerTskUpdate();			// 与充电器通信
@@ -952,7 +952,8 @@ void TskBatteryModeMgt(void)
 			if ( DetectPackDischargeFinish() )
 			{
 				g_BatteryMode = PROTECTION;
-				g_ProtectDelayCnt = RELAY_ACTION_DELAY_20S;
+				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_20S)
+					g_ProtectDelayCnt = RELAY_ACTION_DELAY_20S;
 			}
 			if(GetChargeState())
 			{
