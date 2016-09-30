@@ -924,3 +924,4 @@ uint8_t GetKeyrunState(void)
 {
    return (keyChgrState & 0x02);
 }
+
