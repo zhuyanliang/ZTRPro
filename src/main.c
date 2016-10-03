@@ -229,7 +229,6 @@ void System_Init(void)
 	WDTCONbits.SWDTE = 1; 	// ¿ªÆô¿´ÃÅ¹·
 
     ClrWdt();
-
 }
 
 

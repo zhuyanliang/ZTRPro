@@ -813,7 +813,7 @@ void TskAfeMgt(void)
 		break;
 		
 	case AFE_BALANCE:
-		//TskBlncMgt();
+		TskBlncMgt();
 		AfeState = AFE_VOLT_CNVT;
 		break;
 
@@ -931,11 +931,6 @@ void TskBatteryModeMgt(void)
 			g_BatteryMode = DISCHARGE;
 			g_PrechargeTimer = 0;
 		}
-		else
-		{
-			g_BatteryMode = PRECHARGE;		
-		}
-		
 		break;
 
 	case DISCHARGE:  //放电状态
@@ -948,13 +943,6 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
-			g_BatteryMode = DISCHARGE;
-			if ( DetectPackDischargeFinish() )
-			{
-				g_BatteryMode = PROTECTION;
-				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_20S)
-					g_ProtectDelayCnt = RELAY_ACTION_DELAY_20S;
-			}
 			if(GetChargeState())
 			{
 				g_BatteryMode = PROTECTION;
@@ -962,7 +950,6 @@ void TskBatteryModeMgt(void)
 			}  
 		}
 		break;
-
 	
 	case CHARGE:  //充电状态  
 			if ( DetectSecondWarning() 
@@ -974,13 +961,9 @@ void TskBatteryModeMgt(void)
 			}
 			else
 			{
-				if ( !GetChargeState() )  // 检查充电插头是否拔掉
+				if(!GetChargeState())  // 检查充电插头是否拔掉
 				{
 					g_BatteryMode = IDLE;
-				}
-				else
-				{
-					g_BatteryMode = CHARGE;
 				}
 			}
 			break;
@@ -1000,7 +983,7 @@ void TskBatteryModeMgt(void)
 				g_BatteryMode = CHARGE;
 			}
 			
-			if( GetChargeState() )  // 检查充电插头是否拔掉
+			if(GetChargeState())  // 检查充电插头是否拔掉
 			{
 				if(DetectPackChargeFinish())
 					g_BatteryMode = PROTECTION;

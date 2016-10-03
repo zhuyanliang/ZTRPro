@@ -58,7 +58,7 @@ extern "C" {
 #define  CELL_SERIES_NUM               ((uint8_t)20)     	// 定义电池串数
 #define  CELL_PARALLEL_NUM			   ((uint8_t)30)        // 定义电池并数 
 #define  BATTERY_CAPACITY_RATED		   ((int16_t)750)       // 新电池标称容量(扩大10倍)
-#define  BATTERY_CAPACITY_TOTAL        ((int16_t)750)       // 新电池组满容量(扩大10倍)
+#define  BATTERY_CAPACITY_TOTAL        ((int16_t)725)       // 新电池组满容量(扩大10倍)
 #define  SOC_PACK_TOTAL_WH             ((int16_t)5400)    	// 电池组总容量(Wh)
 
 //--------------------------------- 系统报警值设置 ---------------------------------
@@ -155,9 +155,6 @@ extern "C" {
 #define MAX_CHARGER_OUTPUT_VOLT		   ((uint16_t)840)		// uint: 0.1V
 #define MAX_CHARGER_OUTPUT_CURR		   ((uint16_t)200)		// uintt: 0.1A
 
-
-
-
 // ========= 系统中各参数在EEPROM中存放的地址配置==============                                            
 #define  EEPROM_ADDR_SOC                     ((uint16_t)0x0000)       
 #define  EEPROM_ADDR_ACC                     ((uint16_t)0x0002)       
@@ -218,7 +215,7 @@ extern "C" {
 
 
 //========================== application image Id ============================
-#define _IMG_ID                        4//1                    // BMU  hex file
+#define _IMG_ID                        4
 #define _IMG_APPHDR_ADDR               0x2000
     
 #define CANTEST

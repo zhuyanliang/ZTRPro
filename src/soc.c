@@ -119,18 +119,22 @@ void Soc_Update (void)
 
 	/* 充放电上下截止点SOC校准, 注意该校准一定要在系统状态 */
 	/* 切换前完成，否则以下语句将无法得到执行。            */
-	if((g_BatteryMode == CHARGE) && (DetectPackChargeFinish()))  // 充电上止点校准
+	if((g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+		|| (g_SystemWarning.POV == WARNING_SECOND_LEVEL))
 	{
 		g_BatteryParameter.Ah = BATTERY_CAPACITY_TOTAL;
 		g_BatteryParameter.SOC = 100;
 	}
-	//else if((g_BatteryParameter.CellVoltMin <= g_CellUVThr.cls_2)  // 放电下止点校准
-	//			&& (g_BatteryMode == DISCHARGE))
+
 	else if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-		&&(g_BatteryMode == DISCHARGE))
+		|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL))
 	{
-		g_BatteryParameter.Ah = 0;
-		g_BatteryParameter.SOC= 0;
+		if(g_BatteryMode != CHARGE)
+		{
+			g_BatteryParameter.Ah = 0;
+			g_BatteryParameter.SOC= 0;
+		}
+		
 	}
 
 	/* 每个SOC_UPDATE_PERIOD_MS周期更新一次SOC值 目前暂定4s = 2Ms * SOC_UPDATE_PERIOD_MS */
@@ -140,9 +144,17 @@ void Soc_Update (void)
 		{
 			g_BatteryParameter.Ah = BATTERY_CAPACITY_TOTAL;
 		}
-		else if (g_BatteryParameter.Ah < 0)
+		else if (g_BatteryParameter.Ah < 0) // SOC下限值矫正
 		{
-			g_BatteryParameter.Ah = 0;
+			if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL))
+			{
+				g_BatteryParameter.Ah = 0;
+			}
+			else
+			{
+				g_BatteryParameter.Ah = (BATTERY_CAPACITY_TOTAL/100.0 + 1);
+			}
 		}
 
 		g_BatteryParameter.SOC = (uint32_t)g_BatteryParameter.Ah * 100 / BATTERY_CAPACITY_TOTAL;   // 结果为百分比
@@ -161,7 +173,7 @@ void Soc_Update (void)
 //============================================================================
 void Soc_AhAcc(void)
 {
-	if((g_BatteryMode == CHARGE) || (g_BatteryMode == DISCHARGE))
+	if((CHARGE == g_BatteryMode) || (DISCHARGE == g_BatteryMode))
 	{
 		if ( (g_BatteryParameter.current > 3) || (g_BatteryParameter.current < -3) )
 		{
@@ -296,18 +308,6 @@ int32_t Soc_ReadAcc(void)
 
 	return tmp;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
