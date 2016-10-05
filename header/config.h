@@ -16,10 +16,6 @@ extern "C" {
 
 #define DEBUG
 
-#define MAXCHARGEVOLT   	((uint16_t)835)
-#define MAXCHARGECURRENT   	((uint16_t)150)
-
-
 // 配置的测试标志 如果进行发送数据测试，可以打开
 #define SENDTEST	1
 

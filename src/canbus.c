@@ -22,6 +22,10 @@ static uint16_t canCcsTimeout = 0;	// CCS 充电器控制系统时间超时变量
 static uint16_t canTduTimeout = 0;	// TDU 温度模块时间超时变量
 static uint16_t brdTxTimer = 0;		// 广播时间参数
 
+uint16_t g_CCS_MaxVoltage = 0;		// 控制充电器的最大电压 0.1V
+uint16_t g_CCS_MaxCurrent = 0;		// 控制充电器的最大电流 0.1A
+
+
 //----------------------------------------------------------------------------
 // Function    : TskCan_Init
 // Description : 上层 CAN 参数初始化
@@ -580,7 +584,7 @@ void CAN_SysVerToTxBuf(void)
 
 void CAN_AckMcsToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x72C;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = SEND_HEART_ID;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -602,7 +606,7 @@ void CAN_AckMcsToTxBuf(void)
 
 void CAN_SendHeartToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x72C;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = SEND_HEART_ID;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -624,7 +628,7 @@ void CAN_SendHeartToTxBuf(void)
 
 void CAN_SendSTDBattInfoToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x1AC;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = SendBatterInfoID;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -1456,15 +1460,15 @@ void CAN_PaserChargerMsg(void)
 // 将要发送给充电机的信息放入发送缓冲区
 void CAN_CharggerMsgToTxBuf(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = 0x111;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = ControlCCSID;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_STD;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)(MAXCHARGEVOLT>>8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(MAXCHARGEVOLT);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)(MAXCHARGECURRENT>>8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(MAXCHARGECURRENT);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)(g_CCS_MaxVoltage>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_CCS_MaxVoltage);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)(g_CCS_MaxCurrent>>8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_CCS_MaxCurrent);
 	
 	if(g_BatteryMode == CHARGE)
 		g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0x00;
@@ -1754,13 +1758,8 @@ void TskCanProcessRxMsg(void)
 		{
 			can_sa = CAN_GetSourceAddr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID);
 			can_fc = CAN_GetFuncCode(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID);
-
-            if (tduCanId == can_sa) 
-            {
-                if(can_fc == CAN_MSG_TEMP_GNR_INFO)
-					CAN_PaserTduGnrInfo(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);           
-            }   
-			else if(GUI == can_sa)
+  
+			if(GUI == can_sa)
 			{
 				switch(can_fc)
 				{
@@ -1901,19 +1900,17 @@ void TskCanProcessRxMsg(void)
 				}
 
 			}
-			else if(CCS == can_sa)
-			{
-				if (can_fc == CAN_MSG_BRDCST_INFO)
-					CAN_PaserChargerMsg();
-			}
-			else if(MCS == can_sa)
-				CAN_PaserMcsInfo(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);
 		}
 		else if(CAN_ID_STD == g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].IDE)
 		{
-			if(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID == 0x100)
+			if(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID == GET_HEART_ID) // 响应整车的心跳
 			{
 				CAN_AckMcsToTxBuf();
+			}
+			else if(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].COB_ID == CCSBROADCASTID) // 
+			{
+				// 充电器广播数据的解析
+				CAN_PaserChargerMsg();
 			}
 		}
 

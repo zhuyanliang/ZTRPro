@@ -22,6 +22,11 @@
 #define  CCS          	0xE5 // 充电器地址
 #define  BCA         	0x50 // 广播地址
 
+#define GET_HEART_ID    	0x100   // 整车发送心跳的 ID
+#define SEND_HEART_ID 		0x72C	// 应答心跳的 ID
+#define SendBatterInfoID	0x1AC	// 发送给整车电池信息的 ID
+#define ControlCCSID		0x111	// 控制充电器的ID
+#define CCSBROADCASTID		0x112	// 充电器广播帧的ID
 
 #define CAN_MSG_BMS_TO_CHGR					    0x06
 #define CAN_MSG_BMS_MCS_HNDSK					0x10
@@ -45,7 +50,7 @@
 #define CAN_NEIGHBOR_PACK_TIMEOUT				((uint16_t)(5000 / 5))
 #define CAN_MCS_COMM_TIMEOUT                    ((uint16_t)(3000 / 5))
 #define CAN_TDU_COMM_TIMEOUT                    ((uint16_t)(3000 / 5))
-#define CAN_CCS_COMM_TIMEOUT                    ((uint16_t)(3000 / 5))
+#define CAN_CCS_COMM_TIMEOUT                    ((uint16_t)600)
 //=================================== CAN function code =======================================
 // 以下宏定义定义了各个CAN节点之间的消息帧功能码
 // 1. BMS与GUI之间通信功能码

@@ -775,7 +775,6 @@ uint8_t DetectPackChargeFinish(void)
 
 	// 注意,选用的充电器如果电流不稳定需要修改此行代码
 	if ((g_BatteryParameter.CellVoltMax >= g_CellOVThr.cls_2)
-		|| (g_BatteryParameter.SOC == 100)
 		|| (g_BatteryParameter.voltage > g_PackOVThr.cls_2)
 		|| ((g_BatteryParameter.current <= 31) // 充电电流降到3A
 		&& (g_BatteryParameter.current >= 30)

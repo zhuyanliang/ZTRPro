@@ -826,7 +826,7 @@ void TskAfeMgt(void)
 //----------------------------------------------------------------------------
 // Function    : TskCanMgt
 // Description : 对CAN总线发送接收缓冲区的管理
-//				CAN数据首先进入发送接收缓冲区，然后进行处理
+//				CAN数据首先进入发送接收缓冲区，然后进行处理 执行周期10Ms
 // Parameters  : 
 // Returns     : 
 //----------------------------------------------------------------------------
@@ -838,8 +838,12 @@ void TskCanMgt(void)
 	CAN_BroadcastBufUpdate();       // 将要发送的广播数据更新到发送缓冲区
 	TskCanSendTxBufMsg();           // 发送发送缓冲区数据
 
-	CAN_ChargerTskUpdate();			// 与充电器通信
-	//CAN_ChargerTimeoutCheck();
+	if(CHARGE == g_BatteryMode)
+	{
+		CAN_ChargerTskUpdate();			// 与充电器通信
+		// 根据充电器的电流精度  目前待定
+		CAN_ChargerTimeoutCheck();
+	}
 
 	//if(g_BatteryMode == DISCHARGE)
 	//{

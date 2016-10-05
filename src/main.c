@@ -136,7 +136,9 @@ void main(void)
         // 查询优先级较高任务
         ClrWdt();
         TskCurrentMgt();
+        #ifdef DEBUG
 		TRIG_TEST();
+		#endif
 		Soc_AhAcc();
         Soh_ChargeAhAcc();
         ClrWdt();
@@ -145,7 +147,7 @@ void main(void)
         TskCanRecMsgToBuf();
         //DetectRunkey();
 		ClrWdt();
-		// 发送标准真的电池组信息
+		// 发送标准帧的电池组信息给整车
 		if(16 == cnt++)
 		{
 			cnt = 0;
@@ -221,6 +223,8 @@ void System_Init(void)
     g_EnterLowPoweModeFlg 	= 0;	// 进入低功耗状态
     g_SystemWarning.all 	= 0;    // clear system warning flags
     //g_SystemError.all 		= 0xf8;
+    g_CCS_MaxVoltage 		= 835;	// 设置充电器的最大电压 0.1V
+    g_CCS_MaxCurrent		= 150;	// 设置充电器的最大电流 0.1A
 
     SystemSelftest();  		// 系统自检
     Soc_PowerOnAdjust();	// SOC 上电校准

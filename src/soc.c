@@ -144,7 +144,7 @@ void Soc_Update (void)
 		{
 			g_BatteryParameter.Ah = BATTERY_CAPACITY_TOTAL;
 		}
-		else if (g_BatteryParameter.Ah < 0) // SOC下限值矫正
+		else if (g_BatteryParameter.Ah <= 0) // SOC下限值矫正
 		{
 			if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL))

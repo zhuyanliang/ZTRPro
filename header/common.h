@@ -208,6 +208,10 @@ const  VoltWarnClsDef CellIBMThrDefault = {200,300,0};
 const  VoltWarnClsDef PackOVThrDefault = {820,830,0}; // 0.1V
 const  VoltWarnClsDef PackUVThrDefault = {600,570,0}; // 0.1V
 
+extern uint16_t g_CCS_MaxVoltage;		// 控制充电器的最大电压 0.1V
+extern uint16_t g_CCS_MaxCurrent;		// 控制充电器的最大电流 0.1A
+
+
 //-------------------------- 常用宏定义 --------------------------
 
 // 1.求最大值和最小值 
