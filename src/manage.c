@@ -1040,6 +1040,31 @@ void TskSohMgt(void)
 	}	
 }
 
-
+// 设置充电器电压电流
+void TskSetCCsPra(void)
+{
+	// 充电三个阶段
+	// 1.涓流充电
+	if(CHARGE == g_BatteryMode)
+	{
+		if(g_BatteryParameter.CellVoltMin <= 3000)
+		{
+			g_CCS_MaxVoltage = 835; // 单位0.1V
+			g_CCS_MaxCurrent = 20; // 单位0.1A
+		}
+		// 2.恒流充电
+		else if(g_BatteryParameter.CellVoltMin > 3000)
+		{
+			g_CCS_MaxVoltage = 835; // 单位0.1V
+			g_CCS_MaxCurrent = 150; // 单位0.1A
+		}
+		// 3.恒压充电
+		else if(g_BatteryParameter.CellVoltMax> 4100)
+		{
+			g_CCS_MaxVoltage = 835; // 单位0.1V
+			g_CCS_MaxCurrent = 30; // 单位0.1A
+		}
+	}
+}
 
 

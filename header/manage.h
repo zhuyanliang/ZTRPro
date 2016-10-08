@@ -25,6 +25,7 @@ void TskBlncMgt(void);
 void TskAfeMgt(void);
 void TskAmbTempMgt(void);
 void TskSohMgt(void);
+void TskSetCCsPra(void);
 
 
 #ifdef	__cplusplus

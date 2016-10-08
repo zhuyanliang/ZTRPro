@@ -145,7 +145,8 @@ void main(void)
         TskBatteryModeMgt();
         TskRelayMgt();
         TskCanRecMsgToBuf();
-        //DetectRunkey();
+        //根据总电压，设置充电器参数
+        TskSetCCsPra();
 		ClrWdt();
 		// 发送标准帧的电池组信息给整车
 		if(16 == cnt++)
