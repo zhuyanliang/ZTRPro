@@ -19,6 +19,13 @@ extern "C" {
 // 配置的测试标志 如果进行发送数据测试，可以打开
 #define SENDTEST	1
 
+// 电芯涓流充电电压阀值
+#define CELLPRECHARGEVOLT	(uint16_t)2000 // 单位 mV
+// 电芯标准充电电压阀值
+#define CELLSTDCHARGEVOLT	(uint16_t)2500
+// 电芯恒流充电电压阀值
+#define CELLCONSTCURRENTVOLT	(uint16_t)4000
+
 /* 定义设计中ltc6803级联的数量
    该定义根据实际工程情况修改 */
 #define  ModuleAmount          ((uint8_t)2)           // 定义设计中有2片ltc6803级联

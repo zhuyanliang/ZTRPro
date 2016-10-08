@@ -1047,19 +1047,19 @@ void TskSetCCsPra(void)
 	// 1.涓流充电
 	if(CHARGE == g_BatteryMode)
 	{
-		if(g_BatteryParameter.CellVoltMin <= 3000)
+		if(g_BatteryParameter.CellVoltMin <= CELLPRECHARGEVOLT)
 		{
 			g_CCS_MaxVoltage = 835; // 单位0.1V
 			g_CCS_MaxCurrent = 60; // 单位0.1A
 		}
 		// 2.恒流充电
-		else if(g_BatteryParameter.CellVoltMin > 3000)
+		else if(g_BatteryParameter.CellVoltMin > CELLSTDCHARGEVOLT)
 		{
 			g_CCS_MaxVoltage = 835; // 单位0.1V
 			g_CCS_MaxCurrent = 150; // 单位0.1A
 		}
 		// 3.恒压充电
-		else if(g_BatteryParameter.CellVoltMax> 4100)
+		else if(g_BatteryParameter.CellVoltMax > CELLCONSTCURRENTVOLT)
 		{
 			g_CCS_MaxVoltage = 835; // 单位0.1V
 			g_CCS_MaxCurrent = 60; // 单位0.1A
