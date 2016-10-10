@@ -184,6 +184,10 @@ void DetectCellsOverTemp(void)
 				g_SystemWarning.COT = 0;
 			}	
 		}
+		else
+		{
+			otErrCnt = 0;
+		}
 		return;
 	}
 	if(g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
@@ -196,6 +200,10 @@ void DetectCellsOverTemp(void)
 				otErrCnt = 0;
 				g_SystemWarning.DOT = 0;
 			}	
+		}
+		else
+		{
+			otErrCnt = 0;
 		}
 		return;
 	}
@@ -444,7 +452,7 @@ void DetectPCBOverTemp(void)
 void DetectCellTempDlt(void)
 {  
 	static uint8_t tImbErrCnt = 0;
-	int8_t temp;
+	int16_t temp = 0;
 
 	temp = g_BatteryParameter.CellTempMax - g_BatteryParameter.CellTempMin;
 	if (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
@@ -460,6 +468,10 @@ void DetectCellTempDlt(void)
 			{
 				tImbErrCnt ++;
 			}
+		}
+		else
+		{
+			tImbErrCnt = 0;
 		}
 		return;
 	}
@@ -774,19 +786,11 @@ uint8_t DetectPackChargeFinish(void)
 	static uint16_t chgEndTimer = 0;
 
 	// 注意,选用的充电器如果电流不稳定需要修改此行代码
-	if ((g_BatteryParameter.CellVoltMax >= g_CellOVThr.cls_2)
-		|| (g_BatteryParameter.voltage > g_PackOVThr.cls_2)
-		|| ((g_BatteryParameter.current <= 31) // 充电电流降到3A
-		&& (g_BatteryParameter.current >= 30)
-		&& (g_BatteryParameter.CellVoltMax >= (g_CellOVThr.cls_2-1))))
+	if ((g_BatteryParameter.CellVoltMax > g_CellOVThr.cls_2)
+		|| (g_BatteryParameter.voltage > g_PackOVThr.cls_2))
 	{
-		if ( chgEndTimer++ < 10 ) 
+		if ( chgEndTimer++ >= 10 ) 
 		{
-			return 0;
-		}
-		else 
-		{
-			chgEndTimer = 11;
 			return 1;
 		}
 	}

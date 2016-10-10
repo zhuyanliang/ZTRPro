@@ -636,52 +636,52 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 	uint8_t levelone = 0x00;
 	uint8_t leveltwo = 0x00;
 
-	if(g_SystemWarning.DOT == 1)
+	if(g_SystemWarning.DOT == WARNING_FIRST_LEVEL)
 	{
 		levelone |= 0x01;
 	}
 
-	if(g_SystemWarning.DUT == 1)
+	if(g_SystemWarning.DUT == WARNING_FIRST_LEVEL)
 	{
 		levelone |= 0x02;
 	}
 
-	if(g_SystemWarning.TIB == 1)
+	if(g_SystemWarning.TIB == WARNING_FIRST_LEVEL)
 	{
 		levelone |= 0x04;
 	}
 
-	if(g_SystemWarning.COV == 1)
+	if(g_SystemWarning.COV == WARNING_FIRST_LEVEL)
 	{
 		levelone |= 0x08;
 	}
 
-	if(g_SystemWarning.CUV == 1)
+	if(g_SystemWarning.CUV == WARNING_FIRST_LEVEL)
 	{
 		levelone |= 0x10;
 	}
 
-	if(g_SystemWarning.DOT == 2)
+	if(g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x01;
 	}
 
-	if(g_SystemWarning.DUT == 2)
+	if(g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x02;
 	}
 
-	if(g_SystemWarning.TIB == 2)
+	if(g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x04;
 	}
 
-	if(g_SystemWarning.COV == 2)
+	if(g_SystemWarning.COV == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x08;
 	}
 
-	if(g_SystemWarning.CUV == 2)
+	if(g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x10;
 	}
@@ -690,7 +690,7 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 	{
 		leveltwo |= 0x40;
 	}
-	if(g_SystemWarning.DOC == 2)
+	if(g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x20;
 	}
@@ -1454,7 +1454,7 @@ void CAN_ClearImage(uint8_t *can_msg)
 void CAN_PaserChargerMsg(void)
 {
 	g_SystemError.ccs_comm = 0;	
-	canCcsTimeout = 1;    
+	canCcsTimeout = 0;    
 }
 
 // 将要发送给充电机的信息放入发送缓冲区
