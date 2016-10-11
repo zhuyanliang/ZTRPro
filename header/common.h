@@ -21,11 +21,11 @@ typedef enum
 }BOOL;
 
 typedef   unsigned char         uint8_t;
-typedef   char                  int8_t;
+typedef   signed   char         int8_t;
 typedef   unsigned short        uint16_t;
-typedef   short                 int16_t;
+typedef   signed   short        int16_t;
 typedef   unsigned long         uint32_t;
-typedef   long                  int32_t;
+typedef   signed   long         int32_t;
 typedef   unsigned short long   uint24_t;
 
 
@@ -68,10 +68,10 @@ typedef struct
 	uint16_t 			CellVoltAvg;          	// 电池包平均单体电压
 	uint8_t  			MaxCellNum;				// 最大最小电压电芯编号
 	uint8_t  			MinCellNum;
-	int16_t   			CellTemp[4];          	// cell temperature 只有4路温度  
-	int16_t   			CellTempMax;          
-	int16_t   			CellTempMin;   
-	int16_t  			CellTempAvg; 
+	int8_t   			CellTemp[4];          	// cell temperature 只有4路温度  
+	int8_t   			CellTempMax;          
+	int8_t   			CellTempMin;   
+	int8_t  			CellTempAvg; 
 	uint8_t 			MaxTempNum;
 	uint8_t 			MinTempNum; 
 	uint8_t 			MaxTempModuIdx;

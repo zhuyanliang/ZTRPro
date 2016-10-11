@@ -409,21 +409,16 @@ void TskRelayMgt(void)
 	
 	case CHARGE:  //充电状态
 		g_RelayActFlg.precharge = FALSE;
-		if(g_BatteryParameter.SOC > 99) // 充电完成
-		{
-			g_RelayActFlg.positive = FALSE;
-			g_RelayActFlg.negative = FALSE;
-		}
-		else
-		{
-			g_RelayActFlg.positive = TRUE;
-			g_RelayActFlg.negative = TRUE;
-		}
+		
+		g_RelayActFlg.positive = TRUE;
+		g_RelayActFlg.negative = TRUE;
+		
 		break;
 
 	case PROTECTION:  //保护状态：可能是故障保护、放电截止保护、充电截止保护等等 
 		g_RelayActFlg.precharge = FALSE;
-		if ((g_ProtectDelayCnt--) <= 0)
+		g_ProtectDelayCnt--;
+		if (0 == g_ProtectDelayCnt)
 		{              
 			g_RelayActFlg.positive = FALSE;
 			g_RelayActFlg.negative = FALSE;
@@ -842,7 +837,7 @@ void TskCanMgt(void)
 	{
 		CAN_ChargerTskUpdate();			// 与充电器通信
 		// 根据充电器的电流精度  目前待定
-		CAN_ChargerTimeoutCheck();
+		//CAN_ChargerTimeoutCheck();
 	}
 
 	//if(g_BatteryMode == DISCHARGE)

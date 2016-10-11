@@ -35,7 +35,7 @@
 #pragma config BORPWR = LOW 
 
 // CONFIG2H
-#pragma config WDTEN = ON  // Watchdog Timer (WDT enabled in hardware; SWDTEN bit disabled)
+#pragma config WDTEN = OFF  // Watchdog Timer (WDT enabled in hardware; SWDTEN bit disabled)
 #pragma config WDTPS = 65536  // Watchdog Postscaler (1:1048576)
 
 // CONFIG3H
@@ -173,7 +173,6 @@ void main(void)
 		case 3:
 			DetectCharger();
 			TskFaultStoreMgt(); 
-			RelayAction();
 			break;
 		case 4:
 			TaskLedMgt();
@@ -230,9 +229,9 @@ void System_Init(void)
     SystemSelftest();  		// 系统自检
     Soc_PowerOnAdjust();	// SOC 上电校准
     CurrentZeroOffsetAdjust();  // 上电执行电流零点校准
-
+#ifndef DEBUG
 	WDTCONbits.SWDTE = 1; 	// 开启看门狗
-
+#endif
     ClrWdt();
 }
 
