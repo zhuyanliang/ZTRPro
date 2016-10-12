@@ -137,8 +137,8 @@ void DetectPackOverCurrent(void)
 void DetectMaxMinCellTemp(void)
 {
 	uint8_t i;
-	int16_t maxTemp = -40;
-	int16_t minTemp = 125;
+	int8_t maxTemp = -40;
+	int8_t minTemp = 125;
 	int16_t avgTemp = 0;
     
 

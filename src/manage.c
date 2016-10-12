@@ -841,17 +841,9 @@ void TskCanMgt(void)
 		// 根据充电器的电流精度  目前待定
 		//CAN_ChargerTimeoutCheck();
 	}
-
-	//if(g_BatteryMode == DISCHARGE)
-	//{
-	//	CAN_McsTskUpdate();
-	//	CAN_McsTimeoutCheck();
-	//}
-
-	//CAN_TmpBoardTimeoutCheck();
 }
 
-
+#if 0
 //============================================================================
 // Function    : TskAmbTempMgt
 // Description : PCB板的温度
@@ -891,7 +883,7 @@ void TskAmbTempMgt(void)
 	DetectPCBOverTemp();
 }
 
-
+#endif
 
 //============================================================================
 // Function    ：BatteryModeSwitch
@@ -914,7 +906,7 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
-			if(GetChargeState() && (g_BatteryParameter.SOC <100)) // 充电器接入
+			if(GetChargeState()) // 充电器接入
 			{
 				g_BatteryMode = CHARGE;
 			}
@@ -946,8 +938,7 @@ void TskBatteryModeMgt(void)
 		{
 			if(GetChargeState())
 			{
-				g_BatteryMode = PROTECTION;
-				g_ProtectDelayCnt = RELAY_ACTION_DELAY_1S;                    
+				g_BatteryMode = IDLE;                    
 			}  
 		}
 		break;
@@ -995,8 +986,6 @@ void TskBatteryModeMgt(void)
 			{
 				if(g_BatteryParameter.SOC > 0)
 					g_BatteryMode = IDLE;
-				else
-					g_BatteryMode = PROTECTION;
 			}
 		}
 		
