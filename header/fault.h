@@ -36,9 +36,11 @@ typedef struct
 	uint16_t coc;
 	uint16_t doc;
 	uint16_t ltc_st;
-
 	uint16_t ltc_com;
-	uint16_t mos_ot;
+	uint16_t pov;
+	uint16_t puv;
+	uint16_t vdif; // 一致性差值过界次数
+	uint16_t tdif; // 温差过界次数
 }FaultRecordTpdef;
 
 

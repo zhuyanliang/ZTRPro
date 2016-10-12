@@ -455,6 +455,10 @@ void CAN_CellTempToTxBuf(void)
 	}
 }
 
+
+
+
+
 //----------------------------------------------------------------------------
 // Function    : CAN_BatteryStateToTxBuf
 // Description : 电池包基本信息放入发送缓冲区
@@ -1119,13 +1123,13 @@ void CAN_GUI_ReadFaultRecOuc(void)
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_FaultRecord.cov;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_FaultRecord.cov >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_FaultRecord.pov;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_FaultRecord.pov >> 8);
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)g_FaultRecord.cuv;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = (uint8_t)(g_FaultRecord.cuv >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = (uint8_t)g_FaultRecord.puv;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = (uint8_t)(g_FaultRecord.puv >> 8);
 
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{

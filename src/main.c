@@ -114,12 +114,6 @@ void GPIO_Init(void)
 	TRISDbits.TRISD7 = 1;  //充电器充电检测引脚
 }
 
-void TRIG_TEST(void)
-{
-	LATDbits.LATD0 ^= 0b1;   
-}
-
-
 /*
  * 
  */
@@ -136,9 +130,7 @@ void main(void)
         // 查询优先级较高任务
         ClrWdt();
         TskCurrentMgt();
-        #ifdef DEBUG
-		TRIG_TEST();
-		#endif
+        
 		Soc_AhAcc();
         Soh_ChargeAhAcc();
         ClrWdt();

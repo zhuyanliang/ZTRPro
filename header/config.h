@@ -199,7 +199,11 @@ extern "C" {
 #define  EEPROM_ADDR_FAULT_CER         	((uint16_t)0x03EC)
 #define  EEPROM_ADDR_FAULT_LTCCOM    	((uint16_t)0x03EE)
 #define  EEPROM_ADDR_FAULT_LTCST    	((uint16_t)0x03F0)
-#define  EEPROM_ADDR_FAULT_MOSOT      	((uint16_t)0x03F2) 
+#define  EEPROM_ADDR_FAULT_POV      	((uint16_t)0x03F2) 
+#define  EEPROM_ADDR_FAULT_PUV      	((uint16_t)0x03F4)
+#define  EEPROM_ADDR_FAULT_VDIF      	((uint16_t)0x03F6)
+#define  EEPROM_ADDR_FAULT_TDIF      	((uint16_t)0x03F8)
+
 
 //´íÎó²ÎÊý 
 #define FAULT_REC_LIMIT          0xFFFF

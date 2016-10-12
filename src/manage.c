@@ -378,9 +378,15 @@ void TskSOCMgt(void)
    Soc_StoreSoc();
 }
 
+void TRIG_TEST(void)
+{
+	LATDbits.LATD0 ^= 0b1;   
+}
+
+
 //============================================================================
 // Function    ：TskRelayMgt
-// Description ：该函数根据pack的状态决定相应继电器的开关标志状态
+// Description ：该函数根据pack的状态决定相应继电器的开关标志状态 执行周期2Ms
 // Parameters  ：none 
 // Returns     ：none
 //============================================================================
@@ -392,7 +398,6 @@ void TskRelayMgt(void)
 		g_RelayActFlg.precharge = FALSE;
 		g_RelayActFlg.positive = FALSE;
 		g_RelayActFlg.negative = FALSE;
-		g_RelayActFlg.cooling = FALSE;
 		break;
 
 	case PRECHARGE:  //预充电状态
@@ -402,17 +407,10 @@ void TskRelayMgt(void)
 		break;
 
 	case DISCHARGE:  //放电状态
-		g_RelayActFlg.precharge = FALSE;
-		g_RelayActFlg.positive = TRUE;
-		g_RelayActFlg.negative = TRUE;
-		break;
-	
 	case CHARGE:  //充电状态
 		g_RelayActFlg.precharge = FALSE;
-		
 		g_RelayActFlg.positive = TRUE;
-		g_RelayActFlg.negative = TRUE;
-		
+		g_RelayActFlg.negative = TRUE;	
 		break;
 
 	case PROTECTION:  //保护状态：可能是故障保护、放电截止保护、充电截止保护等等 
@@ -423,6 +421,9 @@ void TskRelayMgt(void)
 			g_RelayActFlg.positive = FALSE;
 			g_RelayActFlg.negative = FALSE;
 		}
+		#ifdef DEBUG
+		TRIG_TEST();
+		#endif
         break;
 	default:
 		break;
@@ -521,10 +522,10 @@ void TskFaultStoreMgt(void)
 		break;
 	}
 
-	switch (state & 0x0008)
+	switch (state & 0x0008) 
 	{
 	case 0:
-		if (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)// 电芯欠压
 		{
 			if (g_FaultRecord.cut < FAULT_REC_LIMIT)
 			{
@@ -534,7 +535,7 @@ void TskFaultStoreMgt(void)
 			}
 			state |= 0x0008;
 		}
-		if (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)// 电芯过压
 		{
 			if (g_FaultRecord.dut < FAULT_REC_LIMIT)
 			{
@@ -775,6 +776,7 @@ void TskAfeMgt(void)
 				else 
 				{
 					g_SystemError.ltc_com = 1;
+					g_FaultRecord.ltc_com ++;
 					if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_1S)
 					{
 						g_ProtectDelayCnt = RELAY_ACTION_DELAY_1S;
