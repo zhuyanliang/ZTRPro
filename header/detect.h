@@ -23,18 +23,15 @@ void 	DetectPackOv(void);
 void 	DetectCellsOverVolt(void);
 void 	DetectCellsUnderVolt(void);
 void 	DetectCellsVoltImba(void);
-uint8_t DetectPackDischargeFinish(void);
 uint8_t DetectPackChargeFinish(void);
 BOOL 	DetectIsChargedState(void);
 void 	DetectMaxMinAvgCellVolt(void);
 void 	DetectCharger(void);
-void 	DetectRunkey(void);
 uint8_t GetChargeState(void);
+#if 0
+void 	DetectRunkey(void);
 uint8_t GetKeyrunState(void);
-
-void DetectCAN_NeighborPack(void);
-
-
+#endif
 
 
 #ifdef	__cplusplus

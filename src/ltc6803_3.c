@@ -150,6 +150,7 @@ void Ltc6803_WriteCfgRegGroup(Ltc6803_Parameter *dev)
 	Ltc6803_ChipUnselect();	// CSBI拉高
 }
 
+#if 0
 //============================================================================
 // Function    : Ltc6803_ReadCfgRegGroup
 // Description : this function reads the parameter from the config registers 
@@ -184,7 +185,7 @@ uint8_t Ltc6803_ReadCfgRegGroup(uint8_t *CfgData)
 
    return 0;
 }
-
+#endif
 //============================================================================
 // Function    : Ltc6803_CellVoltCnvt
 // Description : start cell voltage convert, broadcast mode
@@ -294,6 +295,7 @@ void Ltc6803_TempCnvt(uint8_t channel)
 	Ltc6803_ChipUnselect();
 }
 
+#if 0
 //============================================================================
 // Function    : Ltc6803_ReadTempRegGroup
 // Description : 读温度寄存器组
@@ -327,6 +329,7 @@ uint8_t Ltc6803_ReadTempRegGroup(uint8_t *data)
 
    return 0;
 }
+#endif
 
 //============================================================================
 // Function    : Ltc6803_ReadAllTemp
@@ -376,6 +379,7 @@ uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *dev)
    return 1;
 }
 
+#if 0
 //============================================================================
 // Function    : Ltc6803_ReadRef
 // Description : 读取VREF值（mv）
@@ -469,6 +473,7 @@ uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *dev)
    return(1);
 }
 
+
 //============================================================================
 // Function    : Ltc6803_SetBalanceSwitch
 // Description : set the balance switch state
@@ -479,4 +484,6 @@ uint8_t Ltc6803_SetBalanceSwitch(uint16_t cells)
 {
     return 0;
 }
+#endif
+
 

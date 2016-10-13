@@ -44,22 +44,22 @@ void DetectPackOverCurrent(void)
 	static uint16_t ocErrCnt = 0;
 	// 已经设置过二级报警的就直接返回，等待保护时间到断开继电器即可
 	// 充电过流
-	if (g_SystemWarning.COC == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.COC)
 	{
 		return;
 	}
 	
 	// 放电过流
-	if (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.DOC)
 	{
 		return;
 	}
 	
-	if (g_BatteryMode == CHARGE)
+	if (CHARGE == g_BatteryMode)
 	{
 		if (g_BatteryParameter.current < g_BattCOCThr.cls_2)
 		{
-			if (ocErrCnt > PACK_COC_FAULT_DLY)
+			if (ocErrCnt > PACK_COC_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.COC = WARNING_SECOND_LEVEL;
 				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_5S)
@@ -74,7 +74,7 @@ void DetectPackOverCurrent(void)
 		} 
 		else if (g_BatteryParameter.current < g_BattCOCThr.cls_1)
 		{
-			if (ocErrCnt > PACK_COC_WARNING_DLY)
+			if (ocErrCnt > PACK_COC_WARNING_DLY) // 持续5s
 			{
 				g_SystemWarning.COC = WARNING_FIRST_LEVEL;
 				ocErrCnt = 0;
@@ -90,16 +90,16 @@ void DetectPackOverCurrent(void)
 			ocErrCnt = 0;
 		}
 	}
-	else  // 放电情况
+	else if(DISCHARGE == g_BatteryMode )// 放电情况
 	{
 		if (g_BatteryParameter.current > g_BattDOCThr.cls_2)
 		{
-			if (ocErrCnt > PACK_DOC_FAULT_DLY)
+			if (ocErrCnt > PACK_DOC_FAULT_DLY) // 持续500Ms
 			{
 				g_SystemWarning.DOC = WARNING_SECOND_LEVEL;
-				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
+				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_3S)
 				{
-					g_ProtectDelayCnt = RELAY_ACTION_DELAY_10S;
+					g_ProtectDelayCnt = RELAY_ACTION_DELAY_3S;
 				}
 			}
 			else
@@ -109,7 +109,7 @@ void DetectPackOverCurrent(void)
 		}
 		else if (g_BatteryParameter.current > g_BattDOCThr.cls_1)
 		{
-			if (ocErrCnt > PACK_DOC_WARNING_DLY)
+			if (ocErrCnt > PACK_DOC_WARNING_DLY) // 持续500Ms
 			{
 				ocErrCnt = 0;
 				g_SystemWarning.DOC = WARNING_FIRST_LEVEL;
@@ -173,12 +173,12 @@ void DetectCellsOverTemp(void)
 {
 	static uint8_t otErrCnt = 0;
 
-	if(g_SystemWarning.COT == WARNING_SECOND_LEVEL)
+	if(WARNING_SECOND_LEVEL == g_SystemWarning.COT)
 	{
 		if(g_BatteryParameter.CellTempMax < g_PACKCOTThr.cls_1)
 		{
 			otErrCnt++;
-			if (otErrCnt > CELL_COT_FAULT_DLY) // 4S
+			if (otErrCnt > CELL_COT_FAULT_DLY) // 持续5S
 			{
 				otErrCnt = 0;
 				g_SystemWarning.COT = 0;
@@ -190,12 +190,12 @@ void DetectCellsOverTemp(void)
 		}
 		return;
 	}
-	if(g_SystemWarning.DOT == WARNING_SECOND_LEVEL)
+	if(WARNING_SECOND_LEVEL == g_SystemWarning.DOT)
 	{
 		if (g_BatteryParameter.CellTempMax < g_PACKDOTThr.cls_1)
 		{ 
 			otErrCnt++;
-			if (otErrCnt > CELL_DOT_FAULT_DLY) // 4S
+			if (otErrCnt > CELL_DOT_FAULT_DLY) // 持续5S
 			{
 				otErrCnt = 0;
 				g_SystemWarning.DOT = 0;
@@ -208,11 +208,11 @@ void DetectCellsOverTemp(void)
 		return;
 	}
 
-	if(g_BatteryMode == CHARGE)
+	if(CHARGE == g_BatteryMode)
 	{
 		if(g_BatteryParameter.CellTempMax > g_PACKCOTThr.cls_2)
 		{
-			if(otErrCnt > CELL_COT_FAULT_DLY)
+			if(otErrCnt > CELL_COT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.COT = WARNING_SECOND_LEVEL;
 				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -243,11 +243,11 @@ void DetectCellsOverTemp(void)
 			g_SystemWarning.COT = 0;
 		}
 	}
-	else
+	else if(DISCHARGE == g_BatteryMode)
 	{
 		if(g_BatteryParameter.CellTempMax > g_PACKDOTThr.cls_2)
 		{   
-			if(otErrCnt > CELL_DOT_FAULT_DLY) // 1S
+			if(otErrCnt > CELL_DOT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.DOT = WARNING_SECOND_LEVEL;
 				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -262,7 +262,7 @@ void DetectCellsOverTemp(void)
 		}
 		else if(g_BatteryParameter.CellTempMax > g_PACKDOTThr.cls_1)
 		{
-			if(otErrCnt > CELL_DOT_WARNING_DLY) // 1S
+			if(otErrCnt > CELL_DOT_WARNING_DLY) // 持续5S
 			{
 				g_SystemWarning.DOT = WARNING_FIRST_LEVEL;
 				otErrCnt = 0;
@@ -290,14 +290,11 @@ void DetectCellsUnderTemp(void)
 {
 	static uint8_t utErrCnt = 0;
 
-	if(g_SystemError.tdu_comm) 
-		return;
-
-	if(g_SystemWarning.CUT == WARNING_SECOND_LEVEL)
+	if(WARNING_SECOND_LEVEL == g_SystemWarning.CUT)
 	{
 		if(g_BatteryParameter.CellTempMin > g_PACKCUTThr.cls_1)
 		{       
-			if(utErrCnt > CELL_CUT_FAULT_DLY)
+			if(utErrCnt > CELL_CUT_FAULT_DLY) // 持续5S
 			{
 				utErrCnt = 0;
 				g_SystemWarning.CUT = 0;
@@ -309,11 +306,11 @@ void DetectCellsUnderTemp(void)
 		}
 		return;
 	}
-	if(g_SystemWarning.DUT == WARNING_SECOND_LEVEL)
+	if(WARNING_SECOND_LEVEL == g_SystemWarning.DUT)
 	{
 		if(g_BatteryParameter.CellTempMin > g_PACKDUTThr.cls_1)
 		{
-			if(utErrCnt > CELL_DUT_FAULT_DLY)
+			if(utErrCnt > CELL_DUT_FAULT_DLY) // 持续5S
 			{
 				utErrCnt = 0;
 				g_SystemWarning.DUT = 0;
@@ -326,11 +323,11 @@ void DetectCellsUnderTemp(void)
 		return;
 	}
 
-	if(g_BatteryMode == CHARGE)
+	if(CHARGE == g_BatteryMode)
 	{
 		if(g_BatteryParameter.CellTempMin < g_PACKCUTThr.cls_2)
 		{       
-			if(utErrCnt > CELL_CUT_FAULT_DLY)
+			if(utErrCnt > CELL_CUT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.CUT = WARNING_SECOND_LEVEL;
 				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -345,7 +342,7 @@ void DetectCellsUnderTemp(void)
 		}
 		else if(g_BatteryParameter.CellTempMin < g_PACKCUTThr.cls_1)
 		{
-			if(utErrCnt > CELL_CUT_WARNING_DLY)
+			if(utErrCnt > CELL_CUT_WARNING_DLY) // 持续5S
 			{
 				utErrCnt= 0;
 				g_SystemWarning.CUT = WARNING_FIRST_LEVEL;
@@ -361,12 +358,12 @@ void DetectCellsUnderTemp(void)
 			g_SystemWarning.CUT = 0;
 		}
 	}
-	else
+	else if(DISCHARGE == g_BatteryMode)
 	{
 		if(g_BatteryParameter.CellTempMin < g_PACKDUTThr.cls_2)
 		{
 
-			if(utErrCnt > CELL_DUT_FAULT_DLY)
+			if(utErrCnt > CELL_DUT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.DUT = WARNING_SECOND_LEVEL;
 				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -399,6 +396,8 @@ void DetectCellsUnderTemp(void)
 	}
 }
 
+#if 0
+// 检测PCB板子的温度
 void DetectPCBOverTemp(void)
 {
 	static uint8_t otErrCnt = 0;
@@ -441,7 +440,7 @@ void DetectPCBOverTemp(void)
 		}
 	}
 }
-
+#endif
 
 //============================================================================
 // Function    : DetectCellsUnderTemp
@@ -455,11 +454,11 @@ void DetectCellTempDlt(void)
 	int16_t temp = 0;
 
 	temp = g_BatteryParameter.CellTempMax - g_BatteryParameter.CellTempMin;
-	if (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.TIB)
 	{
 		if(temp < g_PACKDLTThr.cls_1)
 		{
-			if(tImbErrCnt > CELL_TIB_FAULT_DLY) // 1S
+			if(tImbErrCnt > CELL_TIB_FAULT_DLY) //持续5S
 			{
 				tImbErrCnt = 0;
 				g_SystemWarning.TIB = 0;
@@ -478,7 +477,7 @@ void DetectCellTempDlt(void)
 
 	if(temp > g_PACKDLTThr.cls_2)
 	{
-		if (tImbErrCnt > CELL_TIB_FAULT_DLY)
+		if (tImbErrCnt > CELL_TIB_FAULT_DLY)//持续5S 
 		{
 			g_SystemWarning.TIB = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -493,7 +492,7 @@ void DetectCellTempDlt(void)
 	}
 	else if(temp > g_PACKDLTThr.cls_1)
 	{
-		if (tImbErrCnt > CELL_TIB_WARNING_DLY)
+		if (tImbErrCnt > CELL_TIB_WARNING_DLY) //持续5S
 		{
 			tImbErrCnt = 0;
 			g_SystemWarning.TIB = WARNING_FIRST_LEVEL;
@@ -522,14 +521,14 @@ void DetectCellsOverVolt(void)
 {
 	static uint8_t ovErrCnt = 0;
 
-	if (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.COV)
 	{    
 		return;
 	}
 
 	if(g_BatteryParameter.CellVoltMax > g_CellOVThr.cls_2)
 	{
-		if (ovErrCnt > CELL_OV_FAULT_DLY)// 接近1S
+		if (ovErrCnt > CELL_OV_FAULT_DLY) // 持续5S
 		{
 			g_SystemWarning.COV = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_5S)
@@ -544,7 +543,7 @@ void DetectCellsOverVolt(void)
 	}
 	else if(g_BatteryParameter.CellVoltMax > g_CellOVThr.cls_1)
 	{
-		if (ovErrCnt > CELL_OV_WARNING_DLY) // 接近1S
+		if (ovErrCnt > CELL_OV_WARNING_DLY) // 持续5S
 		{
 			ovErrCnt = 0;
 			g_SystemWarning.COV = WARNING_FIRST_LEVEL;
@@ -572,14 +571,14 @@ void DetectCellsUnderVolt(void)
 {
 	static uint8_t uvErrCnt = 0;
 
-	if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.CUV)
 	{
 		return;
 	}
 
 	if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_2)
 	{
-		if (uvErrCnt > CELL_UV_FAULT_DLY)
+		if (uvErrCnt > CELL_UV_FAULT_DLY) // 持续5S
 		{
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_20S)
 			{
@@ -595,7 +594,7 @@ void DetectCellsUnderVolt(void)
 		
 	else if(g_BatteryParameter.CellVoltMin < g_CellUVThr.cls_1)
 	{
-		if (uvErrCnt > CELL_UV_WARNING_DLY)
+		if (uvErrCnt > CELL_UV_WARNING_DLY) // 持续5S
 		{
 			g_SystemWarning.CUV = WARNING_FIRST_LEVEL;
 			uvErrCnt = 0;
@@ -625,14 +624,14 @@ void DetectCellsVoltImba(void)
 
    	temp = g_BatteryParameter.CellVoltMax - g_BatteryParameter.CellVoltMin;
 
-	if (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.CIB)
 	{
 		return;
 	}
 	
 	if(temp > g_CellIBMThr.cls_2)
 	{
-		if (imbErrCnt > CELL_IB_FAULT_DLY)
+		if (imbErrCnt > CELL_IB_FAULT_DLY)  // 持续5S
 		{
 			g_SystemWarning.CIB = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -647,7 +646,7 @@ void DetectCellsVoltImba(void)
 	}
 	else if(temp > g_CellIBMThr.cls_1)
 	{
-		if (imbErrCnt > CELL_IB_WARNING_DLY)
+		if (imbErrCnt > CELL_IB_WARNING_DLY) // 持续5S
 		{
 			imbErrCnt = 0;
 			g_SystemWarning.CIB = WARNING_FIRST_LEVEL;
@@ -669,14 +668,14 @@ void DetectPackOv(void)
 {
 	static uint8_t pOvErrCnt = 0;
 
-	if (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.POV)
 	{
 		return;
 	}
 
 	if(g_BatteryParameter.voltage > g_PackOVThr.cls_2)
 	{
-		if (pOvErrCnt > PACK_OV_FAULT_DLY)
+		if (pOvErrCnt > PACK_OV_FAULT_DLY) // 持续5S
 		{
 			g_SystemWarning.POV = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -691,7 +690,7 @@ void DetectPackOv(void)
 	}
 	else if(g_BatteryParameter.voltage > g_PackOVThr.cls_1)
 	{
-		if (pOvErrCnt > PACK_OV_WARNING_DLY)
+		if (pOvErrCnt > PACK_OV_WARNING_DLY) // 持续5S
 		{
 			pOvErrCnt = 0;
 			g_SystemWarning.POV = WARNING_FIRST_LEVEL;
@@ -714,14 +713,14 @@ void DetectPackUv(void)
 {
 	static uint8_t pUvErrCnt = 0;
 
-	if (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.PUV)
 	{
 		return;
 	}
 
 	if(g_BatteryParameter.voltage < g_PackUVThr.cls_2)
 	{
-		if (pUvErrCnt > PACK_UV_FAULT_DLY)
+		if (pUvErrCnt > PACK_UV_FAULT_DLY) // 持续5S
 		{
 			g_SystemWarning.PUV = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -736,7 +735,7 @@ void DetectPackUv(void)
 	}
 	else if(g_BatteryParameter.voltage < g_PackUVThr.cls_1)
 	{
-		if (pUvErrCnt > PACK_UV_WARNING_DLY)
+		if (pUvErrCnt > PACK_UV_WARNING_DLY) // 持续5S
 		{
 			pUvErrCnt = 0;
 			g_SystemWarning.PUV = WARNING_FIRST_LEVEL;
@@ -751,27 +750,6 @@ void DetectPackUv(void)
 		g_SystemWarning.PUV = 0;
 		pUvErrCnt = 0;
 	}    
-}
-
-
-//============================================================================
-// Function    : PackDischargeFinish
-// Description : 检测电池包电压是否达到放电截止电压
-// Parameters  : none
-// Returns     : 1:无法继续放电 0:可以继续放电
-//============================================================================
-uint8_t DetectPackDischargeFinish(void)
-{
-	if ( (g_BatteryParameter.CellVoltMin <= g_PackUVThr.cls_2) 
-		|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-		|| (g_BatteryParameter.SOC == 0))
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
 }
 
 
@@ -874,6 +852,7 @@ void DetectCharger(void)
 	} 
 }
 
+#if 0
 //============================================================================
 // Function    ：TskRunkeyCheck
 // Description ：检测点火钥匙状态
@@ -905,7 +884,7 @@ void DetectRunkey(void)
 		}
 	}       
 }
-
+#endif
 
 //============================================================================
 // Function    ：GetChargeState
@@ -918,7 +897,7 @@ uint8_t GetChargeState(void)
    return (keyChgrState & 0x01);
 }
 
-
+#if 0
 //============================================================================
 // Function    ：GetKeyrunState
 // Description ：获取点火钥匙状态
@@ -929,4 +908,5 @@ uint8_t GetKeyrunState(void)
 {
    return (keyChgrState & 0x02);
 }
+#endif
 

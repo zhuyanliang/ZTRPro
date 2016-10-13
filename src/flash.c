@@ -23,6 +23,7 @@ void FLASH_Erase64Bytes(uint24_t flashAddr)
    EECON1bits.WREN = 0;                 // Disable flash program writes        
 }
 
+# if 0
 //============================================================================
 // Function    : FlashWr64Bytes
 // Description : This function writes 64 bytes to the flash program memory 
@@ -68,4 +69,4 @@ void FlashWr64Bytes(uint24_t FlashAddr, uint8_t *BufPtr)
     while (EECON1bits.WR);           // Wait for write to terminate  
     EECON1bits.WREN = 0;             // Disable flash program writes                                                                             
 }  
-
+#endif

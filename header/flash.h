@@ -15,7 +15,7 @@ extern "C" {
 #include "common.h"    
     
 void FLASH_Erase64Bytes(uint24_t FlashAddr);
-void FlashWr64Bytes(uint24_t FlashAddr, uint8_t *BufPtr);
+//void FlashWr64Bytes(uint24_t FlashAddr, uint8_t *BufPtr);
 
 
 #ifdef	__cplusplus

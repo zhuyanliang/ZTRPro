@@ -43,8 +43,8 @@ void TaskLedMgt(void)
 			timeStamp = 0;
 		}
         
-		if((g_BatteryParameter.SOC > 99)&&
-			(GetChargeState)) // 充满电后长亮
+		if((g_BatteryParameter.SOC > 99)
+                &&(GetChargeState)) // 充满电后长亮
 		{
 			LedChargeOn();
 		}

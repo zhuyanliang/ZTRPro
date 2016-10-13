@@ -945,8 +945,6 @@ void TskBatteryModeMgt(void)
 	
 	case CHARGE:  //³äµç×´Ì¬  
 			if ( DetectSecondWarning() 
-				|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-				|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
 				|| (g_SystemError.all & 0x07))
 			{
 				g_BatteryMode = PROTECTION;
@@ -968,13 +966,6 @@ void TskBatteryModeMgt(void)
 		}
 		else
 		{
-			if(((g_SystemWarning.CUV == WARNING_SECOND_LEVEL) 
-				||(g_SystemWarning.PUV == WARNING_SECOND_LEVEL)) 
-				&&(GetChargeState()))
-			{
-				g_BatteryMode = CHARGE;
-			}
-			
 			if(GetChargeState())  // ¼ì²é³äµç²åÍ·ÊÇ·ñ°Îµô
 			{
 				if(DetectPackChargeFinish())

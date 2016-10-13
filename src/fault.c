@@ -86,6 +86,7 @@ void Nvm_UpdateRecentFaultRec(uint8_t code)
 	g_FaultRecentRec.code_2 = g_FaultRecentRec.code_1;
 	g_FaultRecentRec.code_1 = g_FaultRecentRec.code_0;
 	g_FaultRecentRec.code_0 = code;
+	Nvm_WriteRecentFaultRec();
 }
 
 

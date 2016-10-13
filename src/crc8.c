@@ -68,6 +68,7 @@ uint8_t calculate_crc8(uint8_t* ptr, uint8_t len)
    return crc;
 }
 
+#if 0
 //----------------------------------------------------------------------------
 // Function:    calculate_char_crc8
 // Description:  计算单个字符数值的CRC
@@ -78,3 +79,4 @@ uint8_t calculate_char_crc8(uint8_t crc, uint8_t nbyte)
 {
    return(Crc8Table[crc ^ nbyte]);
 }
+#endif

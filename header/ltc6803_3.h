@@ -110,15 +110,15 @@ extern Ltc6803_Parameter g_ArrayLtc6803Unit[ModuleAmount]; //Ltc6803管理芯片参数
 void Ltc6803_Init(void);
 
 uint8_t Ltc6803_BlockCrc8Cal(uint8_t *CrcByte, uint8_t len);
-uint8_t Ltc6803_ReadCfgRegGroup(uint8_t *CfgData);
+//uint8_t Ltc6803_ReadCfgRegGroup(uint8_t *CfgData);
 void Ltc6803_WriteCfgRegGroup(Ltc6803_Parameter *Dev);
 void Ltc6803_CellVoltCnvt(uint8_t ConvertMode, uint8_t channel);
 uint8_t Ltc6803_ReadAllCellVolt(Ltc6803_Parameter *Dev);
 int16_t Ltc6803_CellVoltCal(int16_t VoltRaw);
 void Ltc6803_TempCnvt(uint8_t channel);
-uint8_t Ltc6803_ReadTempRegGroup(uint8_t *data);
+//uint8_t Ltc6803_ReadTempRegGroup(uint8_t *data);
 uint8_t Ltc6803_ReadAllTemp(Ltc6803_Parameter *Dev);
-uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *Dev);
+//uint8_t Ltc6803_ReadFlagRegister(Ltc6803_Parameter *Dev);
 uint8_t Ltc6803_SetBalanceSwitch(uint16_t cells);
 
 
