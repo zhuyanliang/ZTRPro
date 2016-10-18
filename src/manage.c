@@ -897,9 +897,6 @@ void TskBatteryModeMgt(void)
 	{
 	case IDLE:  
 		if ( DetectSecondWarning() 
-			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_BatteryParameter.SOC == 0)
 			|| (g_SystemError.all & 0x07))    
 		{
 			g_BatteryMode = PROTECTION;

@@ -168,6 +168,11 @@ void Soc_Update (void)
 				g_BatteryParameter.Ah = (BATTERY_CAPACITY_TOTAL/100.0 + 1);
 			}
 		}
+		else if((g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL))
+		{
+			g_BatteryParameter.Ah = 0;
+		}
 
 		g_BatteryParameter.SOC = (uint32_t)g_BatteryParameter.Ah * 100 / BATTERY_CAPACITY_TOTAL;   // 结果为百分比
 
