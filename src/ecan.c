@@ -258,7 +258,7 @@ uint8_t ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
 {
    uint8_t i, *ptr;
 
-   if (RXB0CONbits.RXFUL)
+   if(RXB0CONbits.RXFUL)
    {
       ptr = (uint8_t*)0x0F66;   //寄存器RXB0D0地址
       RxMessage->IDE = RXB0SIDL & 0x08;     //1-接收到的报文时扩展帧
