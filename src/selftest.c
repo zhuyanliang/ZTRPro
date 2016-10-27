@@ -241,7 +241,7 @@ void CellTempSelftest(void)
 	if ( (g_BatteryParameter.CellTempMax >= 125) || (g_BatteryParameter.CellTempMin <= -40) )
 	{
 		g_SystemError.det_oc = 1;
-		LedGreOn();
+		//LedGreOn();
 	}
 
 }

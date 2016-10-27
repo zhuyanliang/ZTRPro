@@ -123,7 +123,7 @@ void main(void)
 	static uint8_t cnt = 0;
 	
     System_Init();    
-    LedGreOn();
+    //LedGreOn();
     CAN_SendHeartToTxBuf();
     for(;;)
     {

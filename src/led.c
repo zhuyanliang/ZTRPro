@@ -13,6 +13,7 @@ void Led_Init(void)
     LedChargeOff();
     LedRunOff();  
     LedFaultOff();
+    LedGreOff();
 }
 
 //============================================================================
