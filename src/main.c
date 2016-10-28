@@ -90,10 +90,10 @@ void System_Init(void);
 //============================================================================
 void SysClk_Init(void)
 {   
-    OSCCONbits.SCS 		= 0b00;     //Select INOSC as system clock source
-    OSCCONbits.IRCF 	= 0b111;    //设置所选HF_INTOSC输出频率(16MHz)
-    OSCCONbits.IDLEN 	= 0b0;      //when implement sleep function,mcu goto sleep 
-    OSCTUNEbits.TUN 	= 0b0;		//快速RC振荡器(INTOSC)频率调节 暂时不调节，使用默认校验好的
+    OSCCONbits.SCS 		= 0b00;     // 默认主振荡器(OSC或者HF-INTOSC)
+    OSCCONbits.IRCF 	= 0b111;    // 设置所选HF_INTOSC输出频率(16MHz)
+    OSCCONbits.IDLEN 	= 0b0;      // 执行SLEEP指令后进入休眠模式
+    OSCTUNEbits.TUN 	= 0b000000;		//快速RC振荡器(INTOSC)频率调节 暂时不调节，使用默认校验好的
     OSCTUNEbits.PLLEN 	= 0b1;      //enable PLL  系统时钟运行在16MHz*4 
 }
 
