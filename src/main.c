@@ -130,7 +130,6 @@ void main(void)
         // 查询优先级较高任务
         ClrWdt();
         TskCurrentMgt();
-        
 		Soc_AhAcc();
         Soh_ChargeAhAcc();
         ClrWdt();
@@ -173,6 +172,7 @@ void main(void)
 			break;
 		case 5:
 			TskSohMgt();
+			TskCPUMode();
 			taskList = 0;
             break;
 		default:

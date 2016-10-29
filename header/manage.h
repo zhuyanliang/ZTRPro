@@ -26,6 +26,8 @@ void TskAfeMgt(void);
 void TskAmbTempMgt(void);
 void TskSohMgt(void);
 void TskSetCCsPra(void);
+void TskCPUMode(void);
+
 
 
 #ifdef	__cplusplus

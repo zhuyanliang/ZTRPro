@@ -1042,4 +1042,26 @@ void TskSetCCsPra(void)
 	}
 }
 
+// 如果接通电源，十分钟未进行其他操作，CPU进入休眠模式
+void TskCPUMode(void)
+{
+	static uint32_t time = 0;
+	if(g_BatteryMode == DISCHARGE)
+	{
+		if(g_BatteryParameter.current < 20) // 放电电流小于2A
+		{
+			time ++;
+		}
+		else
+		{
+			time = 0;
+		}
+		if(time > 60000) // 10分钟
+		{
+			SLEEP();
+		}
+	}
+}
+
+
 
