@@ -23,7 +23,11 @@
 #pragma config XINST = OFF       // Extended Instruction Set (Enabled)
 
 // CONFIG1H
+#ifdef EXSOC
+#pragma config FOSC = HS2
+#else
 #pragma config FOSC = INTIO2    // Oscillator (Internal RC oscillator)
+#endif
 #pragma config PLLCFG = ON     // PLL x4 Enable bit (Disabled)
 #pragma config FCMEN = ON      // Fail-Safe Clock Monitor (Disabled)
 #pragma config IESO = OFF       // Internal External Oscillator Switch Over Mode (Disabled)
@@ -91,9 +95,11 @@ void System_Init(void);
 void SysClk_Init(void)
 {   
     OSCCONbits.SCS 		= 0b00;     // 默认主振荡器(OSC或者HF-INTOSC)
+    #ifndef EXSOC
     OSCCONbits.IRCF 	= 0b111;    // 设置所选HF_INTOSC输出频率(16MHz)
-    OSCCONbits.IDLEN 	= 0b0;      // 执行SLEEP指令后进入休眠模式
     OSCTUNEbits.TUN 	= 0b000000;		//快速RC振荡器(INTOSC)频率调节 暂时不调节，使用默认校验好的
+    #endif
+    OSCCONbits.IDLEN 	= 0b0;      // 执行SLEEP指令后进入休眠模式
     OSCTUNEbits.PLLEN 	= 0b1;      //enable PLL  系统时钟运行在16MHz*4 
 }
 

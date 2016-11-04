@@ -16,6 +16,9 @@ extern "C" {
 
 #define DEBUG
 
+//顶一次项用于启用外部晶振
+//#define EXSOC
+
 // 配置的测试标志 如果进行发送数据测试，可以打开
 #define SENDTEST	1
 
