@@ -27,8 +27,8 @@ static BOOL DetectSecondWarning(void)
 			|| (g_SystemWarning.COC == WARNING_SECOND_LEVEL)// 充电过流
 			|| (g_SystemWarning.DOC == WARNING_SECOND_LEVEL)// 放点过流
 			|| (g_SystemWarning.ISO == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
-			|| (g_SystemWarning.TIB == WARNING_SECOND_LEVEL))
+			|| (g_SystemWarning.VDIF == WARNING_SECOND_LEVEL)
+			|| (g_SystemWarning.TDIF == WARNING_SECOND_LEVEL))
 	{
 		return TRUE;
 	}
@@ -494,12 +494,12 @@ void TskFaultStoreMgt(void)
 	switch (state & 0x0004)	// 单体一致性
 	{
 	case 0:
-		if (g_SystemWarning.CIB == WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.VDIF == WARNING_SECOND_LEVEL)
 		{
-			if (g_FaultRecord.cib < FAULT_REC_LIMIT)
+			if (g_FaultRecord.vdif < FAULT_REC_LIMIT)
 			{
-				g_FaultRecord.cib++;
-				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_CIB, (uint8_t*)&g_FaultRecord.cib, 2);
+				g_FaultRecord.vdif++;
+				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_VDIF, (uint8_t*)&g_FaultRecord.vdif, 2);
 				Nvm_UpdateRecentFaultRec(FALT_VDIF);	
 			}
 			state |= 0x0004;
@@ -507,7 +507,7 @@ void TskFaultStoreMgt(void)
 		break;
 
 	case 0x0004:
-		if (g_SystemWarning.CIB != WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.VDIF != WARNING_SECOND_LEVEL)
 		{
 			state &= ~0x0004;
 		}
@@ -599,7 +599,7 @@ void TskFaultStoreMgt(void)
 		{
 			if (g_FaultRecord.doc < FAULT_REC_LIMIT)
 			{
-				g_FaultRecord.doc++;
+				g_FaultRecord.doc++; 
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DOC, (uint8_t*)&g_FaultRecord.doc, 2);
 				Nvm_UpdateRecentFaultRec(FALT_DOC);
 			}
@@ -619,7 +619,7 @@ void TskFaultStoreMgt(void)
 	switch (state & 0x0040)
 	{
 	case 0:
-		if (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+		if (g_SystemWarning.TDIF == WARNING_SECOND_LEVEL)
 		{
 			if (g_FaultRecord.tdif < FAULT_REC_LIMIT)
 			{
@@ -632,7 +632,7 @@ void TskFaultStoreMgt(void)
 		break;
 
 	case 0x0040:
-		if (g_SystemWarning.TIB != WARNING_SECOND_LEVEL)	
+		if (g_SystemWarning.TDIF != WARNING_SECOND_LEVEL)	
 		{
 			state &= ~0x0040;
 		}

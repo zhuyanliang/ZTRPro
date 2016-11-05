@@ -650,7 +650,7 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 		levelone |= 0x02;
 	}
 
-	if(g_SystemWarning.TIB == WARNING_FIRST_LEVEL)
+	if(g_SystemWarning.TDIF == WARNING_FIRST_LEVEL)
 	{
 		levelone |= 0x04;
 	}
@@ -675,7 +675,7 @@ void CAN_SendSTDBattInfoToTxBuf(void)
 		leveltwo |= 0x02;
 	}
 
-	if(g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+	if(g_SystemWarning.TDIF == WARNING_SECOND_LEVEL)
 	{
 		leveltwo |= 0x04;
 	}
@@ -1089,9 +1089,9 @@ void CAN_GUI_ReadNormalRec(void)
 
 
 // 将 GUI 要读取的充放电过流错误信息放入发送缓冲区
-void CAN_GUI_ReadFaultOcRec(void)
+void CAN_GUI_ReadFaultCnt1(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_OC);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_1);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -1114,9 +1114,9 @@ void CAN_GUI_ReadFaultOcRec(void)
 
 
 // 将 GUI 要读取的充电电压错误信息放入发送缓冲区
-void CAN_GUI_ReadFaultRecOuc(void)
+void CAN_GUI_ReadFaultCnt2(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_OUC);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_2);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -1139,9 +1139,9 @@ void CAN_GUI_ReadFaultRecOuc(void)
 
 
 // 将 GUI 要读取的充电温度错误信息放入发送缓冲区
-void CAN_GUI_ReadFaultRecCt(void)
+void CAN_GUI_ReadFaultCnt3(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_CT);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_3);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
@@ -1164,22 +1164,22 @@ void CAN_GUI_ReadFaultRecCt(void)
 
 
 // 将 GUI 要读取的放电温度错误信息放入发送缓冲区
-void CAN_GUI_ReadFaultRecDt(void)
+void CAN_GUI_ReadFaultCnt4(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_DT);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_4);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_FaultRecord.dot;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_FaultRecord.dot >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0xFF;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = (uint8_t)g_FaultRecord.dut;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = (uint8_t)(g_FaultRecord.dut >> 8);
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)g_FaultRecord.dut;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = (uint8_t)(g_FaultRecord.dut >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = (uint8_t)g_FaultRecord.vdif;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = (uint8_t)(g_FaultRecord.vdif >> 8);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = (uint8_t)g_FaultRecord.tdif;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = (uint8_t)(g_FaultRecord.tdif >> 8);
 
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
@@ -1189,22 +1189,22 @@ void CAN_GUI_ReadFaultRecDt(void)
 
 
 // 将 GUI 要读取的ltc6803错误信息放入发送缓冲区
-void CAN_GUI_ReadFaultRecHard(void)
+void CAN_GUI_ReadFaultCnt5(void)
 {
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_HARD);
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].COB_ID = CAN_GenerateID(GUI, CAN_MSG_FAULT_REC_5);
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].IDE = CAN_ID_EXT;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].RTR = CAN_RTR_DATA;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].DLC = 0x08;
 
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[0] = (uint8_t)g_FaultRecord.ltc_com;
 	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[1] = (uint8_t)(g_FaultRecord.ltc_com >> 8);
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0xFF;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[2] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[3] = 0x00;
 
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0xff;
-	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0xff;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[4] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[5] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[6] = 0x00;
+	g_CanMsgBuf.TxBuf[g_CanMsgBuf.TxBuf_Wptr].Data[7] = 0x00;
 
 	if (++g_CanMsgBuf.TxBuf_Wptr >= CAN_BUF_DEEP)
 	{
@@ -1841,20 +1841,20 @@ void TskCanProcessRxMsg(void)
 				case CAN_MSG_RUN_NORMAL_REC :
 					CAN_GUI_ReadNormalRec();
 					break;
-				case CAN_MSG_FAULT_REC_OC :
-					CAN_GUI_ReadFaultOcRec();
+				case CAN_MSG_FAULT_REC_1 :
+					CAN_GUI_ReadFaultCnt1();
 					break;
-				case CAN_MSG_FAULT_REC_OUC :
-					CAN_GUI_ReadFaultRecOuc();
+				case CAN_MSG_FAULT_REC_2 :
+					CAN_GUI_ReadFaultCnt2();
 					break;
-				case CAN_MSG_FAULT_REC_CT :
-					CAN_GUI_ReadFaultRecCt();
+				case CAN_MSG_FAULT_REC_3 :
+					CAN_GUI_ReadFaultCnt3();
 					break;
-				case CAN_MSG_FAULT_REC_DT :
-					CAN_GUI_ReadFaultRecDt();
+				case CAN_MSG_FAULT_REC_4 :
+					CAN_GUI_ReadFaultCnt4();
 					break;
-				case CAN_MSG_FAULT_REC_HARD :
-					CAN_GUI_ReadFaultRecHard();
+				case CAN_MSG_FAULT_REC_5 :
+					CAN_GUI_ReadFaultCnt5();
 					break;
 				case CAN_GUI_CONFIG_COV_TH:
 					CAN_GUI_ConfigCovThr(g_CanMsgBuf.RxBuf[g_CanMsgBuf.RxBuf_Rptr].Data);

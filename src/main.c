@@ -187,7 +187,8 @@ void main(void)
 			break;
 		case 5:
 			TskSohMgt();
-			TskCPUMode();
+			// CPU模式管理
+			//TskCPUMode();
 			taskList = 0;
             break;
 		default:

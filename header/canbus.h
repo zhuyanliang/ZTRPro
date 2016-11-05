@@ -102,12 +102,12 @@
 #define  CAN_MSG_GUI_BUF_READ                  ((uint8_t)0x31)  // 定义GUI读BUF命令
 
 #define  CAN_MSG_RUN_NORMAL_REC                ((uint8_t)0x40)  // 定义正常运行参数记录
-#define  CAN_MSG_FAULT_REC_OC                  ((uint8_t)0x41)  // 定义过流故障记录
-#define  CAN_MSG_FAULT_REC_OUC                 ((uint8_t)0x42)  // 定义cell过、欠压故障记录
-#define  CAN_MSG_FAULT_REC_CT                  ((uint8_t)0x43)  // 定义充电高低温故障记录
-#define  CAN_MSG_FAULT_REC_DT                  ((uint8_t)0x44)  // 定义放电高低温故障记录
+#define  CAN_MSG_FAULT_REC_1                  ((uint8_t)0x41)  // 定义过流故障记录
+#define  CAN_MSG_FAULT_REC_2                 ((uint8_t)0x42)  // 定义cell过、欠压故障记录
+#define  CAN_MSG_FAULT_REC_3                  ((uint8_t)0x43)  // 定义充电高低温故障记录
+#define  CAN_MSG_FAULT_REC_4                  ((uint8_t)0x44)  // 定义放电高低温故障记录
 #define  CAN_MSG_FAULT_REC_MOS                 ((uint8_t)0x45)  // 定义MOS管高温故障记录
-#define  CAN_MSG_FAULT_REC_HARD                ((uint8_t)0x46)  // 定义系统硬件故障记录
+#define  CAN_MSG_FAULT_REC_5                ((uint8_t)0x46)  // 定义系统硬件故障记录
 
 #define  CAN_MSG_IMAGE_ERASE                   ((uint8_t)0xF0)
 #define  CAN_MSG_IMAGE_REQUEST                 ((uint8_t)0xF1)

@@ -454,14 +454,14 @@ void DetectCellTempDlt(void)
 	int16_t temp = 0;
 
 	temp = g_BatteryParameter.CellTempMax - g_BatteryParameter.CellTempMin;
-	if (WARNING_SECOND_LEVEL == g_SystemWarning.TIB)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.TDIF)
 	{
 		if(temp < g_PACKDLTThr.cls_1)
 		{
 			if(tImbErrCnt > CELL_TIB_FAULT_DLY) //持续1S
 			{
 				tImbErrCnt = 0;
-				g_SystemWarning.TIB = 0;
+				g_SystemWarning.TDIF = 0;
 			}
 			else
 			{
@@ -479,7 +479,7 @@ void DetectCellTempDlt(void)
 	{
 		if (tImbErrCnt > CELL_TIB_FAULT_DLY)//持续1S 
 		{
-			g_SystemWarning.TIB = WARNING_SECOND_LEVEL;
+			g_SystemWarning.TDIF = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
 			{
 				g_ProtectDelayCnt = RELAY_ACTION_DELAY_10S;
@@ -495,7 +495,7 @@ void DetectCellTempDlt(void)
 		if (tImbErrCnt > CELL_TIB_WARNING_DLY) //持续1S
 		{
 			tImbErrCnt = 0;
-			g_SystemWarning.TIB = WARNING_FIRST_LEVEL;
+			g_SystemWarning.TDIF = WARNING_FIRST_LEVEL;
 		}
 		else
 		{
@@ -504,7 +504,7 @@ void DetectCellTempDlt(void)
 	}
 	else
 	{
-		g_SystemWarning.TIB = 0;
+		g_SystemWarning.TDIF = 0;
 		tImbErrCnt = 0;
 	}
 }
@@ -624,7 +624,7 @@ void DetectCellsVoltImba(void)
 
    	temp = g_BatteryParameter.CellVoltMax - g_BatteryParameter.CellVoltMin;
 
-	if (WARNING_SECOND_LEVEL == g_SystemWarning.CIB)
+	if (WARNING_SECOND_LEVEL == g_SystemWarning.VDIF)
 	{
 		return;
 	}
@@ -633,7 +633,7 @@ void DetectCellsVoltImba(void)
 	{
 		if (imbErrCnt > CELL_IB_FAULT_DLY)  // 持续5S
 		{
-			g_SystemWarning.CIB = WARNING_SECOND_LEVEL;
+			g_SystemWarning.VDIF = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
 			{
 				g_ProtectDelayCnt = RELAY_ACTION_DELAY_10S;
@@ -649,7 +649,7 @@ void DetectCellsVoltImba(void)
 		if (imbErrCnt > CELL_IB_WARNING_DLY) // 持续5S
 		{
 			imbErrCnt = 0;
-			g_SystemWarning.CIB = WARNING_FIRST_LEVEL;
+			g_SystemWarning.VDIF = WARNING_FIRST_LEVEL;
 		}
 		else
 		{
@@ -658,7 +658,7 @@ void DetectCellsVoltImba(void)
 	}
 	else
 	{
-		g_SystemWarning.CIB = 0;
+		g_SystemWarning.VDIF = 0;
 		imbErrCnt = 0;
 	}
 }

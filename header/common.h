@@ -99,12 +99,12 @@ typedef union
 		unsigned DUT :2;		// 单体放电低温
 		unsigned COC :2;		// 充电过流
 		unsigned DOC :2;		// 放电过流  	
-		unsigned CIB :2;     	// 单体电池一致性   
+		unsigned VDIF :2;     	// 单体电池一致性   
 		unsigned PCBOT :2;    	// PCB板高温     
 		unsigned PCBUT :2;    	// PCB板低温    
 		unsigned POV :2;		// 整包总压高
 		unsigned PUV :2;		// 整包总压低
-		unsigned TIB :2;		// 电池温差大
+		unsigned TDIF :2;		// 电池温差大
 		unsigned ISO :2;		// 绝缘警告
 		unsigned     :2;
 	};

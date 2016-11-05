@@ -192,7 +192,7 @@ extern "C" {
 
 #define  EEPROM_ADDR_FAULT_CUV   		((uint16_t)0x03DA)
 #define  EEPROM_ADDR_FAULT_COV         	((uint16_t)0x03DC)
-#define  EEPROM_ADDR_FAULT_CIB         	((uint16_t)0x03DE)
+#define  EEPROM_ADDR_FAULT_VDIF         ((uint16_t)0x03DE)
 #define  EEPROM_ADDR_FAULT_CUT         	((uint16_t)0x03E0)
 #define  EEPROM_ADDR_FAULT_DUT         	((uint16_t)0x03E2)
 #define  EEPROM_ADDR_FAULT_COT         	((uint16_t)0x03E4)
@@ -204,8 +204,7 @@ extern "C" {
 #define  EEPROM_ADDR_FAULT_LTCST    	((uint16_t)0x03F0)
 #define  EEPROM_ADDR_FAULT_POV      	((uint16_t)0x03F2) 
 #define  EEPROM_ADDR_FAULT_PUV      	((uint16_t)0x03F4)
-#define  EEPROM_ADDR_FAULT_VDIF      	((uint16_t)0x03F6)
-#define  EEPROM_ADDR_FAULT_TDIF      	((uint16_t)0x03F8)
+#define  EEPROM_ADDR_FAULT_TDIF      	((uint16_t)0x03F6)
 
 
 //´íÎó²ÎÊý 

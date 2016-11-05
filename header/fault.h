@@ -34,7 +34,6 @@ typedef struct
 {
 	uint16_t cuv;
 	uint16_t cov;
-	uint16_t cib;
 	uint16_t cer;
 
 	uint16_t cut;	

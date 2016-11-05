@@ -13,7 +13,7 @@ void FaultStoreInit(void)
 {
 	g_FaultRecord.cuv 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_CUV);
 	g_FaultRecord.cov 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_COV);
-	g_FaultRecord.cib 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_CIB);
+	g_FaultRecord.vdif 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_VDIF);
 	g_FaultRecord.cut 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_CUT);
 	g_FaultRecord.dut 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_DUT);
 	g_FaultRecord.cot 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_COT);
@@ -25,12 +25,12 @@ void FaultStoreInit(void)
 	g_FaultRecord.ltc_st 	= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_LTCST);
 	g_FaultRecord.pov		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_POV);
 	g_FaultRecord.puv		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_PUV);
-	g_FaultRecord.vdif		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_VDIF);
 	g_FaultRecord.tdif		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_TDIF);
 
 	Nvm_ReadRecentFaultRec();	
 }
-
+
+
 	
 //============================================================================
 // Function    : Nvm_ReadFaultRec
