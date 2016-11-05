@@ -13,13 +13,21 @@ extern "C" {
 #endif
 
 // 错误信息代码
-#define FALT_CUV 	0xE4
-#define FALT_COV 	0xE3
-#define FALT_CIB	0xE5
-#define FALT_CUT	0xE7
-#define FALT_COT	0xE8
-#define FALT_COC	0xE1
-#define FALT_LTC	0xE0
+#define FALT_CUV 	0xE0 // 电芯低压
+#define FALT_COV 	0xE1 // 电芯高压
+#define FALT_CUT	0xE2 // 充电低温
+#define FALT_COT	0xE3 // 充电高温
+#define FALT_DUT	0xE4 // 放电低温
+#define FALT_DOT	0xE5 // 放电高温
+#define FALT_COC	0xE6 // 充电过流
+#define FALT_DOC	0xE7 // 放电过流
+#define FALT_VDIF	0xE8 // 电芯电压一致性
+#define FALT_TDIF	0xE9 // 温差
+#define FALT_POV 	0xEA // 包过压
+#define FALT_PUV	0xEB // 包低压
+#define FALT_LTC	0xEC // 6803错误
+
+
 
 
 typedef struct

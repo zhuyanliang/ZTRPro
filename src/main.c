@@ -120,6 +120,12 @@ void GPIO_Init(void)
 	TRISDbits.TRISD7 = 1;  //充电器充电检测引脚
 }
 
+void TRIG_TEST(void)
+{
+	LATDbits.LATD0 ^= 0b1;   
+}
+
+
 /*
  * 
  */
@@ -144,6 +150,9 @@ void main(void)
         TskCanRecMsgToBuf();
 		ClrWdt();
 		// 发送标准帧的电池组信息给整车
+		#ifdef DEBUG
+		TRIG_TEST();
+		#endif
 		if(16 == cnt++)
 		{
 			cnt = 0;

@@ -22,106 +22,115 @@
 //----------------------------------------------------------------------------
 void ECAN_Init(void)
 {
-   //set cantx as input
-   TRISBbits.TRISB3 = 1;
+	//set cantx as input
+	TRISBbits.TRISB3 = 1;
 
-   //Enter CAN module into config mode
-   CANCON = 0x80;
-   while(!(CANSTATbits.OPMODE ==0x04));
-   //Enter CAN module into Mode 0
-   ECANCON = 0x00;
+	//Enter CAN module into config mode
+	CANCON = 0x80;
+	while(!(CANSTATbits.OPMODE ==0x04));
+	//Enter CAN module into Mode 0
+	ECANCON = 0x00;
 
-   //Initialize CAN baud rate generator
-   #if (Fosc == 16000000)      
-   #if (CAN_BAUDRATE == 100)       
-      BRGCON1 = 0x07; //0000 0111  //SJW=1TQ, BRP 7
-      BRGCON2 = 0x98; //1001 1000  //SEG2PHTS 1, sampled once  PS1=4TQ, PropagationT 1TQ  
-      BRGCON3 = 0x03; //0000 0011  //PS2 3TQ
-   #elif (CAN_BAUDRATE == 125)     
-      BRGCON1 = 0x07; //0000 0111  //SJW=1TQ, BRP 7
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
-   #elif (CAN_BAUDRATE == 250)      
-      BRGCON1 = 0x03; //0000 0011  //SJW=1TQ, BRP 3
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ  
-   #elif (CAN_BAUDRATE == 500)      
-      BRGCON1 = 0x01; //0000 0001  //SJW=1TQ, BRP 1
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1 ,sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
-   #elif (CAN_BAUDRATE == 1000)      
-      BRGCON1 = 0x00; //0000 0000  //SJW=1TQ, BRP 0
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
-   #else
-   #endif
-   #elif Fosc == 64000000  //config can baudrate while Fosc==64MHz   
-   #if (CAN_BAUDRATE == 100)       
-      BRGCON1 = 0x5F; //0101 1111  //SJW=2TQ, BRP 31
-      BRGCON2 = 0x91; //1001 0001  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 2TQ
-      BRGCON3 = 0x03; //0000 0011  //PS2 3TQ
-   #elif (CAN_BAUDRATE == 125)     
-      BRGCON1 = 0x1F; //0001 1111  //SJW=1TQ, BRP 31
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
-   #elif (CAN_BAUDRATE == 250)      
-      BRGCON1 = 0x0F; //0000 1111  //SJW=1TQ, BRP 15
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ  
-   #elif (CAN_BAUDRATE == 500)      
-      BRGCON1 = 0x07; //0000 0111  //SJW=1TQ, BRP 7
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1 ,sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
-   #elif (CAN_BAUDRATE == 1000)      
-      BRGCON1 = 0x03; //0000 0011  //SJW=1TQ, BRP 3
-      BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
-      BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
-   #else
-   #endif
-   #endif
+	//Initialize CAN baud rate generator
+#if (Fosc == 16000000)      
+#if (CAN_BAUDRATE == 100)       
+	BRGCON1 = 0x07; //0000 0111  //SJW=1TQ, BRP 7
+	BRGCON2 = 0x98; //1001 1000  //SEG2PHTS 1, sampled once  PS1=4TQ, PropagationT 1TQ  
+	BRGCON3 = 0x03; //0000 0011  //PS2 3TQ
+#elif (CAN_BAUDRATE == 125)     
+	BRGCON1 = 0x07; //0000 0111  //SJW=1TQ, BRP 7
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
+#elif (CAN_BAUDRATE == 250)      
+	BRGCON1 = 0x03; //0000 0011  //SJW=1TQ, BRP 3
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ  
+#elif (CAN_BAUDRATE == 500)      
+	BRGCON1 = 0x01; //0000 0001  //SJW=1TQ, BRP 1
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1 ,sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
+#elif (CAN_BAUDRATE == 1000)      
+	BRGCON1 = 0x00; //0000 0000  //SJW=1TQ, BRP 0
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
+#else
+#endif
+#elif Fosc == 64000000  //config can baudrate while Fosc==64MHz   
+#if (CAN_BAUDRATE == 100)       
+	BRGCON1 = 0x5F; //0101 1111  //SJW=2TQ, BRP 31
+	BRGCON2 = 0x91; //1001 0001  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 2TQ
+	BRGCON3 = 0x03; //0000 0011  //PS2 3TQ
+#elif (CAN_BAUDRATE == 125)
+#if 0
+	BRGCON1 = 0x1F; //0001 1111  //SJW=1TQ, BRP 31
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
+#endif
+	BRGCON1 = 0x8F; //0000 0111     //SJW=3TQ     BRP  15
+	BRGCON2 = 0xB8; //1011 1000     //SEG2PHTS 1    sampled once  PS1=8TQ  PropagationT 1TQ  
+	BRGCON3 = 0x05; //0000 0101     //PS2  6TQ 
+	//  125 Kbps @ 40MHz 
+	//BRGCON1 = 0x49; //0000 0111     //SJW=2TQ     BRP  9
+	//BRGCON2 = 0xF1; //1011 1000     //SEG2PHTS 1    sampled once  PS1=8TQ  PropagationT 1TQ  
+	//BRGCON3 = 0x05; //0000 0101     //PS2  6TQ 
+#elif (CAN_BAUDRATE == 250)      
+	BRGCON1 = 0x0F; //0000 1111  //SJW=1TQ, BRP 15
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ  
+#elif (CAN_BAUDRATE == 500)      
+	BRGCON1 = 0x07; //0000 0111  //SJW=1TQ, BRP 7
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1 ,sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
+#elif (CAN_BAUDRATE == 1000)      
+	BRGCON1 = 0x03; //0000 0011  //SJW=1TQ, BRP 3
+	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
+	BRGCON3 = 0x02; //0000 0010  //PS2 3TQ
+#else
+#endif
+#endif
 
 
-   //Set Receive Mode for buffers
-   RXB0CON = 0x00;
-   RXB1CON = 0x00;
+	//Set Receive Mode for buffers
+	RXB0CON = 0x00;
+	RXB1CON = 0x00;
 
-   // 配置过滤器屏蔽器
-   RXM0SIDL = 0x00;
-   RXM0SIDH = 0x00;
-   RXM0EIDL = 0x00;
-   RXM0EIDH = 0x00;
+	// 配置过滤器屏蔽器
+	RXM0SIDL = 0x00;
+	RXM0SIDH = 0x00;
+	RXM0EIDL = 0x00;
+	RXM0EIDH = 0x00;
 
-   RXM1SIDL = 0x00;
-   RXM1SIDH = 0x00;
-   RXM1EIDL = 0x00;
-   RXM1EIDH = 0xFF;
+	RXM1SIDL = 0x00;
+	RXM1SIDH = 0x00;
+	RXM1EIDL = 0x00;
+	RXM1EIDH = 0xFF;
 
-   RXF0SIDL = 0;
-   RXF0SIDH = 0;
-   RXF0EIDL = 0;
-   RXF0EIDH = 0;
+	RXF0SIDL = 0;
+	RXF0SIDH = 0;
+	RXF0EIDL = 0;
+	RXF0EIDH = 0;
 
-   RXF1SIDL = 0;
-   RXF1SIDH = 0;
-   RXF1EIDL = 0;
-   RXF1EIDH = BMS;//0xF4
+	RXF1SIDL = 0;
+	RXF1SIDH = 0;
+	RXF1EIDL = 0;
+	RXF1EIDH = BMS;//0xF4
 
-   RXF0SIDLbits.EXIDEN = 0;  // 过滤器0只接收标准报文
-   RXF1SIDLbits.EXIDEN = 1;  // 过滤器1只接收扩展报文
+	RXF0SIDLbits.EXIDEN = 0;  // 过滤器0只接收标准报文
+	RXF1SIDLbits.EXIDEN = 1;  // 过滤器1只接收扩展报文
 
-   CIOCON = 0x20;
+	CIOCON = 0x20;
 
-   // 接收中断设置
-   PIR5bits.RXB0IF = 0;
-   IPR5bits.RXB0IP = 0;
-   PIE5bits.RXB0IE = 0b0;
-   PIR5bits.RXB1IF = 0;
-   IPR5bits.RXB1IP = 0;
-   PIE5bits.RXB1IE = 0b0;
-       
-   //Enter CAN module into normal mode
-   CANCON = 0x00;
-   while(!(CANSTATbits.OPMODE==0x00));
+	// 接收中断设置
+	PIR5bits.RXB0IF = 0;
+	IPR5bits.RXB0IP = 0;
+	PIE5bits.RXB0IE = 0b0;
+	PIR5bits.RXB1IF = 0;
+	IPR5bits.RXB1IP = 0;
+	PIE5bits.RXB1IE = 0b0;
+
+	//Enter CAN module into normal mode
+	CANCON = 0x00;
+	while(!(CANSTATbits.OPMODE==0x00));
 }
 
 //----------------------------------------------------------------------------

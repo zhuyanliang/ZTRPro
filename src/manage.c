@@ -378,11 +378,6 @@ void TskSOCMgt(void)
    Soc_StoreSoc();
 }
 
-void TRIG_TEST(void)
-{
-	LATDbits.LATD0 ^= 0b1;   
-}
-
 
 //============================================================================
 // Function    ：TskRelayMgt
@@ -421,9 +416,6 @@ void TskRelayMgt(void)
 			g_RelayActFlg.positive = FALSE;
 			g_RelayActFlg.negative = FALSE;
 		}
-		#ifdef DEBUG
-		TRIG_TEST();
-		#endif
         break;
 	default:
 		break;
@@ -448,7 +440,7 @@ void TskFaultStoreMgt(void)
 	if(ADC_GetCvtRaw() < 1840)// 2.25V/5V*4096 
 		return;
 	
-	switch(state & 0x0001) // 充电低压
+	switch(state & 0x0001) // 电芯低压
 	{
 	case 0:
 		if (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
@@ -474,7 +466,7 @@ void TskFaultStoreMgt(void)
 		break;
 	}
 
-	switch (state & 0x0002) // 充电过压
+	switch (state & 0x0002) // 电芯过压
 	{
 	case 0:
 		if (g_SystemWarning.COV == WARNING_SECOND_LEVEL)
@@ -508,7 +500,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.cib++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_CIB, (uint8_t*)&g_FaultRecord.cib, 2);
-				Nvm_UpdateRecentFaultRec(FALT_CIB);	
+				Nvm_UpdateRecentFaultRec(FALT_VDIF);	
 			}
 			state |= 0x0004;
 		}
@@ -525,7 +517,7 @@ void TskFaultStoreMgt(void)
 	switch (state & 0x0008) 
 	{
 	case 0:
-		if (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)// 电芯欠压
+		if (g_SystemWarning.CUT == WARNING_SECOND_LEVEL)// 电芯充电低温
 		{
 			if (g_FaultRecord.cut < FAULT_REC_LIMIT)
 			{
@@ -535,13 +527,13 @@ void TskFaultStoreMgt(void)
 			}
 			state |= 0x0008;
 		}
-		if (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)// 电芯过压
+		if (g_SystemWarning.DUT == WARNING_SECOND_LEVEL)// 电芯放电高温
 		{
 			if (g_FaultRecord.dut < FAULT_REC_LIMIT)
 			{
 				g_FaultRecord.dut++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DUT, (uint8_t*)&g_FaultRecord.dut, 2);
-				Nvm_UpdateRecentFaultRec(FALT_CUT);
+				Nvm_UpdateRecentFaultRec(FALT_DUT);
 			}
 			state |= 0x0008;
 		}
@@ -575,7 +567,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.dot++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DOT, (uint8_t*)&g_FaultRecord.dot, 2);
-				Nvm_UpdateRecentFaultRec(FALT_COT);
+				Nvm_UpdateRecentFaultRec(FALT_DOT);
 			}
 			state |= 0x0010;
 		}
@@ -609,7 +601,7 @@ void TskFaultStoreMgt(void)
 			{
 				g_FaultRecord.doc++;
 				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_DOC, (uint8_t*)&g_FaultRecord.doc, 2);
-				Nvm_UpdateRecentFaultRec(FALT_COC);
+				Nvm_UpdateRecentFaultRec(FALT_DOC);
 			}
 			state |= 0x0020;
 		}
@@ -620,6 +612,29 @@ void TskFaultStoreMgt(void)
 			&&(g_SystemWarning.DOC != WARNING_SECOND_LEVEL))	
 		{
 			state &= ~0x0020;
+		}
+		break;
+	}
+
+	switch (state & 0x0040)
+	{
+	case 0:
+		if (g_SystemWarning.TIB == WARNING_SECOND_LEVEL)
+		{
+			if (g_FaultRecord.tdif < FAULT_REC_LIMIT)
+			{
+				g_FaultRecord.tdif++;
+				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_TDIF, (uint8_t*)&g_FaultRecord.tdif, 2);
+				Nvm_UpdateRecentFaultRec(FALT_TDIF);
+			}
+			state |= 0x0040;
+		}
+		break;
+
+	case 0x0040:
+		if (g_SystemWarning.TIB != WARNING_SECOND_LEVEL)	
+		{
+			state &= ~0x0040;
 		}
 		break;
 	}
@@ -669,6 +684,41 @@ void TskFaultStoreMgt(void)
 		}
 		break;
 	}
+
+	switch (state & 0x0200)
+	{
+	case 0:
+		if (g_SystemWarning.POV == WARNING_SECOND_LEVEL)
+		{
+			if (g_FaultRecord.pov < FAULT_REC_LIMIT)
+			{
+				g_FaultRecord.pov++;
+				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_POV, (uint8_t*)&g_FaultRecord.pov, 2);
+				Nvm_UpdateRecentFaultRec(FALT_POV);
+			}
+			state |= 0x0200;
+		}
+		if (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
+		{
+			if (g_FaultRecord.puv < FAULT_REC_LIMIT)
+			{
+				g_FaultRecord.puv++;
+				EEPROM_WriteBlock(EEPROM_ADDR_FAULT_PUV, (uint8_t*)&g_FaultRecord.puv, 2);
+				Nvm_UpdateRecentFaultRec(FALT_PUV);
+			}
+			state |= 0x0200;
+		}
+		break;
+
+	case 0x0200:
+		if ((g_SystemWarning.POV != WARNING_SECOND_LEVEL) 
+			&&(g_SystemWarning.PUV != WARNING_SECOND_LEVEL))	
+		{
+			state &= ~0x0200;
+		}
+		break;
+	}
+	
 }
 
 

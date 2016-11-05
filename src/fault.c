@@ -23,15 +23,11 @@ void FaultStoreInit(void)
 	g_FaultRecord.cer 		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_CER);
 	g_FaultRecord.ltc_com 	= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_LTCCOM);
 	g_FaultRecord.ltc_st 	= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_LTCST);
-/*	g_FaultRecord.pov		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_POV);
+	g_FaultRecord.pov		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_POV);
 	g_FaultRecord.puv		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_PUV);
 	g_FaultRecord.vdif		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_VDIF);
 	g_FaultRecord.tdif		= Nvm_ReadFaultRec(EEPROM_ADDR_FAULT_TDIF);
-*/
-	g_FaultRecord.pov		= 0;
-	g_FaultRecord.puv		= 0;
-	g_FaultRecord.vdif		= 0;
-	g_FaultRecord.tdif		= 0;
+
 	Nvm_ReadRecentFaultRec();	
 }
 
@@ -83,6 +79,8 @@ void Nvm_WriteRecentFaultRec(void)
  */
 void Nvm_UpdateRecentFaultRec(uint8_t code)
 {
+	if(code == g_FaultRecentRec.code_0)
+		return;
 	g_FaultRecentRec.code_2 = g_FaultRecentRec.code_1;
 	g_FaultRecentRec.code_1 = g_FaultRecentRec.code_0;
 	g_FaultRecentRec.code_0 = code;
