@@ -69,10 +69,7 @@ void ECAN_Init(void)
 	BRGCON1 = 0x8F; //0000 0111     //SJW=3TQ     BRP  15
 	BRGCON2 = 0xB8; //1011 1000     //SEG2PHTS 1    sampled once  PS1=8TQ  PropagationT 1TQ  
 	BRGCON3 = 0x05; //0000 0101     //PS2  6TQ 
-	//  125 Kbps @ 40MHz 
-	//BRGCON1 = 0x49; //0000 0111     //SJW=2TQ     BRP  9
-	//BRGCON2 = 0xF1; //1011 1000     //SEG2PHTS 1    sampled once  PS1=8TQ  PropagationT 1TQ  
-	//BRGCON3 = 0x05; //0000 0101     //PS2  6TQ 
+    
 #elif (CAN_BAUDRATE == 250)      
 	BRGCON1 = 0x0F; //0000 1111  //SJW=1TQ, BRP 15
 	BRGCON2 = 0x90; //1001 0000  //SEG2PHTS 1, sampled once  PS1=3TQ, PropagationT 1TQ  
