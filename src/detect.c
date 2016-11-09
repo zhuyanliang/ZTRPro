@@ -178,7 +178,7 @@ void DetectCellsOverTemp(void)
 		if(g_BatteryParameter.CellTempMax < g_PACKCOTThr.cls_1)
 		{
 			otErrCnt++;
-			if (otErrCnt > CELL_COT_FAULT_DLY) // 持续1S
+			if (otErrCnt > CELL_COT_FAULT_DLY) // 持续5S
 			{
 				otErrCnt = 0;
 				g_SystemWarning.COT = 0;
@@ -195,7 +195,7 @@ void DetectCellsOverTemp(void)
 		if (g_BatteryParameter.CellTempMax < g_PACKDOTThr.cls_1)
 		{ 
 			otErrCnt++;
-			if (otErrCnt > CELL_DOT_FAULT_DLY) // 持续1S
+			if (otErrCnt > CELL_DOT_FAULT_DLY) // 持续5S
 			{
 				otErrCnt = 0;
 				g_SystemWarning.DOT = 0;
@@ -212,7 +212,7 @@ void DetectCellsOverTemp(void)
 	{
 		if(g_BatteryParameter.CellTempMax > g_PACKCOTThr.cls_2)
 		{
-			if(otErrCnt > CELL_COT_FAULT_DLY) // 持续1S
+			if(otErrCnt > CELL_COT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.COT = WARNING_SECOND_LEVEL;
 				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -247,7 +247,7 @@ void DetectCellsOverTemp(void)
 	{
 		if(g_BatteryParameter.CellTempMax > g_PACKDOTThr.cls_2)
 		{   
-			if(otErrCnt > CELL_DOT_FAULT_DLY) // 持续1S
+			if(otErrCnt > CELL_DOT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.DOT = WARNING_SECOND_LEVEL;
 				if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -262,7 +262,7 @@ void DetectCellsOverTemp(void)
 		}
 		else if(g_BatteryParameter.CellTempMax > g_PACKDOTThr.cls_1)
 		{
-			if(otErrCnt > CELL_DOT_WARNING_DLY) // 持续1S
+			if(otErrCnt > CELL_DOT_WARNING_DLY) // 持续5S
 			{
 				g_SystemWarning.DOT = WARNING_FIRST_LEVEL;
 				otErrCnt = 0;
@@ -294,7 +294,7 @@ void DetectCellsUnderTemp(void)
 	{
 		if(g_BatteryParameter.CellTempMin > g_PACKCUTThr.cls_1)
 		{       
-			if(utErrCnt > CELL_CUT_FAULT_DLY) // 持续1S
+			if(utErrCnt > CELL_CUT_FAULT_DLY) // 持续5S
 			{
 				utErrCnt = 0;
 				g_SystemWarning.CUT = 0;
@@ -310,7 +310,7 @@ void DetectCellsUnderTemp(void)
 	{
 		if(g_BatteryParameter.CellTempMin > g_PACKDUTThr.cls_1)
 		{
-			if(utErrCnt > CELL_DUT_FAULT_DLY) // 持续1S
+			if(utErrCnt > CELL_DUT_FAULT_DLY) // 持续5S
 			{
 				utErrCnt = 0;
 				g_SystemWarning.DUT = 0;
@@ -327,7 +327,7 @@ void DetectCellsUnderTemp(void)
 	{
 		if(g_BatteryParameter.CellTempMin < g_PACKCUTThr.cls_2)
 		{       
-			if(utErrCnt > CELL_CUT_FAULT_DLY) // 持续1S
+			if(utErrCnt > CELL_CUT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.CUT = WARNING_SECOND_LEVEL;
 				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -342,7 +342,7 @@ void DetectCellsUnderTemp(void)
 		}
 		else if(g_BatteryParameter.CellTempMin < g_PACKCUTThr.cls_1)
 		{
-			if(utErrCnt > CELL_CUT_WARNING_DLY) // 持续1S
+			if(utErrCnt > CELL_CUT_WARNING_DLY) // 持续5S
 			{
 				utErrCnt= 0;
 				g_SystemWarning.CUT = WARNING_FIRST_LEVEL;
@@ -363,7 +363,7 @@ void DetectCellsUnderTemp(void)
 		if(g_BatteryParameter.CellTempMin < g_PACKDUTThr.cls_2)
 		{
 
-			if(utErrCnt > CELL_DUT_FAULT_DLY) // 持续1S
+			if(utErrCnt > CELL_DUT_FAULT_DLY) // 持续5S
 			{
 				g_SystemWarning.DUT = WARNING_SECOND_LEVEL;
 				if(g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -458,7 +458,7 @@ void DetectCellTempDlt(void)
 	{
 		if(temp < g_PACKDLTThr.cls_1)
 		{
-			if(tImbErrCnt > CELL_TIB_FAULT_DLY) //持续1S
+			if(tImbErrCnt > CELL_TIB_FAULT_DLY) //持续5S
 			{
 				tImbErrCnt = 0;
 				g_SystemWarning.TDIF = 0;
@@ -477,7 +477,7 @@ void DetectCellTempDlt(void)
 
 	if(temp > g_PACKDLTThr.cls_2)
 	{
-		if (tImbErrCnt > CELL_TIB_FAULT_DLY)//持续1S 
+		if (tImbErrCnt > CELL_TIB_FAULT_DLY)//持续5S 
 		{
 			g_SystemWarning.TDIF = WARNING_SECOND_LEVEL;
 			if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_10S)
@@ -492,7 +492,7 @@ void DetectCellTempDlt(void)
 	}
 	else if(temp > g_PACKDLTThr.cls_1)
 	{
-		if (tImbErrCnt > CELL_TIB_WARNING_DLY) //持续1S
+		if (tImbErrCnt > CELL_TIB_WARNING_DLY) //持续5S
 		{
 			tImbErrCnt = 0;
 			g_SystemWarning.TDIF = WARNING_FIRST_LEVEL;
@@ -735,7 +735,7 @@ void DetectPackUv(void)
 	}
 	else if(g_BatteryParameter.voltage < g_PackUVThr.cls_1)
 	{
-		if (pUvErrCnt > PACK_UV_WARNING_DLY) // 持续5S
+		if (pUvErrCnt > PACK_UV_WARNING_DLY) // 持5S
 		{
 			pUvErrCnt = 0;
 			g_SystemWarning.PUV = WARNING_FIRST_LEVEL;

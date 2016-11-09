@@ -17,7 +17,7 @@ extern "C" {
 #define DEBUG
 
 //顶一次项用于启用外部晶振
-#define EXSOC
+//#define EXSOC
 
 // 配置的测试标志 如果进行发送数据测试，可以打开
 #define SENDTEST	1
@@ -106,11 +106,11 @@ extern "C" {
 #define CELL_OV_WARNING_DLY				((uint8_t)83)
 #define CELL_UV_WARNING_DLY				((uint8_t)83)
 #define CELL_IB_WARNING_DLY				((uint8_t)83)
-#define CELL_DOT_WARNING_DLY			((uint8_t)21)
-#define CELL_DUT_WARNING_DLY			((uint8_t)21)
-#define CELL_COT_WARNING_DLY			((uint8_t)21)
-#define CELL_CUT_WARNING_DLY			((uint8_t)21)
-#define CELL_TIB_WARNING_DLY            ((uint8_t)21)
+#define CELL_DOT_WARNING_DLY			((uint8_t)125)
+#define CELL_DUT_WARNING_DLY			((uint8_t)125)
+#define CELL_COT_WARNING_DLY			((uint8_t)125)
+#define CELL_CUT_WARNING_DLY			((uint8_t)125)
+#define CELL_TIB_WARNING_DLY            ((uint8_t)125)
 #define PACK_DOC_WARNING_DLY			((uint16_t)250)
 #define PACK_COC_WARNING_DLY			((uint16_t)2500)
 #define PACK_UV_WARNING_DLY             ((uint8_t)83)
@@ -123,11 +123,11 @@ extern "C" {
 #define CELL_IB_FAULT_DLY				((uint8_t)83)            
 #define PACK_UV_FAULT_DLY               ((uint8_t)83)
 #define PACK_OV_FAULT_DLY               ((uint8_t)83)
-#define CELL_DOT_FAULT_DLY				((uint8_t)21)
-#define CELL_DUT_FAULT_DLY				((uint8_t)21)
-#define CELL_COT_FAULT_DLY				((uint8_t)21)
-#define CELL_CUT_FAULT_DLY				((uint8_t)21)
-#define CELL_TIB_FAULT_DLY              ((uint8_t)21)
+#define CELL_DOT_FAULT_DLY				((uint8_t)125)
+#define CELL_DUT_FAULT_DLY				((uint8_t)125)
+#define CELL_COT_FAULT_DLY				((uint8_t)125)
+#define CELL_CUT_FAULT_DLY				((uint8_t)125)
+#define CELL_TIB_FAULT_DLY              ((uint8_t)125)
 #define PACK_DOC_FAULT_DLY				((uint16_t)250)
 #define PACK_COC_FAULT_DLY				((uint16_t)2500)
 #define SYS_ISO_FAULT_DLY               ((uint8_t)50)   
