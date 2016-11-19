@@ -2,7 +2,7 @@
  * File:   main.c
  * Author: Administrator
  *
- * Created on 2016年6月20日, 上午8:14
+ * Created on 2016年6月20日, 上午8:14 
  */
 
 #include "include.h"
@@ -242,5 +242,4 @@ void System_Init(void)
 #endif
     ClrWdt();
 }
-
 
