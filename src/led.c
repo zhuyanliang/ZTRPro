@@ -6,9 +6,9 @@ void Led_Init(void)
 	TRISCbits.TRISC6 = 0;   // PCB板绿灯控制端口
 	TRISCbits.TRISC7 = 0;   // PCB板红灯控制端口
 	
-	TRISAbits.TRISA6 = 0;   // 充电LED闪烁控制端口
+	TRISDbits.TRISD0 = 0;   // 充电LED闪烁控制端口
 	TRISCbits.TRISC1 = 0;	// 放电LED控制端口
-    TRISAbits.TRISA7 = 0;   // 故障灯检测
+    TRISDbits.TRISD1 = 0;   // 故障灯检测
 
     LedChargeOff();
     LedRunOff();  

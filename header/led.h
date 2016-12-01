@@ -14,9 +14,9 @@ extern "C" {
 
 #define LedRed        	LATCbits.LATC7   
 #define LedGre         	LATCbits.LATC6  
-#define LedCharge    	LATAbits.LATA6   
+#define LedCharge    	LATDbits.LATD0   
 #define LedRun      	LATCbits.LATC1 
-#define LedFault        LATAbits.LATA7 
+#define LedFault        LATDbits.LATD1 
 
 #define LedRedOff()			LedRed = 1
 #define LedGreOff()			LedGre = 1

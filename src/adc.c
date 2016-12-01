@@ -39,10 +39,6 @@ void ADC_IOInit(void)
     TRISEbits.TRISE1 = 1;   //AN6  母线电流
     TRISEbits.TRISE2 = 1;   //AN7 热敏电阻采集端口
 
-    //设置连接热敏电子的管脚为输出
-    TRISDbits.TRISD0 = 0;   // 选择热敏电阻端口
-    TRISDbits.TRISD1 = 0;
-
     ADCON1bits.VCFG 	= 0b00;     // ADC的正端参考电压选择 AVdd 
     ADCON1bits.VNCFG 	= 0b0;     // ADC的负端参考电压选择 AVss
     ADCON1bits.CHSN 	= 0b0;      // 模拟反相通道选择位 通道00（AVss） 
