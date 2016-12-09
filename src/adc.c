@@ -72,8 +72,6 @@ uint16_t ADC_GetCvtRaw(void)
 {
 	uint16_t adcRaw = 0;  
 
-	/*adcRaw = ((uint16_t)ADRESH << 8) | ADRESL;
-	adcRaw &= 0x0FFF;*/
 	adcRaw = ADRESH;
 	adcRaw <<= 8;
 	adcRaw |= ADRESL;
