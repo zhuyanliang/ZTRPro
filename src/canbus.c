@@ -1675,7 +1675,7 @@ void CAN_ChargerTimeoutCheck(void)
 {
 	if (canCcsTimeout++ > CAN_CCS_COMM_TIMEOUT)
 	{
-		g_SystemError.ccs_comm = 1;	
+		g_SystemError.ccs_comm = 0b1;	
 		canCcsTimeout = 0;
         if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_1S)
         {

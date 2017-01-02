@@ -889,6 +889,7 @@ void TskCanMgt(void)
 	{
 		CAN_ChargerTskUpdate();			// 与充电器通信
 		// 根据充电器的电流精度  目前待定
+		// 使用CAN充电器时打开此功能
 		//CAN_ChargerTimeoutCheck();
 	}
 }
@@ -947,7 +948,7 @@ void TskBatteryModeMgt(void)
 	{
 	case IDLE:  
 		if ( DetectSecondWarning() 
-			|| (g_SystemError.all & 0x07))    
+			|| (g_SystemError.all & 0x87))    
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -977,7 +978,7 @@ void TskBatteryModeMgt(void)
 		if (DetectSecondWarning() 
 			|| (g_SystemWarning.CUV == WARNING_SECOND_LEVEL)
 			|| (g_SystemWarning.PUV == WARNING_SECOND_LEVEL)
-			|| (g_SystemError.all & 0x07))
+			|| (g_SystemError.all & 0x87))
 		{
 			g_BatteryMode = PROTECTION;
 		}
@@ -992,7 +993,7 @@ void TskBatteryModeMgt(void)
 	
 	case CHARGE:  //充电状态  
 			if ( DetectSecondWarning() 
-				|| (g_SystemError.all & 0x07))
+				|| (g_SystemError.all & 0x87))
 			{
 				g_BatteryMode = PROTECTION;
 			}
