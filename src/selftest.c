@@ -18,7 +18,7 @@ uint8_t SystemSelftest(void)
 	Ltc6803_Selftest();
 
 	// 检测线开路检查
-	//Ltc6803_OpenWireTest();
+	Ltc6803_OpenWireTest();
 	// cell电压自检
 	CellVoltSelftest();
 
@@ -27,7 +27,6 @@ uint8_t SystemSelftest(void)
 	AmbTempSelftest();
 
 	// pack总压自检
-	//TskRelayVoltMgt();
 	if (g_SystemError.ltc_st || g_SystemError.ltc_com || g_SystemError.det_oc)
 	{
 		if (g_ProtectDelayCnt > RELAY_ACTION_DELAY_1S)

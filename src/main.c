@@ -134,6 +134,13 @@ void main(void)
     System_Init();    
     //LedGreOn();
     CAN_SendHeartToTxBuf();
+
+	//
+	for(int i = 0;i<15;i++)
+	{
+		DetectCharger();
+	}
+	
     for(;;)
     {
         // 查询优先级较高任务
@@ -142,6 +149,7 @@ void main(void)
 		Soc_AhAcc();
         Soh_ChargeAhAcc();
         ClrWdt();
+		DetectCharger();
         TskBatteryModeMgt();
         TskRelayMgt();
         TskCanRecMsgToBuf();
@@ -174,7 +182,6 @@ void main(void)
 			// 绝缘性检测
 			break;
 		case 3:
-			DetectCharger();
 			TskFaultStoreMgt(); 
 			break;
 		case 4:

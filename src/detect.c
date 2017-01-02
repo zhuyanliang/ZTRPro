@@ -894,7 +894,8 @@ void DetectRunkey(void)
 //============================================================================
 uint8_t GetChargeState(void)
 {
-   return (keyChgrState & 0x01);
+	return (keyChgrState & 0x01);
+    //return (!PORTDbits.RD7);
 }
 
 #if 0

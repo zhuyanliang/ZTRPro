@@ -14,7 +14,7 @@ extern "C" {
 
 #include "common.h"
 
-#define DEBUG
+//#define DEBUG
 
 //顶一次项用于启用外部晶振
 #define EXSOC

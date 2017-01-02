@@ -249,8 +249,11 @@ uint8_t Ltc6803_ReadAllCellVolt(Ltc6803_Parameter *dev)
 		}
 		else
 		{
-			Ltc6803_ChipUnselect();
-			return 0;
+            if(PROTECTION != g_BatteryMode)
+            {
+                Ltc6803_ChipUnselect();
+                return 0;
+            }
 		}
 
 		dev++;
