@@ -752,7 +752,7 @@ void TskBlncMgt(void)
 						if(g_ArrayLtc6803Unit[i].CellVolt[j] - g_BatteryParameter.CellVoltMin 
 							> CELL_BALANCE_THRESHOLD)
 						{
-							g_ArrayLtc6803Unit[i].CellBal |= 0x0001 << j;
+							g_ArrayLtc6803Unit[i].CellBal |= ((uint16_t)0x01 << j);
 						}
 					}
 				}
