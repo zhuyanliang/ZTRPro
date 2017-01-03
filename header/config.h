@@ -155,7 +155,7 @@ extern "C" {
 
 //-------------------------------- 单体均衡参数定义 --------------------------------
 #define  CELL_BALANCE_THRESHOLD        ((uint8_t)20)        // 定义cell均衡启动门槛压差：10mV
-#define  CELL_BALANCE_OPEN_VOLT        ((uint8_t)3650)      // 定义cell均衡启动电压最低值
+#define  CELL_BALANCE_OPEN_VOLT        ((uint16_t)3650)      // 定义cell均衡启动电压最低值
 #define  CELL_BALANCE_PROTECT_VOLT     ((uint16_t)4100)     // 定义单体均衡保护电压
 
 #define MAX_CHARGER_OUTPUT_VOLT		   ((uint16_t)840)		// uint: 0.1V
