@@ -14,6 +14,7 @@ volatile BatteryModeTypedef g_BatteryMode = IDLE;
 uint16_t 					g_ProtectDelayCnt;	// 保护延时计数 
 uint16_t 					g_PrechargeTimer = 0;
 uint8_t 					g_EnterLowPoweModeFlg;
+uint16_t                    g_BeforeChargeCnt = 0;
 
 //不检测欠压二级警告
 static BOOL DetectSecondWarning(void)
@@ -400,7 +401,11 @@ void TskRelayMgt(void)
 		g_RelayActFlg.negative = TRUE;
 		g_RelayActFlg.precharge = TRUE;
 		break;
-
+    case BEFORECHARGE:    
+        g_RelayActFlg.precharge = FALSE;
+		g_RelayActFlg.positive = FALSE;
+		g_RelayActFlg.negative = TRUE;
+        break;
 	case DISCHARGE:  //放电状态
 	case CHARGE:  //充电状态
 		g_RelayActFlg.precharge = FALSE;
@@ -956,7 +961,8 @@ void TskBatteryModeMgt(void)
 		{
 			if(GetChargeState()) // 充电器接入
 			{
-				g_BatteryMode = CHARGE;
+				g_BatteryMode = BEFORECHARGE;
+                g_BeforeChargeCnt = 0;
 			}
             else
 			{
@@ -990,7 +996,14 @@ void TskBatteryModeMgt(void)
 			}  
 		}
 		break;
-	
+        
+    case BEFORECHARGE:
+        if(++g_BeforeChargeCnt > BEFORE_CHARGE_TIME)
+        {
+            g_BatteryMode = CHARGE;
+            g_BeforeChargeCnt = 0;
+        }
+        break;
 	case CHARGE:  //充电状态  
 			if ( DetectSecondWarning() 
 				|| (g_SystemError.all & 0x87))
@@ -1019,7 +1032,7 @@ void TskBatteryModeMgt(void)
 				if(DetectPackChargeFinish())
 					g_BatteryMode = PROTECTION;
 				else	
-					g_BatteryMode = CHARGE;
+					g_BatteryMode = BEFORECHARGE;
 			}
 			else
 			{
@@ -1029,7 +1042,6 @@ void TskBatteryModeMgt(void)
 		}
 		
 		break;
-
 	default:  
 		break;
     }

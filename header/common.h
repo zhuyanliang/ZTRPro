@@ -115,7 +115,8 @@ typedef enum
 {
 	IDLE = 0,
 	PRECHARGE,
-	DISCHARGE, 
+	DISCHARGE,
+    BEFORECHARGE,
 	CHARGE,
 	PROTECTION
 }BatteryModeTypedef;

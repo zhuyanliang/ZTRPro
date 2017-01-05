@@ -221,7 +221,7 @@ extern "C" {
 #define  _HARDWARE_MINOR_VERSION             0                 //次版本号
 
 #define  PRE_CHARGE_TIME                     500       // 定义预充电继电器闭合时间ms
-
+#define  BEFORE_CHARGE_TIME                  500
 
 //========================== application image Id ============================
 #define _IMG_ID                        4
